@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "Crear Usuario";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@*FORM TO GET THE USER INPUT TO ADD TO THE DATABASE*@
+<form>
+    <div class="mb-3">
+        <label for="user-login" class="form-label">Login del usuario:</label>
+        <input type="text" class="form-control" id="user-login" name="user-login">
+    </div>
+    <div class="mb-3">
+        <label for="user-id" class="form-label">Cédula del usuario:</label>
+        <input type="text" class="form-control" id="user-id" name="user-id">
+    </div>
+    <div class="mb-3">
+        <label for="user-name" class="form-label">Primer nombre:</label>
+        <input type="text" class="form-control" id="user-name" name="user-name">
+    </div>
+    <div class="mb-3">
+        <label for="user-first-ln" class="form-label">Primer apellido:</label>
+        <input type="text" class="form-control" id="user-first-ln" name="user-first-ln">
+    </div>
+    <div class="mb-3">
+        <label for="user-second-ln" class="form-label">Segundo apellido:</label>
+        <input type="text" class="form-control" id="user-second-ln" name="user-second-ln">
+    </div>
+    <div class="mb-3">
+        <label for="user-dept" class="form-label">Departamento:</label>
+        <select class="form-select" id="user-dept" name="user-dept">
+            <option selected> </option>
+            <option value="Dept1">Dept1</option>
+            <option value="Dept2">Dept2</option>
+            <option value="Dept3">Dept3</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="user-password" class="form-label">Contraseña:</label>
+        <input type="password" class="form-control" id="user-password" name="user-password">
+    </div>
+    <button type="submit" class="btn btn-outline-secondary">Agregar</button>
+</form>
