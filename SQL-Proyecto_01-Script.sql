@@ -38,16 +38,18 @@ CREATE TABLE Etapa (
 	nombre varchar(12) NOT NULL PRIMARY KEY
 )
 
--- Se usa por cotizacion
+-- Se usa por cotizacion, ContactoCliente, Actividad
 CREATE TABLE Tipo (
 	categoria varchar(10) NOT NULL PRIMARY KEY,
 	nombre varchar(12) NOT NULL
 )
 
+-- Se usa por cotizacion
 CREATE TABLE Zona (
 	nombre varchar(12) NOT NULL PRIMARY KEY
 )
 
+-- Se usa por cotizacion
 CREATE TABLE Sector (
 	nombre varchar(12) NOT NULL PRIMARY KEY
 )
@@ -76,6 +78,10 @@ CREATE TABLE Prioridad (
 	tipo varchar(3) NOT NULL PRIMARY KEY -- P0, P1, ...
 )
 
+-- #--------------------------------#
+-- #        CREAR LAS TABLAS        #
+-- #--------------------------------#
+
 CREATE TABLE Actividad (
 	codigo varchar(10) NOT NULL PRIMARY KEY,
 	nombre varchar(12) NOT NULL,
@@ -92,9 +98,7 @@ CREATE TABLE Proyecto (
 	-- Cotizacion
 )
 
--- #--------------------------------#
--- #        CREAR LAS TABLAS        #
--- #--------------------------------#
+
 
 CREATE TABLE Usuario (
 	userLogin varchar(10) NOT NULL PRIMARY KEY,
