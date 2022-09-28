@@ -84,6 +84,11 @@ CREATE TABLE Prioridad (
 	tipo varchar(3) NOT NULL PRIMARY KEY -- P0, P1, ...
 )
 
+-- Se usa por Usuario
+CREATE TABLE Rol (
+	nombre varchar(12) NOT NULL PRIMARY KEY
+)
+
 -- #--------------------------------#
 -- #        CREAR LAS TABLAS        #
 -- #--------------------------------#
@@ -99,12 +104,12 @@ CREATE TABLE Ejecucion (
 	nombre varchar(12) NOT NULL,
 	fecha date,
 	codigo_proyecto varchar(10) NOT NULL,
-	codigo_depoartamento varchar(10) NOT NULL,
+	codigo_departamento varchar(10) NOT NULL,
 	FOREIGN KEY (codigo_proyecto) REFERENCES Proyecto(codigo),
-	FOREIGN KEY (codigo_depoartamento) REFERENCES Departamento(codigo)
+	FOREIGN KEY (codigo_departamento) REFERENCES Departamento(codigo)
 )
 
--- Se usa por Tarea
+-- Se usa por Cliente, Tarea, Cotizacion y Ejecucion
 CREATE TABLE Usuario (
 	userLogin varchar(10) NOT NULL PRIMARY KEY,
 	cedula varchar(10) NOT NULL UNIQUE,
@@ -112,7 +117,10 @@ CREATE TABLE Usuario (
 	primerApellido varchar(12) NOT NULL,
 	segundoApellido varchar(12) NOT NULL,
 	clave varchar(13) NOT NULL,
-	rol varchar(12)
+	nombre_rol varchar(12) NOT NULL,
+	codigo_departamento varchar(10) NOT NULL,
+	FOREIGN KEY (codigo_departamento) REFERENCES Departamento(codigo),
+	FOREIGN KEY (nombre_rol) REFERENCES Rol(nombre)
 )
 
 -- Usa Usuario y Estado
