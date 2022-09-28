@@ -38,42 +38,48 @@ CREATE TABLE Etapa (
 	nombre varchar(12) NOT NULL PRIMARY KEY
 )
 
--- Se usa por cotizacion, ContactoCliente, Actividad
+-- Se usa por Cotizacion
+CREATE TABLE Inflacion (
+	anno date NOT NULL PRIMARY KEY,
+	porcentaje decimal(3,2) NOT NULL
+)
+
+-- Se usa por Ejecucion
+CREATE TABLE Departamento (
+	codigo varchar(10) NOT NULL PRIMARY KEY,
+	nombre varchar(12) NOT NULL
+)
+
+-- Se usa por Cotizacion, ContactoCliente, Actividad
 CREATE TABLE Tipo (
 	categoria varchar(10) NOT NULL PRIMARY KEY,
 	nombre varchar(12) NOT NULL
 )
 
--- Se usa por cotizacion
+-- Se usa por Cotizacion, ContactoCliente, Cliente
 CREATE TABLE Zona (
 	nombre varchar(12) NOT NULL PRIMARY KEY
 )
 
--- Se usa por cotizacion
+-- Se usa por Cotizacion, ContactoCliente, Cliente
 CREATE TABLE Sector (
 	nombre varchar(12) NOT NULL PRIMARY KEY
 )
 
-CREATE TABLE Inflacion (
-	anno date NOT NULL PRIMARY KEY,
-	porcentaje decimal(3,2) NOT NULL,
-)
-
-
-
+--Se usa por Tarea, ContactoCliente, Actividad y Caso
 CREATE TABLE Estado (
 	categoria varchar(10) NOT NULL PRIMARY KEY,
 	nombre varchar(12) NOT NULL
 )
 
-
-
+-- Se usa por Cliente
 CREATE TABLE Moneda (
-	disminutico varchar(4) NOT NULL,
-	nombre varchar(12) NOT NULL
-	PRIMARY KEY (disminutico, nombre)
+	disminutivo varchar(4) NOT NULL,
+	nombre varchar(12) NOT NULL,
+	PRIMARY KEY (disminutivo, nombre)
 )
 
+-- Se usa por Caso
 CREATE TABLE Prioridad (
 	tipo varchar(3) NOT NULL PRIMARY KEY -- P0, P1, ...
 )
@@ -81,6 +87,89 @@ CREATE TABLE Prioridad (
 -- #--------------------------------#
 -- #        CREAR LAS TABLAS        #
 -- #--------------------------------#
+
+-- Se usa por Ejecucion
+CREATE TABLE Proyecto (
+	codigo varchar(10) NOT NULL PRIMARY KEY
+)
+
+-- Usa Proyecto y Departamento
+CREATE TABLE Ejecucion (
+	codigo varchar(10) NOT NULL PRIMARY KEY,
+	nombre varchar(12) NOT NULL,
+	fecha date,
+	codigo_proyecto varchar(10) NOT NULL,
+	codigo_depoartamento varchar(10) NOT NULL,
+	FOREIGN KEY (codigo_proyecto) REFERENCES Proyecto(codigo),
+	FOREIGN KEY (codigo_depoartamento) REFERENCES Departamento(codigo)
+)
+
+-- Se usa por Tarea
+CREATE TABLE Usuario (
+	userLogin varchar(10) NOT NULL PRIMARY KEY,
+	cedula varchar(10) NOT NULL UNIQUE,
+	nombre varchar(12) NOT NULL,
+	primerApellido varchar(12) NOT NULL,
+	segundoApellido varchar(12) NOT NULL,
+	clave varchar(13) NOT NULL,
+	rol varchar(12)
+)
+
+-- Usa Usuario y Estado
+CREATE TABLE Tarea (
+	codigo varchar(10) NOT NULL PRIMARY KEY,
+	nombre varchar(12) NOT NULL,
+	descripcion varchar(30) NOT NULL,
+	fechaFinalizacion date NOT NULL,
+	estado varchar(10) NOT NULL,
+	usuario_asignado varchar(10) NOT NULL UNIQUE,
+	FOREIGN KEY (estado) REFERENCES Estado(categoria),
+	FOREIGN KEY (usuario_asignado) REFERENCES Usuario(cedula)
+)
+
+-- Se usa por Producto
+CREATE TABLE FamiliaProducto (
+	codigo varchar(10) NOT NULL PRIMARY KEY,
+	nombre varchar(12) NOT NULL,
+	activo bit NOT NULL, -- 1 si esta activo 0 si no
+	descripcion varchar(30) NOT NULL
+)
+
+-- Usa FamiliaProducto
+CREATE TABLE Producto (
+	codigo varchar(10) NOT NULL PRIMARY KEY,
+	nombre varchar(12) NOT NULL,
+	activo bit NOT NULL,
+	descripcion varchar(30) NOT NULL,
+	precioEstandar decimal(9,2),
+	codigo_familia varchar(10) NOT NULL,
+	FOREIGN KEY (codigo_familia) REFERENCES FamiliaProducto(codigo)
+)
+
+-- Usa Moneda, Sector, Zona
+-- Crea a los contactosCliente
+-- Tiene que existir un cliente para poder crear algun contacto
+CREATE TABLE Cliente (
+	codigo varchar(10) NOT NULL PRIMARY KEY,
+	nombreCuenta varchar(12) NOT NULL,
+	correo varchar(20) NOT NULL,
+	telefono varchar(10) NOT NULL,
+	celular varchar(10) NOT NULL,
+	sitioWeb varchar(22) NOT NULL,
+	informacionAdicional varchar(30) NOT NULL,
+	zona varchar(12) NOT NULL,
+	sector varchar(12) NOT NULL,
+	disminutivo_moneda varchar(4) NOT NULL,
+	nombre_moneda varchar(12) NOT NULL,
+	CONSTRAINT moneda FOREIGN KEY (disminutivo_moneda, nombre_moneda) REFERENCES Moneda(disminutivo, nombre),
+	FOREIGN KEY (zona) REFERENCES Zona(nombre),
+	FOREIGN KEY (sector) REFERENCES Sector(nombre)
+)
+
+
+
+
+
 
 CREATE TABLE Actividad (
 	codigo varchar(10) NOT NULL PRIMARY KEY,
@@ -92,59 +181,6 @@ CREATE TABLE Actividad (
 	-- Estado
 )
 
-CREATE TABLE Proyecto (
-	codigo varchar(10) NOT NULL PRIMARY KEY
-	-- Actividad
-	-- Cotizacion
-)
-
-
-
-CREATE TABLE Usuario (
-	userLogin varchar(10) NOT NULL PRIMARY KEY,
-	cedula varchar(10) NOT NULL,
-	nombre varchar(12) NOT NULL,
-	primerApellido varchar(12) NOT NULL,
-	segundoApellido varchar(12) NOT NULL,
-	clave varchar(13) NOT NULL,
-	-- Departamento
-)
-
-CREATE TABLE Departamento (
-	codigo varchar(10) NOT NULL PRIMARY KEY,
-	nombre varchar(12) NOT NULL
-)
-
-CREATE TABLE FamiliaProducto (
-	codigo varchar(10) NOT NULL PRIMARY KEY,
-	nombre varchar(12) NOT NULL,
-	activo bit NOT NULL, -- 1 si esta activo 0 si no
-	descripcion varchar(30) NOT NULL
-)
-
-CREATE TABLE Producto (
-	codigo varchar(10) NOT NULL PRIMARY KEY,
-	nombre varchar(12) NOT NULL,
-	activo bit NOT NULL,
-	descripcion varchar(30) NOT NULL,
-	precioEstandar decimal(9,2)
-	-- Familia
-)
-
-CREATE TABLE Cliente (
-	codigo varchar(10) NOT NULL PRIMARY KEY,
-	nombreCuenta varchar(12) NOT NULL,
-	correo varchar(20) NOT NULL,
-	telefono varchar(10) NOT NULL,
-	celular varchar(10) NOT NULL,
-	sitioWeb varchar(22) NOT NULL,
-	informacionAdicional varchar(30) NOT NULL,
-	zona varchar(12) NOT NULL,
-	sector varchar(12) NOT NULL
-	-- Contacto principal
-	-- Moneda
-	-- Asesor
-)
 
 CREATE TABLE ContactoCliente (
 	codigoCliente varchar(10) NOT NULL PRIMARY KEY,
@@ -162,14 +198,6 @@ CREATE TABLE ContactoCliente (
 	-- Asesor
 )
 
-CREATE TABLE Tarea (
-	codigo varchar(10) NOT NULL PRIMARY KEY,
-	nombre varchar(12) NOT NULL,
-	descripcion varchar(30) NOT NULL,
-	fechaFinalizacion date -- puede ser null?
-	-- Estado
-	-- Usuario asignado
-)
 
 CREATE TABLE Cotizacion (
 	numeroCotizacion smallint NOT NULL PRIMARY KEY,
@@ -190,19 +218,6 @@ CREATE TABLE Cotizacion (
 	-- Zona
 	-- Sector
 	-- Numero de contacto asociado
-)
-
-CREATE TABLE Ejecucion (
-	codigo varchar(10) NOT NULL PRIMARY KEY,
-	nombre varchar(12) NOT NULL,
-	fecha date
-	-- Departamento
-	-- Numero cotizacion
-	-- Propietario de ejecucion
-	-- Nombre de la cuenta
-	-- Mes Anno proyectado de cierre
-	-- Asesor
-	-- Fecha de cierre
 )
 
 CREATE TABLE Caso (
