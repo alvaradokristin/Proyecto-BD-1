@@ -18,8 +18,84 @@ USE sistemacrm;
 GO
 
 -- #--------------------------------#
+-- #        CREAR CATALOGOS         #
+-- #--------------------------------#
+
+-- Se usa por cotizacion
+CREATE TABLE Factura (
+	numeroFactura smallint NOT NULL PRIMARY KEY,
+	detalle varchar(30) NOT NULL
+)
+
+-- Se usa por cotizacion
+CREATE TABLE Compra (
+	ordenCompra smallint NOT NULL PRIMARY KEY,
+	detalle varchar(30) NOT NULL
+)
+
+-- Se usa por cotizacion
+CREATE TABLE Etapa (
+	nombre varchar(12) NOT NULL PRIMARY KEY
+)
+
+-- Se usa por cotizacion
+CREATE TABLE Tipo (
+	categoria varchar(10) NOT NULL PRIMARY KEY,
+	nombre varchar(12) NOT NULL
+)
+
+CREATE TABLE Zona (
+	nombre varchar(12) NOT NULL PRIMARY KEY
+)
+
+CREATE TABLE Sector (
+	nombre varchar(12) NOT NULL PRIMARY KEY
+)
+
+CREATE TABLE Inflacion (
+	anno date NOT NULL PRIMARY KEY,
+	porcentaje decimal(3,2) NOT NULL,
+)
+
+
+
+CREATE TABLE Estado (
+	categoria varchar(10) NOT NULL PRIMARY KEY,
+	nombre varchar(12) NOT NULL
+)
+
+
+
+CREATE TABLE Moneda (
+	disminutico varchar(4) NOT NULL,
+	nombre varchar(12) NOT NULL
+	PRIMARY KEY (disminutico, nombre)
+)
+
+CREATE TABLE Prioridad (
+	tipo varchar(3) NOT NULL PRIMARY KEY -- P0, P1, ...
+)
+
+CREATE TABLE Actividad (
+	codigo varchar(10) NOT NULL PRIMARY KEY,
+	nombre varchar(12) NOT NULL,
+	descripcion varchar(30) NOT NULL
+	-- Tipo
+	-- Usuario asignado
+	-- Tareas ?
+	-- Estado
+)
+
+CREATE TABLE Proyecto (
+	codigo varchar(10) NOT NULL PRIMARY KEY
+	-- Actividad
+	-- Cotizacion
+)
+
+-- #--------------------------------#
 -- #        CREAR LAS TABLAS        #
 -- #--------------------------------#
+
 CREATE TABLE Usuario (
 	userLogin varchar(10) NOT NULL PRIMARY KEY,
 	cedula varchar(10) NOT NULL,
@@ -96,7 +172,7 @@ CREATE TABLE Cotizacion (
 	nombreOportunidad varchar(12) NOT NULL,
 	fecha date NOT NULL,
 	mesAnnoCierre varchar(5) NOT NULL,
-	fechaCierre date, -- puede ser null?
+	fechaCierre date NOT NULL,
 	probabilidad decimal(3,2) NOT NULL,
 	descripcion varchar(30) NOT NULL,
 	seNego varchar(15) NOT NULL,
@@ -140,62 +216,7 @@ CREATE TABLE Caso (
 	-- Prioridad
 )
 
-CREATE TABLE Inflacion (
-	anno date NOT NULL PRIMARY KEY,
-	porcentaje decimal(3,2) NOT NULL,
-)
 
-CREATE TABLE Etapa (
-	nombre varchar(12) NOT NULL PRIMARY KEY
-)
-
-CREATE TABLE Estado (
-	categoria varchar(10) NOT NULL PRIMARY KEY,
-	nombre varchar(12) NOT NULL
-)
-
-CREATE TABLE Tipo (
-	categoria varchar(10) NOT NULL PRIMARY KEY,
-	nombre varchar(12) NOT NULL
-)
-
-CREATE TABLE Moneda (
-	disminutico varchar(4) NOT NULL,
-	nombre varchar(12) NOT NULL
-	PRIMARY KEY (disminutico, nombre)
-)
-
-CREATE TABLE Prioridad (
-	tipo varchar(3) NOT NULL PRIMARY KEY -- P0, P1, ...
-)
-
-CREATE TABLE Actividad (
-	codigo varchar(10) NOT NULL PRIMARY KEY,
-	nombre varchar(12) NOT NULL,
-	descripcion varchar(30) NOT NULL
-	-- Tipo
-	-- Usuario asignado
-	-- Tareas ?
-	-- Estado
-)
-
-CREATE TABLE Proyecto (
-	codigo varchar(10) NOT NULL PRIMARY KEY
-	-- Actividad
-	-- Cotizacion
-)
-
-CREATE TABLE Factura (
-	numeroFactura smallint NOT NULL PRIMARY KEY,
-	detalle varchar(30) NOT NULL
-	-- Cotizacion
-)
-
-CREATE TABLE Factura (
-	ordenCompra smallint NOT NULL PRIMARY KEY,
-	detalle varchar(30) NOT NULL
-	-- Cotizacion
-)
 
 -- #----------------------------#
 -- #       CREAR USUARIOS       #
