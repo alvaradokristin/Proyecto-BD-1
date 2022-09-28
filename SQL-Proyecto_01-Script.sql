@@ -116,6 +116,7 @@ CREATE TABLE Usuario (
 )
 
 -- Usa Usuario y Estado
+-- Se usa ContactoCliente
 CREATE TABLE Tarea (
 	codigo varchar(10) NOT NULL PRIMARY KEY,
 	nombre varchar(12) NOT NULL,
@@ -161,27 +162,13 @@ CREATE TABLE Cliente (
 	sector varchar(12) NOT NULL,
 	disminutivo_moneda varchar(4) NOT NULL,
 	nombre_moneda varchar(12) NOT NULL,
-	CONSTRAINT moneda FOREIGN KEY (disminutivo_moneda, nombre_moneda) REFERENCES Moneda(disminutivo, nombre),
+	CONSTRAINT FK_moneda FOREIGN KEY (disminutivo_moneda, nombre_moneda) REFERENCES Moneda(disminutivo, nombre),
 	FOREIGN KEY (zona) REFERENCES Zona(nombre),
 	FOREIGN KEY (sector) REFERENCES Sector(nombre)
 )
 
-
-
-
-
-
-CREATE TABLE Actividad (
-	codigo varchar(10) NOT NULL PRIMARY KEY,
-	nombre varchar(12) NOT NULL,
-	descripcion varchar(30) NOT NULL
-	-- Tipo
-	-- Usuario asignado
-	-- Tareas ?
-	-- Estado
-)
-
-
+-- Usa Cliente, Sector, Tarea, Estado, Zona, Tipo
+-- Registra actividades
 CREATE TABLE ContactoCliente (
 	codigoCliente varchar(10) NOT NULL PRIMARY KEY,
 	motivo varchar(15) NOT NULL,
@@ -190,15 +177,53 @@ CREATE TABLE ContactoCliente (
 	telefono varchar(10) NOT NULL,
 	direccion varchar(35) NOT NULL,
 	descripcion varchar(30) NOT NULL,
-	FOREIGN KEY (codigoCliente) REFERENCES Cliente(codigo)
-	-- Tipo de contacto
-	-- Estado de contacto
-	-- Sector
-	-- Zona
-	-- Asesor
+	FOREIGN KEY (codigoCliente) REFERENCES Cliente(codigo),
+	sector varchar(12) NOT NULL,
+	codigo_tarea varchar(10) NOT NULL,
+	estado varchar(10) NOT NULL,
+	zona varchar(12) NOT NULL,
+	categoria_tipo varchar(10) NOT NULL,
+	FOREIGN KEY (sector) REFERENCES Sector(nombre),
+	FOREIGN KEY (codigo_tarea) REFERENCES Tarea(codigo),
+	FOREIGN KEY (estado) REFERENCES Estado(categoria),
+	FOREIGN KEY (zona) REFERENCES Zona(nombre),
+	FOREIGN KEY (categoria_tipo) REFERENCES Tipo(categoria)
 )
 
+-- Usa Estado, tipo
+-- Asocia casos
+-- Es creado por contactoCliente
+CREATE TABLE Actividad (
+	codigo varchar(10) NOT NULL PRIMARY KEY,
+	nombre varchar(12) NOT NULL,
+	descripcion varchar(30) NOT NULL,
+	estado varchar(10) NOT NULL,
+	categoria_tipo varchar(10) NOT NULL,
+	codigoCliente_contactoCliente varchar(10) NOT NULL,
+	FOREIGN KEY (estado) REFERENCES Estado(categoria),
+	FOREIGN KEY (categoria_tipo) REFERENCES Tipo(categoria),
+	FOREIGN KEY (codigoCliente_contactoCliente) REFERENCES ContactoCliente(codigoCliente)
+)
 
+-- Usa Tipo, Prioridad, Actividad, Estado
+-- Cotizacion lo usa
+CREATE TABLE Caso (
+	codigo varchar(10) NOT NULL PRIMARY KEY,
+	origen varchar(12) NOT NULL,
+	asunto varchar(10) NOT NULL,
+	direccion varchar(35) NOT NULL,
+	descripcion varchar(30) NOT NULL,
+	categoria_tipo varchar(10) NOT NULL,
+	tipo_prioridad varchar(3) NOT NULL,
+	codigo_actividad varchar(10) NOT NULL,
+	estado varchar(10) NOT NULL,
+	FOREIGN KEY (categoria_tipo) REFERENCES Tipo(categoria),
+	FOREIGN KEY (tipo_prioridad) REFERENCES Prioridad(tipo),
+	FOREIGN KEY (codigo_actividad) REFERENCES Actividad(codigo),
+	FOREIGN KEY (estado) REFERENCES Estado(categoria)
+)
+
+-- Usa Compra, Factura, Etapa, Tipo, Ejecucion, Zona, Sector, Inflacion, Producto, Caso
 CREATE TABLE Cotizacion (
 	numeroCotizacion smallint NOT NULL PRIMARY KEY,
 	nombreOportunidad varchar(12) NOT NULL,
@@ -208,33 +233,28 @@ CREATE TABLE Cotizacion (
 	probabilidad decimal(3,2) NOT NULL,
 	descripcion varchar(30) NOT NULL,
 	seNego varchar(15) NOT NULL,
-	contraQuien varchar(15) NOT NULL
-	-- Nombre de cuenta
-	-- Asesor
-	-- Etapa
-	-- Moneda de oportunidad
-	-- Orden de compra
-	-- Tipo
-	-- Zona
-	-- Sector
-	-- Numero de contacto asociado
+	contraQuien varchar(15) NOT NULL,
+	ordenCompra smallint NOT NULL,
+	numeroFactura smallint NOT NULL,
+	nombre_etapa varchar(12) NOT NULL,
+	categoria_tipo varchar(10) NOT NULL,
+	codigo_ejecucion varchar(10) NOT NULL,
+	zona varchar(12) NOT NULL,
+	sector varchar(12) NOT NULL,
+	anno_inflacion date NOT NULL,
+	codigo_producto varchar(10) NOT NULL,
+	codigo_caso varchar(10) NOT NULL,
+	FOREIGN KEY (ordenCompra) REFERENCES Compra(ordenCompra),
+	FOREIGN KEY (numeroFactura) REFERENCES Factura(numeroFactura),
+	FOREIGN KEY (nombre_etapa) REFERENCES Etapa(nombre),
+	FOREIGN KEY (categoria_tipo) REFERENCES Tipo(categoria),
+	FOREIGN KEY (codigo_ejecucion) REFERENCES Ejecucion(codigo),
+	FOREIGN KEY (zona) REFERENCES Zona(nombre),
+	FOREIGN KEY (sector) REFERENCES Sector(nombre),
+	FOREIGN KEY (anno_inflacion) REFERENCES Inflacion(anno),
+	FOREIGN KEY (codigo_producto) REFERENCES Producto(codigo),
+	FOREIGN KEY (codigo_caso) REFERENCES Caso(codigo)
 )
-
-CREATE TABLE Caso (
-	codigo varchar(10) NOT NULL PRIMARY KEY,
-	origen varchar(12) NOT NULL,
-	asunto varchar(10) NOT NULL,
-	direccion varchar(35) NOT NULL,
-	descripcion varchar(30) NOT NULL
-	-- Propietario
-	-- Nombre de cuenta
-	-- Nombre de contacto
-	-- Nombre de proyecto asociado
-	-- Estado
-	-- Tipo de caso
-	-- Prioridad
-)
-
 
 
 -- #----------------------------#
