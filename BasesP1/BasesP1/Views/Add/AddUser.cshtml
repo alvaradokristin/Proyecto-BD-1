@@ -11,6 +11,10 @@
         <input type="text" class="form-control" id="user-login" name="user-login">
     </div>
     <div class="mb-3">
+        <label for="user-password" class="form-label">Contraseña:</label>
+        <input type="password" class="form-control" id="user-password" name="user-password">
+    </div>
+    <div class="mb-3">
         <label for="user-id" class="form-label">Cédula del usuario:</label>
         <input type="text" class="form-control" id="user-id" name="user-id">
     </div>
@@ -36,8 +40,13 @@
         </select>
     </div>
     <div class="mb-3">
-        <label for="user-password" class="form-label">Contraseña:</label>
-        <input type="password" class="form-control" id="user-password" name="user-password">
+        <label for="user-rol" class="form-label">Rol:</label>
+        <select class="form-select" id="user-rol" name="user-rol">
+            <option selected> </option>
+            <option value="db_Rol1">db_Rol1</option>
+            <option value="db_Rol2">db_Rol2</option>
+            <option value="db_Rol3">db_Rol3</option>
+        </select>
     </div>
     <button type="submit" class="btn btn-outline-secondary">Agregar</button>
 </form>

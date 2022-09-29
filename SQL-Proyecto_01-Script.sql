@@ -40,7 +40,7 @@ CREATE TABLE Etapa (
 
 -- Se usa por Cotizacion
 CREATE TABLE Inflacion (
-	anno date NOT NULL PRIMARY KEY,
+	anno varchar(4) NOT NULL PRIMARY KEY,
 	porcentaje decimal(3,2) NOT NULL
 )
 
@@ -170,6 +170,8 @@ CREATE TABLE Cliente (
 	sector varchar(12) NOT NULL,
 	disminutivo_moneda varchar(4) NOT NULL,
 	nombre_moneda varchar(12) NOT NULL,
+	login_usuario varchar(10) NOT NULL,
+	FOREIGN KEY (login_usuario) REFERENCES Usuario(userLogin),
 	CONSTRAINT FK_moneda FOREIGN KEY (disminutivo_moneda, nombre_moneda) REFERENCES Moneda(disminutivo, nombre),
 	FOREIGN KEY (zona) REFERENCES Zona(nombre),
 	FOREIGN KEY (sector) REFERENCES Sector(nombre)
@@ -185,12 +187,12 @@ CREATE TABLE ContactoCliente (
 	telefono varchar(10) NOT NULL,
 	direccion varchar(35) NOT NULL,
 	descripcion varchar(30) NOT NULL,
-	FOREIGN KEY (codigoCliente) REFERENCES Cliente(codigo),
 	sector varchar(12) NOT NULL,
 	codigo_tarea varchar(10) NOT NULL,
 	estado varchar(10) NOT NULL,
 	zona varchar(12) NOT NULL,
 	categoria_tipo varchar(10) NOT NULL,
+	FOREIGN KEY (codigoCliente) REFERENCES Cliente(codigo),
 	FOREIGN KEY (sector) REFERENCES Sector(nombre),
 	FOREIGN KEY (codigo_tarea) REFERENCES Tarea(codigo),
 	FOREIGN KEY (estado) REFERENCES Estado(categoria),
@@ -249,9 +251,11 @@ CREATE TABLE Cotizacion (
 	codigo_ejecucion varchar(10) NOT NULL,
 	zona varchar(12) NOT NULL,
 	sector varchar(12) NOT NULL,
-	anno_inflacion date NOT NULL,
+	anno_inflacion varchar(4) NOT NULL,
 	codigo_producto varchar(10) NOT NULL,
 	codigo_caso varchar(10) NOT NULL,
+	login_usuario varchar(10) NOT NULL,
+	FOREIGN KEY (login_usuario) REFERENCES Usuario(userLogin),
 	FOREIGN KEY (ordenCompra) REFERENCES Compra(ordenCompra),
 	FOREIGN KEY (numeroFactura) REFERENCES Factura(numeroFactura),
 	FOREIGN KEY (nombre_etapa) REFERENCES Etapa(nombre),
@@ -269,16 +273,16 @@ CREATE TABLE Cotizacion (
 -- #       CREAR USUARIOS       #
 -- #----------------------------#
 -- Ejemplo de como crear un usuario
-CREATE LOGIN NewAdminName WITH PASSWORD = 'ABCD'
+CREATE LOGIN kalva WITH PASSWORD = 'MyPass0102'
 GO
 
 -- Asignar permisos de administrador
-IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = N'NewAdminName')
+IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = N'Kristin')
 BEGIN
-    CREATE USER [NewAdminName] FOR LOGIN [NewAdminName]
-    EXEC sp_addrolemember N'db_owner', N'NewAdminName'
+    CREATE USER Kristin FOR LOGIN kalva
+    EXEC sp_addrolemember N'db_owner', N'Kristin'
 END;
 GO
 
 -- Asignar permisos
-GRANT SELECT ON OBJECT::Region TO Ted; -- Ted es el usuario, Region es la tabla?
+GRANT SELECT ON OBJECT::Cotizacion TO Kristin;
