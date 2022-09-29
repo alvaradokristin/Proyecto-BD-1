@@ -110,6 +110,8 @@ CREATE TABLE Ejecucion (
 )
 
 -- Se usa por Cliente, Tarea, Cotizacion y Ejecucion
+-- La encriptacion de la clave se va a manejar en el backend ya que consideramos que es mas 
+-- seguro y sencillo de aplicar y validar a la hora de realizar los logins
 CREATE TABLE Usuario (
 	userLogin varchar(10) NOT NULL PRIMARY KEY,
 	cedula varchar(10) NOT NULL UNIQUE,
