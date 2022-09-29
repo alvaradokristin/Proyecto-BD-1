@@ -1,0 +1,16 @@
+Nombre del curso: Base de Datos I
+Número de semestre y año lectivo: Semestre II del 2022
+Nombre de los Estudiantes:
+- Kristin Alvarado Gonzalez
+- Aivy Masis Rivera
+
+Número de carnet de los estudiantes: 
+- 2015096407
+- 2016253759
+
+Número de proyecto programado: Proyecto #1
+Fecha de entrega: 28/09/2022
+Estatus de la entrega (debe ser CONGRUENTE con la solución entregada):  Superior
+---------
+
+URL del repositorio de GitHub: https://github.com/alvaradokristin/Proyecto-BD-1.git
