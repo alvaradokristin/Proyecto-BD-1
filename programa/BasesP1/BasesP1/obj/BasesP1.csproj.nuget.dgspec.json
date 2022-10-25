@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Krispin\\Documents\\GitHub\\Proyecto-BD-1\\BasesP1\\BasesP1\\BasesP1.csproj": {}
+    "C:\\Users\\Krispin\\Documents\\GitHub\\Proyecto-BD-1\\programa\\BasesP1\\BasesP1\\BasesP1.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Krispin\\Documents\\GitHub\\Proyecto-BD-1\\BasesP1\\BasesP1\\BasesP1.csproj": {
+    "C:\\Users\\Krispin\\Documents\\GitHub\\Proyecto-BD-1\\programa\\BasesP1\\BasesP1\\BasesP1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Krispin\\Documents\\GitHub\\Proyecto-BD-1\\BasesP1\\BasesP1\\BasesP1.csproj",
+        "projectUniqueName": "C:\\Users\\Krispin\\Documents\\GitHub\\Proyecto-BD-1\\programa\\BasesP1\\BasesP1\\BasesP1.csproj",
         "projectName": "BasesP1",
-        "projectPath": "C:\\Users\\Krispin\\Documents\\GitHub\\Proyecto-BD-1\\BasesP1\\BasesP1\\BasesP1.csproj",
+        "projectPath": "C:\\Users\\Krispin\\Documents\\GitHub\\Proyecto-BD-1\\programa\\BasesP1\\BasesP1\\BasesP1.csproj",
         "packagesPath": "C:\\Users\\Krispin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Krispin\\Documents\\GitHub\\Proyecto-BD-1\\BasesP1\\BasesP1\\obj\\",
+        "outputPath": "C:\\Users\\Krispin\\Documents\\GitHub\\Proyecto-BD-1\\programa\\BasesP1\\BasesP1\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Krispin\\AppData\\Roaming\\NuGet\\NuGet.Config",

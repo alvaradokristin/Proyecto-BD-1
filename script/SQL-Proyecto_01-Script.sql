@@ -52,8 +52,9 @@ CREATE TABLE Departamento (
 
 -- Se usa por Cotizacion, ContactoCliente, Actividad
 CREATE TABLE Tipo (
-	categoria varchar(10) NOT NULL PRIMARY KEY,
-	nombre varchar(12) NOT NULL
+	categoria varchar(10) NOT NULL,
+	nombre varchar(12) NOT NULL,
+	PRIMARY KEY (categoria, nombre)
 )
 
 -- Se usa por Cotizacion, ContactoCliente, Cliente
@@ -68,8 +69,9 @@ CREATE TABLE Sector (
 
 --Se usa por Tarea, ContactoCliente, Actividad y Caso
 CREATE TABLE Estado (
-	categoria varchar(10) NOT NULL PRIMARY KEY,
-	nombre varchar(12) NOT NULL
+	categoria varchar(10) NOT NULL,
+	nombre varchar(12) NOT NULL,
+	PRIMARY KEY (categoria, nombre)
 )
 
 -- Se usa por Cliente
@@ -84,8 +86,27 @@ CREATE TABLE Prioridad (
 	tipo varchar(3) NOT NULL PRIMARY KEY -- P0, P1, ...
 )
 
--- Se usa por Usuario
+-- Se usa por Usuario y funciones
 CREATE TABLE Rol (
+	nombre varchar(12) NOT NULL PRIMARY KEY
+)
+
+-- Se usa para el manejo de usuarios
+CREATE TABLE FuncionesXRol (
+	nombre varchar(12) NOT NULL,
+	nombreRol varchar(12) NOT NULL,
+	PRIMARY KEY (nombre, nombreRol),
+	FOREIGN KEY (nombreRol) REFERENCES Rol(nombre)
+)
+
+-- Se usa por Cotizacion
+-- Catalogo para contra quien se pierde
+CREATE TABLE Competencia (
+	nombre varchar(15) NOT NULL PRIMARY KEY
+)
+
+-- Se usa por Caso
+CREATE TABLE Origen (
 	nombre varchar(12) NOT NULL PRIMARY KEY
 )
 
@@ -125,17 +146,14 @@ CREATE TABLE Usuario (
 	FOREIGN KEY (nombre_rol) REFERENCES Rol(nombre)
 )
 
--- Usa Usuario y Estado
--- Se usa ContactoCliente
-CREATE TABLE Tarea (
-	codigo varchar(10) NOT NULL PRIMARY KEY,
-	nombre varchar(12) NOT NULL,
-	descripcion varchar(30) NOT NULL,
-	fechaFinalizacion date NOT NULL,
-	estado varchar(10) NOT NULL,
-	usuario_asignado varchar(10) NOT NULL UNIQUE,
-	FOREIGN KEY (estado) REFERENCES Estado(categoria),
-	FOREIGN KEY (usuario_asignado) REFERENCES Usuario(cedula)
+-- Se usa apara el manejo de usuarios
+-- Ya que el usuario tiene mas de un rol
+CREATE TABLE RolXUsuario (
+	nombreRol varchar(12) NOT NULL,
+	userLogin varchar(10) NOT NULL,
+	PRIMARY KEY (nombreRol, userLogin),
+	FOREIGN KEY (nombreRol) REFERENCES Rol(nombre),
+	FOREIGN KEY (userLogin) REFERENCES Usuario(userLogin)
 )
 
 -- Se usa por Producto
@@ -190,16 +208,31 @@ CREATE TABLE ContactoCliente (
 	direccion varchar(35) NOT NULL,
 	descripcion varchar(30) NOT NULL,
 	sector varchar(12) NOT NULL,
-	codigo_tarea varchar(10) NOT NULL,
-	estado varchar(10) NOT NULL,
+	categoria_estado varchar(10) NOT NULL,
+	nombre_estado varchar(12) NOT NULL,
 	zona varchar(12) NOT NULL,
 	categoria_tipo varchar(10) NOT NULL,
+	nombre_tipo varchar(12) NOT NULL,
 	FOREIGN KEY (codigoCliente) REFERENCES Cliente(codigo),
 	FOREIGN KEY (sector) REFERENCES Sector(nombre),
-	FOREIGN KEY (codigo_tarea) REFERENCES Tarea(codigo),
-	FOREIGN KEY (estado) REFERENCES Estado(categoria),
+	FOREIGN KEY (categoria_estado, nombre_estado) REFERENCES Estado(categoria, nombre),
 	FOREIGN KEY (zona) REFERENCES Zona(nombre),
-	FOREIGN KEY (categoria_tipo) REFERENCES Tipo(categoria)
+	FOREIGN KEY (categoria_tipo, nombre_tipo) REFERENCES Tipo(categoria, nombre),
+)
+
+-- Usa Usuario, Estado y ContactoCliente
+CREATE TABLE Tarea (
+	codigo varchar(10) NOT NULL PRIMARY KEY,
+	nombre varchar(12) NOT NULL,
+	descripcion varchar(30) NOT NULL,
+	fechaFinalizacion date NOT NULL,
+	categoria_estado varchar(10) NOT NULL,
+	nombre_estado varchar(12) NOT NULL,
+	usuario_asignado varchar(10) NOT NULL UNIQUE,
+	codigo_cliente varchar(10) NOT NULL,
+	FOREIGN KEY (categoria_estado, nombre_estado) REFERENCES Estado(categoria, nombre),
+	FOREIGN KEY (usuario_asignado) REFERENCES Usuario(cedula),
+	FOREIGN KEY (codigo_cliente) REFERENCES ContactoCliente(codigoCliente)
 )
 
 -- Usa Estado, tipo
@@ -209,30 +242,14 @@ CREATE TABLE Actividad (
 	codigo varchar(10) NOT NULL PRIMARY KEY,
 	nombre varchar(12) NOT NULL,
 	descripcion varchar(30) NOT NULL,
-	estado varchar(10) NOT NULL,
+	categoria_estado varchar(10) NOT NULL,
+	nombre_estado varchar(12) NOT NULL,
 	categoria_tipo varchar(10) NOT NULL,
+	nombre_tipo varchar(12) NOT NULL,
 	codigoCliente_contactoCliente varchar(10) NOT NULL,
-	FOREIGN KEY (estado) REFERENCES Estado(categoria),
-	FOREIGN KEY (categoria_tipo) REFERENCES Tipo(categoria),
+	FOREIGN KEY (categoria_estado, nombre_estado) REFERENCES Estado(categoria, nombre),
+	FOREIGN KEY (categoria_tipo, nombre_tipo) REFERENCES Tipo(categoria, nombre),
 	FOREIGN KEY (codigoCliente_contactoCliente) REFERENCES ContactoCliente(codigoCliente)
-)
-
--- Usa Tipo, Prioridad, Actividad, Estado
--- Cotizacion lo usa
-CREATE TABLE Caso (
-	codigo varchar(10) NOT NULL PRIMARY KEY,
-	origen varchar(12) NOT NULL,
-	asunto varchar(10) NOT NULL,
-	direccion varchar(35) NOT NULL,
-	descripcion varchar(30) NOT NULL,
-	categoria_tipo varchar(10) NOT NULL,
-	tipo_prioridad varchar(3) NOT NULL,
-	codigo_actividad varchar(10) NOT NULL,
-	estado varchar(10) NOT NULL,
-	FOREIGN KEY (categoria_tipo) REFERENCES Tipo(categoria),
-	FOREIGN KEY (tipo_prioridad) REFERENCES Prioridad(tipo),
-	FOREIGN KEY (codigo_actividad) REFERENCES Actividad(codigo),
-	FOREIGN KEY (estado) REFERENCES Estado(categoria)
 )
 
 -- Usa Compra, Factura, Etapa, Tipo, Ejecucion, Zona, Sector, Inflacion, Producto, Caso
@@ -245,31 +262,114 @@ CREATE TABLE Cotizacion (
 	probabilidad decimal(3,2) NOT NULL,
 	descripcion varchar(30) NOT NULL,
 	seNego varchar(15) NOT NULL,
-	contraQuien varchar(15) NOT NULL,
+	nombre_competencia varchar(15) NOT NULL, -- contraQuien
 	ordenCompra smallint NOT NULL,
-	numeroFactura smallint NOT NULL,
+	numero_factura smallint NOT NULL,
 	nombre_etapa varchar(12) NOT NULL,
 	categoria_tipo varchar(10) NOT NULL,
+	nombre_tipo varchar(12) NOT NULL,
 	codigo_ejecucion varchar(10) NOT NULL,
 	zona varchar(12) NOT NULL,
 	sector varchar(12) NOT NULL,
 	anno_inflacion varchar(4) NOT NULL,
-	codigo_producto varchar(10) NOT NULL,
 	codigo_caso varchar(10) NOT NULL,
 	login_usuario varchar(10) NOT NULL,
 	FOREIGN KEY (login_usuario) REFERENCES Usuario(userLogin),
 	FOREIGN KEY (ordenCompra) REFERENCES Compra(ordenCompra),
-	FOREIGN KEY (numeroFactura) REFERENCES Factura(numeroFactura),
+	FOREIGN KEY (numero_factura) REFERENCES Factura(numeroFactura),
 	FOREIGN KEY (nombre_etapa) REFERENCES Etapa(nombre),
-	FOREIGN KEY (categoria_tipo) REFERENCES Tipo(categoria),
+	FOREIGN KEY (categoria_tipo, nombre_tipo) REFERENCES Tipo(categoria, nombre),
 	FOREIGN KEY (codigo_ejecucion) REFERENCES Ejecucion(codigo),
 	FOREIGN KEY (zona) REFERENCES Zona(nombre),
 	FOREIGN KEY (sector) REFERENCES Sector(nombre),
 	FOREIGN KEY (anno_inflacion) REFERENCES Inflacion(anno),
-	FOREIGN KEY (codigo_producto) REFERENCES Producto(codigo),
-	FOREIGN KEY (codigo_caso) REFERENCES Caso(codigo)
+	FOREIGN KEY (nombre_competencia) REFERENCES Competencia(nombre)
 )
 
+-- Usa Tipo, Prioridad, Actividad, Estado, Cotizacion
+CREATE TABLE Caso (
+	codigo varchar(10) NOT NULL PRIMARY KEY,
+	origen varchar(12) NOT NULL,
+	asunto varchar(10) NOT NULL,
+	direccion varchar(35) NOT NULL,
+	descripcion varchar(30) NOT NULL,
+	categoria_tipo varchar(10) NOT NULL,
+	nombre_tipo varchar(12) NOT NULL,
+	tipo_prioridad varchar(3) NOT NULL,
+	categoria_estado varchar(10) NOT NULL,
+	nombre_estado varchar(12) NOT NULL,
+	numero_cotizacion smallint NOT NULL,
+	nombre_origen varchar(12) NOT NULL,
+	FOREIGN KEY (categoria_tipo, nombre_tipo) REFERENCES Tipo(categoria, nombre),
+	FOREIGN KEY (tipo_prioridad) REFERENCES Prioridad(tipo),
+	FOREIGN KEY (categoria_estado, nombre_estado) REFERENCES Estado(categoria, nombre),
+	FOREIGN KEY (numero_cotizacion) REFERENCES Cotizacion(numeroCotizacion),
+	FOREIGN KEY (nombre_origen) REFERENCES Origen(nombre)
+)
+
+-- Usa Producto y Cotizacion
+-- Cada cotizacion puede usar mas de un producto
+CREATE TABLE ProductoXCotizacion (
+	codigo_producto varchar(10) NOT NULL,
+	numero_cotizacion smallint NOT NULL,
+	PRIMARY KEY (codigo_producto, numero_cotizacion),
+	FOREIGN KEY (codigo_producto) REFERENCES Producto(codigo),
+	FOREIGN KEY (numero_cotizacion) REFERENCES Cotizacion(numeroCotizacion)
+)
+
+-- Usa Actividad y Cotizacion
+CREATE TABLE ActividadXCotizacion (
+	numero_cotizacion smallint NOT NULL,
+	codigo_actividad varchar(10) NOT NULL,
+	PRIMARY KEY (numero_cotizacion, codigo_actividad),
+	FOREIGN KEY (numero_cotizacion) REFERENCES Cotizacion(numeroCotizacion),
+	FOREIGN KEY (codigo_actividad) REFERENCES Actividad(codigo)
+)
+
+-- Usa Tarea y Cotizacion
+CREATE TABLE TareaXCotizacion (
+	numero_cotizacion smallint NOT NULL,
+	codigo_tarea varchar(10) NOT NULL,
+	PRIMARY KEY (numero_cotizacion, codigo_tarea),
+	FOREIGN KEY (numero_cotizacion) REFERENCES Cotizacion(numeroCotizacion),
+	FOREIGN KEY (codigo_tarea) REFERENCES Tarea(codigo)
+)
+
+-- Usa Actividad y Ejecucion
+CREATE TABLE ActividadXEjecucion (
+	codigo_ejecucion varchar(10) NOT NULL,
+	codigo_actividad varchar(10) NOT NULL,
+	PRIMARY KEY (codigo_ejecucion, codigo_actividad),
+	FOREIGN KEY (codigo_ejecucion) REFERENCES Ejecucion(codigo),
+	FOREIGN KEY (codigo_actividad) REFERENCES Actividad(codigo)
+)
+
+-- Usa Tarea y Ejecucion
+CREATE TABLE TareaXEjecucion (
+	codigo_ejecucion varchar(10) NOT NULL,
+	codigo_tarea varchar(10) NOT NULL,
+	PRIMARY KEY (codigo_ejecucion, codigo_tarea),
+	FOREIGN KEY (codigo_ejecucion) REFERENCES Ejecucion(codigo),
+	FOREIGN KEY (codigo_tarea) REFERENCES Tarea(codigo)
+)
+
+-- Usa Actividad y Caso
+CREATE TABLE ActividadXCaso (
+	codigo_caso varchar(10) NOT NULL,
+	codigo_actividad varchar(10) NOT NULL,
+	PRIMARY KEY (codigo_caso, codigo_actividad),
+	FOREIGN KEY (codigo_caso) REFERENCES Caso(codigo),
+	FOREIGN KEY (codigo_actividad) REFERENCES Actividad(codigo)
+)
+
+-- Usa Tarea y Caso
+CREATE TABLE TareaXCaso (
+	codigo_caso varchar(10) NOT NULL,
+	codigo_tarea varchar(10) NOT NULL,
+	PRIMARY KEY (codigo_caso, codigo_tarea),
+	FOREIGN KEY (codigo_caso) REFERENCES Caso(codigo),
+	FOREIGN KEY (codigo_tarea) REFERENCES Tarea(codigo)
+)
 
 -- #----------------------------#
 -- #       CREAR USUARIOS       #
