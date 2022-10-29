@@ -15,12 +15,24 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = C:\Users\Krispin\Documents\GitHub\Proyecto-BD-1\programa\BasesP1\BasesP1
 build_property._RazorSourceGeneratorDebug = 
 
+[C:/Users/Krispin/Documents/GitHub/Proyecto-BD-1/programa/BasesP1/BasesP1/Views/Add/AddActivity.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRkXEFkZEFjdGl2aXR5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Krispin/Documents/GitHub/Proyecto-BD-1/programa/BasesP1/BasesP1/Views/Add/AddClient.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRkXEFkZENsaWVudC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Krispin/Documents/GitHub/Proyecto-BD-1/programa/BasesP1/BasesP1/Views/Add/AddContact.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRkXEFkZENvbnRhY3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Krispin/Documents/GitHub/Proyecto-BD-1/programa/BasesP1/BasesP1/Views/Add/AddProduct.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRkXEFkZFByb2R1Y3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Krispin/Documents/GitHub/Proyecto-BD-1/programa/BasesP1/BasesP1/Views/Add/AddTask.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRkXEFkZFRhc2suY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Krispin/Documents/GitHub/Proyecto-BD-1/programa/BasesP1/BasesP1/Views/Add/AddUser.cshtml]
@@ -45,6 +57,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Krispin/Documents/GitHub/Proyecto-BD-1/programa/BasesP1/BasesP1/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Krispin/Documents/GitHub/Proyecto-BD-1/programa/BasesP1/BasesP1/Views/Show/ShowContactByClient.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hvd1xTaG93Q29udGFjdEJ5Q2xpZW50LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Krispin/Documents/GitHub/Proyecto-BD-1/programa/BasesP1/BasesP1/Views/Show/ShowProductReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hvd1xTaG93UHJvZHVjdFJlcG9ydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Krispin/Documents/GitHub/Proyecto-BD-1/programa/BasesP1/BasesP1/Views/Show/ShowProducts.cshtml]

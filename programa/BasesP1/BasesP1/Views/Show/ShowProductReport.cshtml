@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Productos disponibles";
+    ViewData["Title"] = "ReporteXXXX";
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -16,13 +16,12 @@
                 <th>Descripcion</th>
                 <th>Precio</th>
                 <th>Codigo Familia</th>
-                <th>Acción</th>
             </tr>
         </thead>
 
         <tbody>
             @*CREATE THE TABLES ROWS AND ASSIGN THEM THE INFORMATION FROM THE DB*@
-            @foreach (var item in Model.listProds)
+            @foreach (var item in Model.listVal)
             {
                 <tr>
                     <td>@item.code</td>
@@ -31,11 +30,6 @@
                     <td>@item.descripcion</td>
                     <td>@item.price</td>
                     <td>@item.family</td>
-
-                    @*ADD A BUTTON TO DELETE THAT APP FROM THE BD*@
-                    <td>
-                        <a class="btn btn-outline-danger" href="/Edit/EditProduct?code=@item.codigo">Editar</a>
-                    </td>
                 </tr>
             }
         </tbody>

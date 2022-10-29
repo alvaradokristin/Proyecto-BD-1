@@ -76,9 +76,9 @@ CREATE TABLE Estado (
 
 -- Se usa por Cliente
 CREATE TABLE Moneda (
-	disminutivo varchar(4) NOT NULL,
+	abreviatura varchar(4) NOT NULL,
 	nombre varchar(12) NOT NULL,
-	PRIMARY KEY (disminutivo, nombre)
+	PRIMARY KEY (abreviatura, nombre)
 )
 
 -- Se usa por Caso
@@ -188,11 +188,11 @@ CREATE TABLE Cliente (
 	informacionAdicional varchar(30) NOT NULL,
 	zona varchar(12) NOT NULL,
 	sector varchar(12) NOT NULL,
-	disminutivo_moneda varchar(4) NOT NULL,
+	abreviatura_moneda varchar(4) NOT NULL,
 	nombre_moneda varchar(12) NOT NULL,
 	login_usuario varchar(10) NOT NULL,
 	FOREIGN KEY (login_usuario) REFERENCES Usuario(userLogin),
-	CONSTRAINT FK_moneda FOREIGN KEY (disminutivo_moneda, nombre_moneda) REFERENCES Moneda(disminutivo, nombre),
+	CONSTRAINT FK_moneda FOREIGN KEY (abreviatura_moneda, nombre_moneda) REFERENCES Moneda(abreviatura, nombre),
 	FOREIGN KEY (zona) REFERENCES Zona(nombre),
 	FOREIGN KEY (sector) REFERENCES Sector(nombre)
 )
@@ -200,7 +200,7 @@ CREATE TABLE Cliente (
 -- Usa Cliente, Sector, Tarea, Estado, Zona, Tipo
 -- Registra actividades
 CREATE TABLE ContactoCliente (
-	codigoCliente varchar(10) NOT NULL PRIMARY KEY,
+	codigoCliente varchar(10) NOT NULL,
 	motivo varchar(15) NOT NULL,
 	nombreContacto varchar(12) NOT NULL,
 	correo varchar(20) NOT NULL,
@@ -213,6 +213,7 @@ CREATE TABLE ContactoCliente (
 	zona varchar(12) NOT NULL,
 	categoria_tipo varchar(10) NOT NULL,
 	nombre_tipo varchar(12) NOT NULL,
+	PRIMARY KEY (codigoCliente, motivo),
 	FOREIGN KEY (codigoCliente) REFERENCES Cliente(codigo),
 	FOREIGN KEY (sector) REFERENCES Sector(nombre),
 	FOREIGN KEY (categoria_estado, nombre_estado) REFERENCES Estado(categoria, nombre),
@@ -220,24 +221,21 @@ CREATE TABLE ContactoCliente (
 	FOREIGN KEY (categoria_tipo, nombre_tipo) REFERENCES Tipo(categoria, nombre),
 )
 
--- Usa Usuario, Estado y ContactoCliente
+-- Usa Usuario y Estado
 CREATE TABLE Tarea (
 	codigo varchar(10) NOT NULL PRIMARY KEY,
 	nombre varchar(12) NOT NULL,
 	descripcion varchar(30) NOT NULL,
+	fechaInicio date NOT NULL,
 	fechaFinalizacion date NOT NULL,
 	categoria_estado varchar(10) NOT NULL,
 	nombre_estado varchar(12) NOT NULL,
-	usuario_asignado varchar(10) NOT NULL UNIQUE,
-	codigo_cliente varchar(10) NOT NULL,
+	usuario_asignado varchar(10) NOT NULL,
 	FOREIGN KEY (categoria_estado, nombre_estado) REFERENCES Estado(categoria, nombre),
-	FOREIGN KEY (usuario_asignado) REFERENCES Usuario(cedula),
-	FOREIGN KEY (codigo_cliente) REFERENCES ContactoCliente(codigoCliente)
+	FOREIGN KEY (usuario_asignado) REFERENCES Usuario(cedula)
 )
 
--- Usa Estado, tipo
--- Asocia casos
--- Es creado por contactoCliente
+-- Usa Estado, Tipo y Usuario
 CREATE TABLE Actividad (
 	codigo varchar(10) NOT NULL PRIMARY KEY,
 	nombre varchar(12) NOT NULL,
@@ -246,10 +244,10 @@ CREATE TABLE Actividad (
 	nombre_estado varchar(12) NOT NULL,
 	categoria_tipo varchar(10) NOT NULL,
 	nombre_tipo varchar(12) NOT NULL,
-	codigoCliente_contactoCliente varchar(10) NOT NULL,
+	usuario_asignado varchar(10) NOT NULL,
 	FOREIGN KEY (categoria_estado, nombre_estado) REFERENCES Estado(categoria, nombre),
 	FOREIGN KEY (categoria_tipo, nombre_tipo) REFERENCES Tipo(categoria, nombre),
-	FOREIGN KEY (codigoCliente_contactoCliente) REFERENCES ContactoCliente(codigoCliente)
+	FOREIGN KEY (usuario_asignado) REFERENCES Usuario(cedula)
 )
 
 -- Usa Compra, Factura, Etapa, Tipo, Ejecucion, Zona, Sector, Inflacion, Producto, Caso
@@ -315,6 +313,26 @@ CREATE TABLE ProductoXCotizacion (
 	PRIMARY KEY (codigo_producto, numero_cotizacion),
 	FOREIGN KEY (codigo_producto) REFERENCES Producto(codigo),
 	FOREIGN KEY (numero_cotizacion) REFERENCES Cotizacion(numeroCotizacion)
+)
+
+-- Usa Actividad y ContactoCliente
+CREATE TABLE ActividadXContactoCliente (
+	cliente_contacto varchar(10) NOT NULL,
+	motivo_contacto varchar(15) NOT NULL,
+	codigo_actividad varchar(10) NOT NULL,
+	PRIMARY KEY (cliente_contacto, motivo_contacto, codigo_actividad),
+	FOREIGN KEY (codigo_actividad) REFERENCES Actividad(codigo),
+	FOREIGN KEY (motivo_contacto, cliente_contacto) REFERENCES ContactoCliente(motivo, codigoCliente)
+)
+
+-- Usa Tarea y ContactoCliente
+CREATE TABLE TareaXContactoCliente (
+	cliente_contacto varchar(10) NOT NULL,
+	motivo_contacto varchar(15) NOT NULL,
+	codigo_tarea varchar(10) NOT NULL,
+	PRIMARY KEY (cliente_contacto, motivo_contacto, codigo_tarea),
+	FOREIGN KEY (codigo_tarea) REFERENCES Tarea(codigo),
+	FOREIGN KEY (motivo_contacto, cliente_contacto) REFERENCES ContactoCliente(motivo, codigoCliente)
 )
 
 -- Usa Actividad y Cotizacion
