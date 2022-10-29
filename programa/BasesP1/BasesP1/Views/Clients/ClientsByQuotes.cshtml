@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Información de clientes por sector";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<main id="main">
+    <div class="container">
+        <div class="mb-3">
+            <label for="client-sector" class="form-label">Cotización:</label>
+            <select class="form-select" id="client-quotes" name="client-quotes" style="width: auto">
+                <option selected value="Cotización1">Cotización1</option>
+                <option value="Cotización2">Cotización2</option>
+                <option value="Cotización3">Cotización3</option>
+            </select>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Nombre de cuenta</th>
+                    <th scope="col">Correo electrónico</th>
+                    <th scope="col">Contacto principal</th>
+                    <th scope="col">Moneda</th>
+                    <th scope="col">Telefono</th>
+                    <th scope="col">Celular</th>
+                    <th scope="col">Sitio Web</th>
+                    <th scope="col">Información adicional</th>
+                    <th scope="col">Nombre de usuario</th>
+                    <th scope="col">Zona</th>
+                    <th scope="col">Sector</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</main>

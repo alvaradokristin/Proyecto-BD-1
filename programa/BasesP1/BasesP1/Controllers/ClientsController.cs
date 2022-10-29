@@ -20,5 +20,13 @@ namespace BasesP1.Controllers
         {
             return View("ClientsByZone");
         }
+        public IActionResult ShowClientsByQuotes()
+        {
+            return View("ClientsByQuotes");
+        }
+        public IActionResult ShowClientsByQuotedAmount()
+        {
+            return View("ClientsByQuotedAmount");
+        }
     }
 }
