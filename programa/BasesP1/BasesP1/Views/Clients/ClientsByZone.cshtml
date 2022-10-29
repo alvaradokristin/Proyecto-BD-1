@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Información de clientes por zona";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<main id="main">
+    <div class="container">
+        <div class="mb-3">
+            <label for="client-zone" class="form-label">Zona:</label>
+            <select class="form-select" id="client-zone" name="client-zone" style="width: auto">
+                <option selected value="Zone1">Zone1</option>
+                <option value="Zone2">Zone2</option>
+                <option value="Zone3">Zone3</option>
+            </select>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Nombre de cuenta</th>
+                    <th scope="col">Correo electrónico</th>
+                    <th scope="col">Contacto principal</th>
+                    <th scope="col">Moneda</th>
+                    <th scope="col">Telefono</th>
+                    <th scope="col">Celular</th>
+                    <th scope="col">Sitio Web</th>
+                    <th scope="col">Información adicional</th>
+                    <th scope="col">Nombre de usuario</th>
+                    <th scope="col">Sector</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</main>
