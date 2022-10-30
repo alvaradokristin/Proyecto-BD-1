@@ -8,19 +8,24 @@
     "net6.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Krispin\\.nuget\\packages\\": {}
+    "C:\\Users\\aivym\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Krispin\\Documents\\GitHub\\Proyecto-BD-1\\programa\\BasesP1\\BasesP1\\BasesP1.csproj",
+      "projectUniqueName": "C:\\Users\\aivym\\Desktop\\BD1\\proyecto2\\code\\Proyecto-BD-1\\programa\\BasesP1\\BasesP1\\BasesP1.csproj",
       "projectName": "BasesP1",
-      "projectPath": "C:\\Users\\Krispin\\Documents\\GitHub\\Proyecto-BD-1\\programa\\BasesP1\\BasesP1\\BasesP1.csproj",
-      "packagesPath": "C:\\Users\\Krispin\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Krispin\\Documents\\GitHub\\Proyecto-BD-1\\programa\\BasesP1\\BasesP1\\obj\\",
+      "projectPath": "C:\\Users\\aivym\\Desktop\\BD1\\proyecto2\\code\\Proyecto-BD-1\\programa\\BasesP1\\BasesP1\\BasesP1.csproj",
+      "packagesPath": "C:\\Users\\aivym\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\aivym\\Desktop\\BD1\\proyecto2\\code\\Proyecto-BD-1\\programa\\BasesP1\\BasesP1\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\Krispin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\aivym\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -28,6 +33,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
