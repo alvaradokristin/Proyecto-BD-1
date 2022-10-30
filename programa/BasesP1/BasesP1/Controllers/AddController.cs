@@ -8,10 +8,5 @@ namespace BasesP1.Controllers
         {
             return View();
         }
-
-        public IActionResult AddProduct()
-        {
-            return View();
-        }
     }
 }

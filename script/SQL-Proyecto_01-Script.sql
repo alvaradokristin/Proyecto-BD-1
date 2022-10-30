@@ -322,7 +322,7 @@ CREATE TABLE ActividadXContactoCliente (
 	codigo_actividad varchar(10) NOT NULL,
 	PRIMARY KEY (cliente_contacto, motivo_contacto, codigo_actividad),
 	FOREIGN KEY (codigo_actividad) REFERENCES Actividad(codigo),
-	FOREIGN KEY (motivo_contacto, cliente_contacto) REFERENCES ContactoCliente(motivo, codigoCliente)
+	FOREIGN KEY (cliente_contacto, motivo_contacto) REFERENCES ContactoCliente(codigoCliente, motivo)
 )
 
 -- Usa Tarea y ContactoCliente
@@ -332,7 +332,7 @@ CREATE TABLE TareaXContactoCliente (
 	codigo_tarea varchar(10) NOT NULL,
 	PRIMARY KEY (cliente_contacto, motivo_contacto, codigo_tarea),
 	FOREIGN KEY (codigo_tarea) REFERENCES Tarea(codigo),
-	FOREIGN KEY (motivo_contacto, cliente_contacto) REFERENCES ContactoCliente(motivo, codigoCliente)
+	FOREIGN KEY (cliente_contacto, motivo_contacto) REFERENCES ContactoCliente(codigoCliente, motivo)
 )
 
 -- Usa Actividad y Cotizacion
@@ -392,17 +392,17 @@ CREATE TABLE TareaXCaso (
 -- #----------------------------#
 -- #       CREAR USUARIOS       #
 -- #----------------------------#
--- Ejemplo de como crear un usuario
-CREATE LOGIN kalva WITH PASSWORD = 'MyPass0102'
-GO
+---- Ejemplo de como crear un usuario
+--CREATE LOGIN kalva WITH PASSWORD = 'MyPass0102'
+--GO
 
--- Asignar permisos de administrador
-IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = N'Kristin')
-BEGIN
-    CREATE USER Kristin FOR LOGIN kalva
-    EXEC sp_addrolemember N'db_owner', N'Kristin'
-END;
-GO
+---- Asignar permisos de administrador
+--IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = N'Kristin')
+--BEGIN
+--    CREATE USER Kristin FOR LOGIN kalva
+--    EXEC sp_addrolemember N'db_owner', N'Kristin'
+--END;
+--GO
 
--- Asignar permisos
-GRANT SELECT ON OBJECT::Cotizacion TO Kristin;
+---- Asignar permisos
+--GRANT SELECT ON OBJECT::Cotizacion TO Kristin;
