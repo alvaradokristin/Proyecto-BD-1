@@ -1,8 +1,27 @@
 ﻿@{
     ViewData["Title"] = "Mostrar contacto por cliente";
+
+    //CreatedAtActionResult a list of the table headers
+    string[] tableHeaders = new string[] {
+    "Codigo"
+    ,"Nombre De Contacto"
+    ,"Motivo"
+    ,"Correo"
+    ,"Telefono"
+    ,"Dirección"
+    ,"Descripción"
+    ,"Sector"
+    ,"Estado"
+    ,"Zona"
+    ,"Tipo"
+    ,"Tareas"
+    ,"Actividades"
+    };
 }
 
 <h1>@ViewData["Title"]</h1>
+
+<br/>
 
 @*FORM TO SELECT THE CLIENT YOU WANT TO DISPLAY THE CONTACTS FROM*@
 <form>
@@ -21,25 +40,16 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Codigo</th>
-                <th>Nombre De Contacto</th>
-                <th>Motivo</th>
-                <th>Correo</th>
-                <th>Telefono</th>
-                <th>Dirección</th>
-                <th>Descripción</th>
-                <th>Sector</th>
-                <th>Estado</th>
-                <th>Zona</th>
-                <th>Tipo</th>
-                <th>Tareas</th>
-                <th>Actividades</th>
+                @foreach (var header in tableHeaders)
+                {
+                    <th>@header</th>
+                }
             </tr>
         </thead>
 
         <tbody>
             @*CREATE THE TABLES ROWS AND ASSIGN THEM THE INFORMATION FROM THE DB*@
-            @foreach (var item in Model.listVal)
+            @*@foreach (var item in Model.listVal)
             {
                 <tr>
                     <td>@item.code</td>
@@ -52,21 +62,21 @@
                     <td>@item.sector</td>
                     <td>@item.status</td>
                     <td>@item.zone</td>
-                    <td>@item.type</td>
+                    <td>@item.type</td>*@
 
                     @*ADD BUTTONS TO ADD OR SHOW TASKS*@
-                    <td>
+                    @*<td>
                         <a class="btn btn-outline-info" href="/Show/ShowTasks?code=@item.codigo">Mostrar Tareas</a>
                         <a class="btn btn-outline-success" href="/Add/AddTasks?code=@item.codigo">Agregar Tareas</a>
-                    </td>
+                    </td>*@
 
                     @*ADD BUTTONS TO ADD OR SHOW ACTIVITIES*@
-                    <td>
+                    @*<td>
                         <a class="btn btn-outline-info" href="/Show/Activities?code=@item.codigo">Mostrar Actividades</a>
                         <a class="btn btn-outline-success" href="/Add/AddActivities?code=@item.codigo">Agregar Actividades</a>
                     </td>
                 </tr>
-            }
+            }*@
         </tbody>
     </table>
 </div>

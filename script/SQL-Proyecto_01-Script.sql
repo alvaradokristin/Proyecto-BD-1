@@ -404,5 +404,81 @@ CREATE TABLE TareaXCaso (
 --END;
 --GO
 
+<<<<<<< Updated upstream
 ---- Asignar permisos
 --GRANT SELECT ON OBJECT::Cotizacion TO Kristin;
+=======
+-- Asignar permisos
+--GRANT SELECT ON OBJECT::Cotizacion TO Kristin;
+
+-- #----------------------------#
+-- #          INSERTS           #
+-- #----------------------------#
+
+INSERT INTO Departamento (codigo,nombre)
+VALUES	('DP01', 'Desarrollo'),
+		('DP02', 'Backend'),
+		('DP03', 'Frontend'),
+		('DP04', 'Debugging'),
+		('DP05', 'QA');
+
+INSERT INTO Rol (nombre)
+VALUES	('Editor'),
+		('Visor'),
+		('Reportero');
+
+INSERT INTO Usuario (userLogin, cedula, nombre, primerApellido, segundoApellido, clave, nombre_rol, codigo_departamento)
+VALUES	('amr', '123456789', 'Aivy', 'Masis', 'Rivera', 'amr123','Editor', 'DP01');
+
+INSERT INTO Moneda (abreviatura, nombre)
+VALUES	('USD', 'dolar'),
+		('CRC', 'colon');
+
+INSERT INTO Zona (nombre)
+VALUES	('Cartago'),
+		('San Jose'),
+		('Heredia');
+
+INSERT INTO Sector (nombre)
+VALUES	('Tres Rios'),
+		('San Jose'),
+		('Barva');
+
+INSERT INTO Cliente (codigo, nombreCuenta, correo, telefono, celular, sitioWeb, informacionAdicional, zona, sector, abreviatura_moneda, nombre_moneda, login_usuario)
+VALUES	('C01', 'CuentaAMR', 'asd@asd.com', '123456', '456789', 'www.asd.cr', 'NO', 'Cartago', 'Tres Rios', 'CRC', 'colon', 'amr');
+
+INSERT INTO FamiliaProducto (codigo, nombre, activo, descripcion)
+VALUES 
+('FMPR0001', 'FamiliaP 01', 1, 'Primera familia de producto')
+
+GO
+
+-- Procedimiento para poder agregar valores a la tabla de Producto
+CREATE PROCEDURE insertarProducto
+	@ProCodifo varchar(10),
+	@ProNombre varchar(12),
+	@ProActivo bit,
+	@ProDescripcion varchar(30),
+	@ProPrecioEstandar decimal(9,2),
+	@ProCodigoFamilia varchar(10),
+	@Return int OUTPUT
+AS
+BEGIN
+	BEGIN TRY
+		INSERT INTO Producto VALUES (@ProCodifo, @ProNombre, @ProActivo, @ProDescripcion, @ProPrecioEstandar, @ProCodigoFamilia)
+		SET @Return = 1
+	END TRY
+
+	BEGIN CATCH
+		PRINT @@error
+		SET @Return = -1
+	END CATCH
+END
+GO
+
+DECLARE @return AS int;
+EXEC insertarProducto 'PROD001', 'Producto 01', 1, 'Primer producto', 5500, 'FMPR0001', @return OUTPUT;
+SELECT @return AS retOutput;
+
+SELECT * FROM Producto
+>>>>>>> Stashed changes

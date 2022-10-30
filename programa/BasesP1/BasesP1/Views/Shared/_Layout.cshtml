@@ -39,11 +39,11 @@
                                 <a class="dropdown-item disabled" asp-controller="Home" asp-action="Index">Departamento</a>
                                 <a class="dropdown-item" asp-controller="Products" asp-action="AddProduct">Producto</a>
                                 <a class="dropdown-item" asp-controller="Clients" asp-action="AddClient">Cliente</a>
-                                <a class="dropdown-item disabled" asp-controller="Home" asp-action="Index">Proyecto</a>
-                                <a class="dropdown-item disabled" asp-controller="Home" asp-action="Index">Persona a Proyecto</a>
+                                <a class="dropdown-item" asp-controller="ClientContact" asp-action="AddContact">Contacto Cliente</a>
                             </div>
                         </li>
 
+                        @*Dropdown to acess the Client views*@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Datos de Clientes
@@ -57,6 +57,31 @@
                             </div>
                         </li>
 
+<<<<<<< Updated upstream
+=======
+                        @*Dropdown to acess the Users view*@
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Datos de Usuarios
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" asp-controller="Users" asp-action="ShowUsers">Ver todos</a>
+                            </div>
+                        </li>
+
+                        @*Dropdown to acess the Product functionalities*@
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Productos
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" asp-controller="Products" asp-action="EditProduct">Editar producto</a>
+                                <a class="dropdown-item" asp-controller="Products" asp-action="ShowProductReport">Ver reportes</a>
+                                <a class="dropdown-item" asp-controller="Products" asp-action="ShowProducts">Ver todos</a>
+                            </div>
+                        </li>
+
+>>>>>>> Stashed changes
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
                         </li>
