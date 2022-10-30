@@ -7,7 +7,7 @@
 @*FORM TO GET THE USER INPUT TO ADD TO THE DATABASE*@
 <form>
     <div class="mb-3">
-        <label for="client-code" class="form-label">Codigo del cliente:</label>
+        <label for="client-code" class="form-label">Código:</label>
         <input type="text" class="form-control" id="client-code" name="client-code">
     </div>
     <div class="mb-3">
@@ -16,24 +16,7 @@
     </div>
     <div class="mb-3">
         <label for="client-email" class="form-label">Correo del cliente:</label>
-        <input type="text" class="form-control" id="client-email" name="client-email">
-    </div>
-    @*<div class="mb-3">
-        <label for="client-main-contact" class="form-label">Contacto principal:</label>
-        <select class="form-select" id="client-main-contact" name="client-main-contact">
-            <option selected> </option>
-            <option value="Cont1">Cont1</option>
-            <option value="Cont2">Cont2</option>
-            <option value="Cont3">Cont3</option>
-        </select>
-    </div>*@
-    <div class="mb-3">
-        <label for="client-currency" class="form-label">Moneda:</label>
-        <select class="form-select" id="client-currency" name="client-currency">
-            <option selected> </option>
-            <option value="CRC">CRC</option>
-            <option value="USD">USD</option>
-        </select>
+        <input type="text" class="form-control" id="client-email" name="client-email">    
     </div>
     <div class="mb-3">
         <label for="client-phone-number" class="form-label">Número de telefono:</label>
@@ -48,16 +31,11 @@
         <input type="text" class="form-control" id="client-website" name="client-website">
     </div>
     <div class="mb-3">
-        <label for="client-additional-info" class="form-label">Informacion adicional:</label>
-        <textarea class="form-control" id="client-additional-info" rows="3" name="client-additional-info"></textarea>
-    </div>
-    <div class="mb-3">
-        <label for="client-adviser" class="form-label">Asesor:</label>
-        <select class="form-select" id="client-adviser" name="client-adviser">
+        <label for="client-currency" class="form-label">Moneda a utilizar:</label>
+        <select class="form-select" id="client-currency" name="client-currency">
             <option selected> </option>
-            <option value="User1">User 1</option>
-            <option value="User2">User 2</option>
-            <option value="User3">User 3</option>
+            <option value="CRC">CRC</option>
+            <option value="USD">USD</option>
         </select>
     </div>
     <div class="mb-3">
@@ -73,10 +51,23 @@
         <label for="client-sector" class="form-label">Sector:</label>
         <select class="form-select" id="client-sector" name="client-sector">
             <option selected> </option>
-            <option value="Sector1">Sector 1</option>
-            <option value="Sector2">Sector 2</option>
-            <option value="Sector3">Sector 3</option>
+            <option value="Sector1">Sector1</option>
+            <option value="Sector2">Sector2</option>
+            <option value="Sector3">Sector3</option>
         </select>
+    </div>
+    <div class="mb-3">
+        <label for="client-adviser" class="form-label">Usuario:</label>
+        <select class="form-select" id="client-adviser" name="client-adviser">
+            <option selected> </option>
+            <option value="Usuario1">Usuario1</option>
+            <option value="Usuario2">Usuario2</option>
+            <option value="Usuario3">Usuario3</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="client-additional-info" class="form-label">Informacion adicional:</label>
+        <textarea class="form-control" id="client-additional-info" rows="3" name="client-additional-info"></textarea>
     </div>
     <button type="submit" class="btn btn-outline-secondary">Agregar</button>
 </form>
