@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Agregar Producto";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@*FORM TO GET THE USER INPUT TO ADD TO THE DATABASE*@
+<form>
+    <div class="mb-3">
+        <label for="prod-code" class="form-label">Código de producto:</label>
+        <input type="text" class="form-control" id="prod-code" name="prod-code">
+    </div>
+    <div class="mb-3">
+        <label for="prod-name" class="form-label">Nombre del producto:</label>
+        <input type="text" class="form-control" id="prod-name" name="prod-name">
+    </div>
+    <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" value="" id="prod-active">
+        <label class="form-check-label" for="prod-active">
+            Activo
+        </label>
+    </div>
+    <div class="mb-3">
+        <label for="prod-desc" class="form-label">Descripción del producto:</label>
+        <textarea class="form-control" id="prod-desc" rows="3" name="prod-desc"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="prod-family" class="form-label">Familia del producto:</label>
+        <select class="form-select" id="prod-family" name="prod-family">
+            <option selected> </option>
+            <option value="Fam1">Fam 1</option>
+            <option value="Fam2">Fam 2</option>
+            <option value="Fam3">Fam 3</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="prod-price" class="form-label">Precio estandar:</label>
+        <input type="text" class="form-control" id="prod-price" name="prod-price">
+    </div>
+    <button type="submit" class="btn btn-outline-secondary">Agregar</button>
+</form>

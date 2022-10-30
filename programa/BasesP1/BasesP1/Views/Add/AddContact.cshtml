@@ -1,0 +1,91 @@
+﻿@{
+    ViewData["Title"] = "Agregar Contacto a Cliente";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@*FORM TO GET THE USER INPUT TO ADD TO THE DATABASE*@
+<form>
+    @*<div class="mb-3">
+        <label for="contact-code" class="form-label">Codigo del cliente:</label>
+        <input type="text" class="form-control" id="contact-code" name="contact-code">
+    </div>*@
+    <div class="mb-3">
+        <label for="contact-client-code" class="form-label">Codigo del cliente:</label>
+        <select class="form-select" id="contact-client-code" name="contact-client-code">
+            <option selected> </option>
+            <option value="Cliente1">Cleinte A</option>
+            <option value="Cliente2">Cliente B</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="contact-type" class="form-label">Tipo:</label>
+        <select class="form-select" id="contact-type" name="contact-type">
+            <option selected> </option>
+            <option value="Tipo1">Tipo 1</option>
+            <option value="Tipo2">Tipo 2</option>
+            <option value="Tipo3">Tipo 3</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="contact-reason" class="form-label">Motivo:</label>
+        <input type="text" class="form-control" id="contact-reason" name="contact-reason">
+    </div>
+    <div class="mb-3">
+        <label for="contact-name" class="form-label">Nombre del contacto:</label>
+        <input type="text" class="form-control" id="contact-name" name="contact-name">
+    </div>
+    <div class="mb-3">
+        <label for="contact-email" class="form-label">Correo:</label>
+        <input type="text" class="form-control" id="contact-email" name="contact-email">
+    </div>
+    <div class="mb-3">
+        <label for="contact-phone-number" class="form-label">Número de telefono:</label>
+        <input type="text" class="form-control" id="contact-phone-number" name="contact-phone-number">
+    </div>
+    <div class="mb-3">
+        <label for="contact-status" class="form-label">Estado:</label>
+        <select class="form-select" id="contact-status" name="contact-status">
+            <option selected> </option>
+            <option value="Status1">Status 1</option>
+            <option value="Status2">Status 1</option>
+            <option value="Status3">Status 1</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="contact-address" class="form-label">Dirección:</label>
+        <input type="text" class="form-control" id="contact-address" name="contact-address">
+    </div>
+    <div class="mb-3">
+        <label for="contact-zone" class="form-label">Zona:</label>
+        <select class="form-select" id="contact-zone" name="contact-zone">
+            <option selected> </option>
+            <option value="Zone1">Zone 1</option>
+            <option value="Zone2">Zone 2</option>
+            <option value="Zone3">Zone 3</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="contact-sector" class="form-label">Sector:</label>
+        <select class="form-select" id="contact-sector" name="contact-sector">
+            <option selected> </option>
+            <option value="Sector1">Sector 1</option>
+            <option value="Sector2">Sector 2</option>
+            <option value="Sector3">Sector 3</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="contact-adviser" class="form-label">Asesor:</label>
+        <select class="form-select" id="contact-adviser" name="contact-adviser">
+            <option selected> </option>
+            <option value="User1">User 1</option>
+            <option value="User2">User 2</option>
+            <option value="User3">User 3</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="contact-desc" class="form-label">Descripción:</label>
+        <textarea class="form-control" id="contact-desc" rows="3" name="contact-desc"></textarea>
+    </div>
+    <button type="submit" class="btn btn-outline-secondary">Agregar</button>
+</form>
