@@ -1,7 +1,17 @@
+using BasesP1.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddMvc();
+
+// Database Connection
+builder.Services.AddDbContext<SistemaCRMContext>(options =>
+options.UseSqlServer(
+    builder.Configuration.GetConnectionString("RealConnection")
+    ));
 
 var app = builder.Build();
 

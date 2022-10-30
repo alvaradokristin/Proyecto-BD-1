@@ -1,0 +1,49 @@
+﻿@{
+    ViewData["Title"] = "Agregar Actividad";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@*FORM TO GET THE USER INPUT TO ADD TO THE DATABASE*@
+<form>
+    <div class="mb-3">
+        <label for="activity-code" class="form-label">Código de actividad:</label>
+        <input type="text" class="form-control" id="activity-code" name="activity-code">
+    </div>
+    <div class="mb-3">
+        <label for="activity-name" class="form-label">Nombre de la actividad:</label>
+        <input type="text" class="form-control" id="activity-name" name="activity-name">
+    </div>
+    <div class="mb-3">
+        <label for="activity-desc" class="form-label">Descripción de la actividad:</label>
+        <textarea class="form-control" id="activity-desc" rows="3" name="activity-desc"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="activity-status" class="form-label">Estado:</label>
+        <select class="form-select" id="activity-status" name="activity-status">
+            <option selected> </option>
+            <option value="Estado1">Estado 1</option>
+            <option value="Estado2">Estado 2</option>
+            <option value="Estado3">Estado 3</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="activity-type" class="form-label">Tipo:</label>
+        <select class="form-select" id="activity-type" name="activity-type">
+            <option selected> </option>
+            <option value="Tipo1">Tipo 1</option>
+            <option value="Tipo2">Tipo 2</option>
+            <option value="Tipo3">Tipo 3</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="client-adviser" class="form-label">Asesor:</label>
+        <select class="form-select" id="client-adviser" name="client-adviser">
+            <option selected> </option>
+            <option value="User1">User 1</option>
+            <option value="User2">User 2</option>
+            <option value="User3">User 3</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-outline-secondary">Agregar</button>
+</form>
