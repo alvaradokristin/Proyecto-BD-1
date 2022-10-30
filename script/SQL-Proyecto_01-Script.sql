@@ -404,5 +404,41 @@ CREATE TABLE TareaXCaso (
 --END;
 --GO
 
----- Asignar permisos
---GRANT SELECT ON OBJECT::Cotizacion TO Kristin;
+-- Asignar permisos
+GRANT SELECT ON OBJECT::Cotizacion TO Kristin;
+
+-- #----------------------------#
+-- #          INSERTS           #
+-- #----------------------------#
+
+INSERT INTO Departamento (codigo,nombre)
+VALUES	('DP01', 'Desarrollo'),
+		('DP02', 'Backend'),
+		('DP03', 'Frontend'),
+		('DP04', 'Debugging'),
+		('DP05', 'QA');
+
+INSERT INTO Rol (nombre)
+VALUES	('Editor'),
+		('Visor'),
+		('Reportero');
+
+INSERT INTO Usuario (userLogin, cedula, nombre, primerApellido, segundoApellido, clave, nombre_rol, codigo_departamento)
+VALUES	('amr', '123456789', 'Aivy', 'Masis', 'Rivera', 'amr123','Editor', 'DP01');
+
+INSERT INTO Moneda (abreviatura, nombre)
+VALUES	('USD', 'dolar'),
+		('CRC', 'colon');
+
+INSERT INTO Zona (nombre)
+VALUES	('Cartago'),
+		('San Jose'),
+		('Heredia');
+
+INSERT INTO Sector (nombre)
+VALUES	('Tres Rios'),
+		('San Jose'),
+		('Barva');
+
+INSERT INTO Cliente (codigo, nombreCuenta, correo, telefono, celular, sitioWeb, informacionAdicional, zona, sector, abreviatura_moneda, nombre_moneda, login_usuario)
+VALUES	('C01', 'CuentaAMR', 'asd@asd.com', '123456', '456789', 'www.asd.cr', 'NO', 'Cartago', 'Tres Rios', 'CRC', 'colon', 'amr');

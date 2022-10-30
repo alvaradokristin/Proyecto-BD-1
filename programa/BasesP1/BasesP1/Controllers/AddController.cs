@@ -4,7 +4,7 @@ namespace BasesP1.Controllers
 {
     public class AddController : Controller
     {
-        public IActionResult AddUser()
+        public IActionResult AddProduct()
         {
             return View();
         }
