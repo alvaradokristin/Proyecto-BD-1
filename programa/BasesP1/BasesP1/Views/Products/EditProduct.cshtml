@@ -1,10 +1,9 @@
 ﻿@{
-    ViewData["Title"] = "Agregar Producto";
+    ViewData["Title"] = "Editar Información de Producto";
 }
 
 <h1>@ViewData["Title"]</h1>
 
-@*FORM TO GET THE USER INPUT TO ADD TO THE DATABASE*@
 <form>
     <div class="mb-3">
         <label for="prod-code" class="form-label">Código de producto:</label>
@@ -37,5 +36,5 @@
         <label for="prod-price" class="form-label">Precio estandar:</label>
         <input type="text" class="form-control" id="prod-price" name="prod-price">
     </div>
-    <button type="submit" class="btn btn-outline-secondary">Agregar</button>
+    <button type="submit" class="btn btn-outline-secondary">Guardar</button>
 </form>

@@ -392,17 +392,17 @@ CREATE TABLE TareaXCaso (
 -- #----------------------------#
 -- #       CREAR USUARIOS       #
 -- #----------------------------#
--- Ejemplo de como crear un usuario
-CREATE LOGIN kalva WITH PASSWORD = 'MyPass0102'
-GO
+---- Ejemplo de como crear un usuario
+--CREATE LOGIN kalva WITH PASSWORD = 'MyPass0102'
+--GO
 
--- Asignar permisos de administrador
-IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = N'Kristin')
-BEGIN
-    CREATE USER Kristin FOR LOGIN kalva
-    EXEC sp_addrolemember N'db_owner', N'Kristin'
-END;
-GO
+---- Asignar permisos de administrador
+--IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = N'Kristin')
+--BEGIN
+--    CREATE USER Kristin FOR LOGIN kalva
+--    EXEC sp_addrolemember N'db_owner', N'Kristin'
+--END;
+--GO
 
 -- Asignar permisos
 GRANT SELECT ON OBJECT::Cotizacion TO Kristin;
