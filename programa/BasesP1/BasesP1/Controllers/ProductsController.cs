@@ -2,43 +2,55 @@
 using BasesP1.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Data.SqlClient;
+using System.Diagnostics;
 
 namespace BasesP1.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly SistemaCRMContext _context;
+        SqlCommand command = new SqlCommand();
+        SqlDataReader reader;
 
-        public ProductsController(SistemaCRMContext context)
-        {
-            _context = context;
-        }
+        SqlConnection connection = new SqlConnection();
 
-        // GET: Products
-        public async Task<IActionResult> Index()
+        private void FetchData()
         {
-            return View(await _context.Producto.ToListAsync());
-        }
-
-        // GET: Products/ShowProducts/5
-        public async Task<IActionResult> Details(string id)
-        {
-            if (id == null || _context.Producto == null)
+            try
             {
-                return NotFound();
-            }
+                connection.Open();
+                command.Connection = connection;
+                command.CommandText = "SELECT * FROM Producto";
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    Debug.WriteLine("Producto : " + reader["codigo"]);
+                }
+                connection.Close();
 
-            var producto = await _context.Producto
-                .FirstOrDefaultAsync(m => m.Codigo == id);
-            if (producto == null)
+            }
+            catch (Exception ex)
             {
-                return NotFound();
+                Debug.WriteLine("Exception: " + ex.ToString());
             }
-
-            return View(producto);
         }
         public IActionResult AddProduct()
         {
+            return View();
+        }
+
+        public IActionResult EditProduct()
+        {
+            return View();
+        }
+
+        public IActionResult ShowProductReport()
+        {
+            return View();
+        }
+        public IActionResult ShowProducts()
+        {
+            FetchData();
             return View();
         }
     }

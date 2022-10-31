@@ -1,4 +1,4 @@
--- Script para el proyecto #1 de Bases de Datos I
+-- Script para el proyecto #2 de Bases de Datos I
 
 -- # --------------- ELIMINAR BASE DE DATOS SI EXISTE --------------- #
 DROP DATABASE IF EXISTS sistemacrm;
@@ -405,7 +405,7 @@ CREATE TABLE TareaXCaso (
 --GO
 
 -- Asignar permisos
-GRANT SELECT ON OBJECT::Cotizacion TO Kristin;
+--GRANT SELECT ON OBJECT::Cotizacion TO Kristin;
 
 -- #----------------------------#
 -- #          INSERTS           #
@@ -442,3 +442,38 @@ VALUES	('Tres Rios'),
 
 INSERT INTO Cliente (codigo, nombreCuenta, correo, telefono, celular, sitioWeb, informacionAdicional, zona, sector, abreviatura_moneda, nombre_moneda, login_usuario)
 VALUES	('C01', 'CuentaAMR', 'asd@asd.com', '123456', '456789', 'www.asd.cr', 'NO', 'Cartago', 'Tres Rios', 'CRC', 'colon', 'amr');
+
+INSERT INTO FamiliaProducto (codigo, nombre, activo, descripcion)
+VALUES 
+('FMPR0001', 'FamiliaP 01', 1, 'Primera familia de producto')
+
+GO
+
+-- Procedimiento para poder agregar valores a la tabla de Producto
+CREATE PROCEDURE insertarProducto
+	@ProCodifo varchar(10),
+	@ProNombre varchar(12),
+	@ProActivo bit,
+	@ProDescripcion varchar(30),
+	@ProPrecioEstandar decimal(9,2),
+	@ProCodigoFamilia varchar(10),
+	@Return int OUTPUT
+AS
+BEGIN
+	BEGIN TRY
+		INSERT INTO Producto VALUES (@ProCodifo, @ProNombre, @ProActivo, @ProDescripcion, @ProPrecioEstandar, @ProCodigoFamilia)
+		SET @Return = 1
+	END TRY
+
+	BEGIN CATCH
+		PRINT @@error
+		SET @Return = -1
+	END CATCH
+END
+GO
+
+DECLARE @return AS int;
+EXEC insertarProducto 'PROD001', 'Producto 01', 1, 'Primer producto', 5500, 'FMPR0001', @return OUTPUT;
+SELECT @return AS retOutput;
+
+SELECT * FROM Producto
