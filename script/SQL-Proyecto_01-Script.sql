@@ -197,6 +197,8 @@ CREATE TABLE Cliente (
 	FOREIGN KEY (sector) REFERENCES Sector(nombre)
 )
 
+SELECT * FROM Cliente
+
 -- Usa Cliente, Sector, Tarea, Estado, Zona, Tipo
 -- Registra actividades
 CREATE TABLE ContactoCliente (
@@ -296,12 +298,10 @@ CREATE TABLE Caso (
 	tipo_prioridad varchar(3) NOT NULL,
 	categoria_estado varchar(10) NOT NULL,
 	nombre_estado varchar(12) NOT NULL,
-	numero_cotizacion smallint NOT NULL,
 	nombre_origen varchar(12) NOT NULL,
 	FOREIGN KEY (categoria_tipo, nombre_tipo) REFERENCES Tipo(categoria, nombre),
 	FOREIGN KEY (tipo_prioridad) REFERENCES Prioridad(tipo),
 	FOREIGN KEY (categoria_estado, nombre_estado) REFERENCES Estado(categoria, nombre),
-	FOREIGN KEY (numero_cotizacion) REFERENCES Cotizacion(numeroCotizacion),
 	FOREIGN KEY (nombre_origen) REFERENCES Origen(nombre)
 )
 
@@ -405,7 +405,7 @@ CREATE TABLE TareaXCaso (
 --GO
 
 -- Asignar permisos
-GRANT SELECT ON OBJECT::Cotizacion TO Kristin;
+--GRANT SELECT ON OBJECT::Cotizacion TO Kristin;
 
 -- #----------------------------#
 -- #          INSERTS           #
