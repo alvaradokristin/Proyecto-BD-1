@@ -1,0 +1,108 @@
+﻿@{
+    ViewData["Title"] = "Agregar Cotización";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@*FORM TO GET THE USER INPUT TO ADD TO THE DATABASE*@
+<form>
+    <div class="mb-3">
+        <label for="quote-code" class="form-label">Código de cotización:</label>
+        <input type="text" class="form-control" id="quote-code" name="quote-code">
+    </div>
+    <div class="mb-3">
+        <label for="quote-name" class="form-label">Nombre del oportunidad:</label>
+        <input type="text" class="form-control" id="quote-name" name="quote-name">
+    </div>
+    <div class="mb-3">
+        <label for="quote-date" class="form-label">Fecha:</label>
+        <input type="text" class="form-control" id="quote-date" name="quote-date" placeholder="AAAA-MM-DD">
+    </div>
+    <div class="mb-3">
+        <label for="quote-my-closure" class="form-label">Mes y año de cierre:</label>
+        <input type="text" class="form-control" id="quote-my-closure" name="quote-my-closure" placeholder="AAAA-MM">
+    </div>
+    <div class="mb-3">
+        <label for="quote-closure-date" class="form-label">Fecha de cierre:</label>
+        <input type="text" class="form-control" id="quote-closure-date" name="quote-closure-date" placeholder="AAAA-MM-DD">
+    </div>
+    <div class="mb-3">
+        <label for="quote-probability" class="form-label">Probabilidad:</label>
+        <input type="text" class="form-control" id="quote-probability" name="quote-probability" placeholder="70">
+    </div>
+    <div class="mb-3">
+        <label for="quote-desc" class="form-label">Descripción:</label>
+        <textarea class="form-control" id="quote-desc" rows="3" name="quote-desc"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="quote-denied" class="form-label">Se nego:</label>
+        <input type="text" class="form-control" id="quote-denied" name="quote-denied">
+    </div>
+    <div class="mb-3">
+        <label for="quote-competition" class="form-label">Contra quien:</label>
+        <select class="form-select" id="quote-competition" name="quote-competition">
+            <option selected> </option>
+            <option value="Organizacion1">Organizacion 1</option>
+            <option value="Organizacion2">Organizacion 2</option>
+            <option value="Organizacion3">Organizacion 3</option>
+        </select>
+    </div>
+    <br />
+
+    @*SECTION TO CREATE AN INVOICE*@
+    <hr class="solid">
+    <h3><code><strong>Crear Factura</strong></code></h3>
+    <div class="mb-3">
+        <label for="quote-invoice-number" class="form-label">Número de factura:</label>
+        <input type="text" class="form-control" id="quote-invoice-number" name="quote-invoice-number">
+    </div>
+    <div class="mb-3">
+        <label for="quote-invoice-det" class="form-label">Detalle de factura:</label>
+        <input type="text" class="form-control" id="quote-invoice-det" name="quote-invoice-det">
+    </div>
+    <hr class="solid">
+    <br />
+
+    <div class="mb-3">
+        <label for="quote-stage" class="form-label">Etapa:</label>
+        <select class="form-select" id="quote-stage" name="quote-stage">
+            <option selected> </option>
+            <option value="Etapa1">Etapa 1</option>
+            <option value="Etapa2">Etapa 2</option>
+            <option value="Etapa3">Etapa 3</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="quote-type" class="form-label">Tipo:</label>
+        <select class="form-select" id="quote-type" name="quote-type">
+            <option selected> </option>
+            <option value="Tipo1">Tipo 1</option>
+            <option value="Tipo2">Tipo 2</option>
+            <option value="Tipo3">Tipo 3</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="quote-exec" class="form-label">Ejecución:</label>
+        <select class="form-select" id="quote-exec" name="quote-exec">
+            <option selected> </option>
+            <option value="Ejecucion1">Ejecucion 1</option>
+            <option value="Ejecucion2">Ejecucion 2</option>
+            <option value="Ejecucion3">Ejecucion 3</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="quote-aff-year" class="form-label">Año de afiliación:</label>
+        <input type="text" class="form-control" id="quote-aff-year" name="quote-aff-year" placeholder="AAAA">
+    </div>
+    <div class="mb-3">
+        <label for="quote-case" class="form-label">Caso:</label>
+        <select class="form-select" id="quote-case" name="quote-case">
+            <option selected> </option>
+            <option value="Caso1">Caso 1</option>
+            <option value="Caso2">Caso 2</option>
+            <option value="Caso3">Caso 3</option>
+        </select>
+    </div>
+    
+    <button type="submit" class="btn btn-outline-secondary">Agregar</button>
+</form>

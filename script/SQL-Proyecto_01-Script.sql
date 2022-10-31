@@ -24,13 +24,13 @@ GO
 -- Se usa por cotizacion
 CREATE TABLE Factura (
 	numeroFactura smallint NOT NULL PRIMARY KEY,
-	detalle varchar(30) NOT NULL
+	detalle varchar(60) NOT NULL
 )
 
 -- Se usa por cotizacion
 CREATE TABLE Compra (
 	ordenCompra smallint NOT NULL PRIMARY KEY,
-	detalle varchar(30) NOT NULL
+	detalle varchar(60) NOT NULL
 )
 
 -- Se usa por cotizacion
@@ -250,18 +250,36 @@ CREATE TABLE Actividad (
 	FOREIGN KEY (usuario_asignado) REFERENCES Usuario(cedula)
 )
 
+-- Usa Tipo, Prioridad, Actividad, Estado, Cotizacion
+CREATE TABLE Caso (
+	codigo varchar(10) NOT NULL PRIMARY KEY,
+	origen varchar(12) NOT NULL,
+	asunto varchar(10) NOT NULL,
+	direccion varchar(35) NOT NULL,
+	descripcion varchar(30) NOT NULL,
+	categoria_tipo varchar(10) NOT NULL,
+	nombre_tipo varchar(12) NOT NULL,
+	tipo_prioridad varchar(3) NOT NULL,
+	categoria_estado varchar(10) NOT NULL,
+	nombre_estado varchar(12) NOT NULL,
+	FOREIGN KEY (categoria_tipo, nombre_tipo) REFERENCES Tipo(categoria, nombre),
+	FOREIGN KEY (tipo_prioridad) REFERENCES Prioridad(tipo),
+	FOREIGN KEY (categoria_estado, nombre_estado) REFERENCES Estado(categoria, nombre),
+	FOREIGN KEY (origen) REFERENCES Origen(nombre)
+)
+
 -- Usa Compra, Factura, Etapa, Tipo, Ejecucion, Zona, Sector, Inflacion, Producto, Caso
 CREATE TABLE Cotizacion (
 	numeroCotizacion smallint NOT NULL PRIMARY KEY,
 	nombreOportunidad varchar(12) NOT NULL,
 	fecha date NOT NULL,
-	mesAnnoCierre varchar(5) NOT NULL,
+	mesAnnoCierre varchar(7) NOT NULL,
 	fechaCierre date NOT NULL,
-	probabilidad decimal(3,2) NOT NULL,
+	probabilidad decimal(5,2) NOT NULL,
 	descripcion varchar(30) NOT NULL,
 	seNego varchar(15) NOT NULL,
 	nombre_competencia varchar(15) NOT NULL, -- contraQuien
-	ordenCompra smallint NOT NULL,
+	ordenCompra smallint, -- -1 si no se ha hecho la compra todavia
 	numero_factura smallint NOT NULL,
 	nombre_etapa varchar(12) NOT NULL,
 	categoria_tipo varchar(10) NOT NULL,
@@ -278,31 +296,11 @@ CREATE TABLE Cotizacion (
 	FOREIGN KEY (nombre_etapa) REFERENCES Etapa(nombre),
 	FOREIGN KEY (categoria_tipo, nombre_tipo) REFERENCES Tipo(categoria, nombre),
 	FOREIGN KEY (codigo_ejecucion) REFERENCES Ejecucion(codigo),
+	FOREIGN KEY (codigo_caso) REFERENCES Caso(codigo),
 	FOREIGN KEY (zona) REFERENCES Zona(nombre),
 	FOREIGN KEY (sector) REFERENCES Sector(nombre),
 	FOREIGN KEY (anno_inflacion) REFERENCES Inflacion(anno),
 	FOREIGN KEY (nombre_competencia) REFERENCES Competencia(nombre)
-)
-
--- Usa Tipo, Prioridad, Actividad, Estado, Cotizacion
-CREATE TABLE Caso (
-	codigo varchar(10) NOT NULL PRIMARY KEY,
-	origen varchar(12) NOT NULL,
-	asunto varchar(10) NOT NULL,
-	direccion varchar(35) NOT NULL,
-	descripcion varchar(30) NOT NULL,
-	categoria_tipo varchar(10) NOT NULL,
-	nombre_tipo varchar(12) NOT NULL,
-	tipo_prioridad varchar(3) NOT NULL,
-	categoria_estado varchar(10) NOT NULL,
-	nombre_estado varchar(12) NOT NULL,
-	numero_cotizacion smallint NOT NULL,
-	nombre_origen varchar(12) NOT NULL,
-	FOREIGN KEY (categoria_tipo, nombre_tipo) REFERENCES Tipo(categoria, nombre),
-	FOREIGN KEY (tipo_prioridad) REFERENCES Prioridad(tipo),
-	FOREIGN KEY (categoria_estado, nombre_estado) REFERENCES Estado(categoria, nombre),
-	FOREIGN KEY (numero_cotizacion) REFERENCES Cotizacion(numeroCotizacion),
-	FOREIGN KEY (nombre_origen) REFERENCES Origen(nombre)
 )
 
 -- Usa Producto y Cotizacion
@@ -445,8 +443,71 @@ VALUES	('C01', 'CuentaAMR', 'asd@asd.com', '123456', '456789', 'www.asd.cr', 'NO
 
 INSERT INTO FamiliaProducto (codigo, nombre, activo, descripcion)
 VALUES 
-('FMPR0001', 'FamiliaP 01', 1, 'Primera familia de producto')
+('FMPR0001', 'FamiliaP 01', 1, 'Primera familia de producto');
 
+-- Agregar estados
+-- CC: ContactoCliente
+INSERT INTO Estado (categoria, nombre)
+VALUES
+('CC', 'Inicio'),
+('CC', 'En Progreso'),
+('CC', 'Finalizado'),
+('Actividad', 'Inicio'),
+('Actividad', 'En Progreso'),
+('Actividad', 'Finalizado'),
+('Tarea', 'Inicio'),
+('Tarea', 'En Progreso'),
+('Tarea', 'Finalizado'),
+('Caso', 'Inicio'),
+('Caso', 'En Progreso'),
+('Caso', 'Finalizado');
+
+-- Agregar tipos
+-- CC: ContactoCliente
+INSERT INTO Tipo (categoria, nombre)
+VALUES
+('CC', 'Tipo1'),
+('CC', 'Tipo2'),
+('CC', 'Tipo3'),
+('Actividad', 'Tipo1'),
+('Actividad', 'Tipo2'),
+('Actividad', 'Tipo3'),
+('Cotizacion', 'Tipo1'),
+('Cotizacion', 'Tipo2'),
+('Cotizacion', 'Tipo3'),
+('Caso', 'Tipo1'),
+('Caso', 'Tipo2'),
+('Caso', 'Tipo3');
+
+INSERT INTO Etapa (nombre)
+VALUES
+('Cotizacion'),
+('Negociacion'),
+('Pausa'),
+('Finalizado');
+
+INSERT INTO Prioridad (tipo)
+VALUES
+('P0'),
+('P1'),
+('P2'),
+('P3'),
+('P4');
+
+INSERT INTO Origen (nombre)
+VALUES
+('Origen 01'),
+('Origen 02'),
+('Origen 03'),
+('Origen 04'),
+('Origen 05'),
+('Origen 06');
+
+-- Agregar valor a Compra para usar en Caso
+-- Es un valor especifico para usar en cotizaciones que todavia no se acepta la compra
+INSERT INTO Compra (ordenCompra, detalle)
+VALUES
+(-1, 'Placeholder para compras no realizadas todavia');
 GO
 
 -- Procedimiento para poder agregar valores a la tabla de Producto
@@ -461,7 +522,132 @@ CREATE PROCEDURE insertarProducto
 AS
 BEGIN
 	BEGIN TRY
-		INSERT INTO Producto VALUES (@ProCodifo, @ProNombre, @ProActivo, @ProDescripcion, @ProPrecioEstandar, @ProCodigoFamilia)
+		INSERT INTO Producto VALUES (@ProCodifo, @ProNombre, @ProActivo, @ProDescripcion, 
+		@ProPrecioEstandar, @ProCodigoFamilia)
+		SET @Return = 1
+	END TRY
+
+	BEGIN CATCH
+		PRINT @@error
+		SET @Return = -1
+	END CATCH
+END
+GO
+
+-- Procedimiento para poder agregar valores a la tabla de ContactoCliente
+CREATE PROCEDURE insertarContactoCliente
+	@CCCodigoCliente varchar(10),
+	@CCMotivo varchar(15),
+	@CCNombreContacto varchar(12),
+	@CCCorreo varchar(20),
+	@CCTelefono varchar(10),
+	@CCDireccion varchar(35),
+	@CCDescripcion varchar(30),
+	@CCSector varchar(12),
+	@CCCategoriaEstado varchar(10),
+	@CCNombreEstado varchar(12),
+	@CCZona varchar(12),
+	@CCCategoriaTipo varchar(10),
+	@CCNombreTipo varchar(12),
+	@Return int OUTPUT
+AS
+BEGIN
+	BEGIN TRY
+		INSERT INTO ContactoCliente VALUES 
+		(@CCCodigoCliente, @CCMotivo, @CCNombreContacto, @CCCorreo, @CCTelefono, 
+		@CCDireccion, @CCDescripcion, @CCSector, @CCCategoriaEstado, @CCNombreEstado, 
+		@CCZona, @CCCategoriaTipo, @CCNombreTipo)
+		SET @Return = 1
+	END TRY
+
+	BEGIN CATCH
+		PRINT @@error
+		SET @Return = -1
+	END CATCH
+END
+GO
+
+-- Procedimiento para poder agregar valores a la tabla de Ejecucion
+CREATE PROCEDURE insertarEjecucion
+	@EjeCodigo varchar(10),
+	@EjeNombre varchar(12),
+	@EjeFecha date,
+	@EjeCodigoProyecto varchar(10),
+	@EjeCodigoDept varchar(10),
+	@Return int OUTPUT
+AS
+BEGIN
+	BEGIN TRY
+		INSERT INTO Ejecucion VALUES 
+		(@EjeCodigo, @EjeNombre, @EjeFecha, @EjeCodigoProyecto, @EjeCodigoDept)
+		SET @Return = 1
+	END TRY
+
+	BEGIN CATCH
+		PRINT @@error
+		SET @Return = -1
+	END CATCH
+END
+GO
+
+-- Procedimiento para poder agregar valores a la tabla de Caso
+CREATE PROCEDURE insertarCaso
+	@CasoCodigo varchar(10),
+	@CasoOrigen varchar(12),
+	@CasoAsunto varchar(10),
+	@CasoDireccion varchar(35),
+	@CasoDescripcion varchar(30),
+	@CasoTipo varchar(12),
+	@CasoPrioridad varchar(3),
+	@CasoEstado varchar(12),
+	@Return int OUTPUT
+AS
+BEGIN
+	BEGIN TRY
+		INSERT INTO Caso VALUES 
+		(@CasoCodigo, @CasoOrigen, @CasoAsunto, @CasoDireccion, @CasoDescripcion, 
+		'Caso', @CasoTipo, @CasoPrioridad, 'Caso', @CasoEstado)
+		SET @Return = 1
+	END TRY
+
+	BEGIN CATCH
+		PRINT @@error
+		SET @Return = -1
+	END CATCH
+END
+GO
+
+-- Procedimiento para poder agregar valores a la tabla de Cotizacion y Factura
+CREATE PROCEDURE insertarCotizacionFactura
+	@CotNumero smallint,
+	@CotNombreOportunidad varchar(12),
+	@CotFecha date,
+	@CotMesAnnoCierre varchar(7),
+	@CotFechaCierre date,
+	@CotProbabilidad decimal(5,2),
+	@CotDescripcion varchar(30),
+	@CotSeNego varchar(15),
+	@CotNombreCompetencia varchar(15),
+	@CotNumeroFactura smallint,
+	@FactDetalle varchar(30),
+	@CotEtapa varchar(12),
+	@CotTipo varchar(12), -- nombre tipo
+	@CotCodigoEjecucion varchar(10),
+	@CotZona varchar(12),
+	@CotSector varchar(12),
+	@CotAnnoInflacion varchar(4),
+	@CotCaso varchar(10),
+	@CotUsuario varchar(10), -- asesor
+	@Return int OUTPUT
+AS
+BEGIN
+	BEGIN TRY
+		INSERT INTO Factura VALUES (@CotNumeroFactura, @FactDetalle)
+		INSERT INTO Cotizacion VALUES 
+		(@CotNumero, @CotNombreOportunidad, @CotFecha, @CotMesAnnoCierre, @CotFechaCierre, 
+		@CotProbabilidad, @CotDescripcion, @CotSeNego, @CotNombreCompetencia, -1, @CotNumeroFactura, 
+		@CotEtapa, 'Cotizacion', @CotTipo, @CotCodigoEjecucion, @CotZona, @CotSector,
+		@CotAnnoInflacion, @CotCaso, @CotUsuario)
 		SET @Return = 1
 	END TRY
 
@@ -474,6 +660,14 @@ GO
 
 DECLARE @return AS int;
 EXEC insertarProducto 'PROD001', 'Producto 01', 1, 'Primer producto', 5500, 'FMPR0001', @return OUTPUT;
-SELECT @return AS retOutput;
+SELECT @return AS retOutputProd;
 
 SELECT * FROM Producto
+GO
+
+DECLARE @return AS int;
+EXEC insertarContactoCliente 'C01', 'Acercamiento', 'Aivy', 'asd@asd.com', '88888888', 'Sabana, San Jose', 'Primer acercamiento', 'Tres Rios', 'CC', 'Inicio', 'San Jose', 'CC', 'Tipo1', @return OUTPUT;
+SELECT @return AS retOutputCC;
+
+SELECT * FROM ContactoCliente;
+GO

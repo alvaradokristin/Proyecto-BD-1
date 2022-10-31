@@ -2,7 +2,9 @@
 
 namespace BasesP1.Models
 {
-    public class Producto
+
+    //Model with the columns from the Producto table
+    public class Product
     {
         [Key]
         [Required]
@@ -14,20 +16,19 @@ namespace BasesP1.Models
         public string? Nombre { get; set; }
 
         [Required]
-        [StringLength(1)]
-        public string? Activo { get; set; }
+        public Boolean? Activo { get; set; }
 
         [Required]
         [StringLength(30)]
         public string? Descripcion { get; set; }
 
         [Display(Name = "Precio Estandar")]
-        public float? PrecioEstandar { get; set; }
+        public decimal? PrecioEstandar { get; set; }
 
         [Required]
         [StringLength(10)]
         [Display(Name = "Codigo de Familia Producto")]
-        public string? Codigo_Familia { get; set; }
+        public string? CodigoFamilia { get; set; }
 
     }
 }
