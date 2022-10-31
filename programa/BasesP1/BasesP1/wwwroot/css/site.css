@@ -16,3 +16,7 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+hr.solid {
+    border-top: 1px solid #999;
+}

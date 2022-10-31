@@ -9,31 +9,31 @@ namespace BasesP1.Controllers
 {
     public class ProductsController : Controller
     {
-        SqlCommand command = new SqlCommand();
-        SqlDataReader reader;
+        //SqlCommand command = new SqlCommand();
+        //SqlDataReader reader;
 
-        SqlConnection connection = new SqlConnection();
+        //SqlConnection connection = new SqlConnection();
 
-        private void FetchData()
-        {
-            try
-            {
-                connection.Open();
-                command.Connection = connection;
-                command.CommandText = "SELECT * FROM Producto";
-                reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    Debug.WriteLine("Producto : " + reader["codigo"]);
-                }
-                connection.Close();
+        //private void FetchData()
+        //{
+        //    try
+        //    {
+        //        connection.Open();
+        //        command.Connection = connection;
+        //        command.CommandText = "SELECT * FROM Producto";
+        //        reader = command.ExecuteReader();
+        //        while (reader.Read())
+        //        {
+        //            Debug.WriteLine("Producto : " + reader["codigo"]);
+        //        }
+        //        connection.Close();
 
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("Exception: " + ex.ToString());
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine("Exception: " + ex.ToString());
+        //    }
+        //}
         public IActionResult AddProduct()
         {
             return View();
@@ -50,7 +50,7 @@ namespace BasesP1.Controllers
         }
         public IActionResult ShowProducts()
         {
-            FetchData();
+            //FetchData();
             return View();
         }
     }

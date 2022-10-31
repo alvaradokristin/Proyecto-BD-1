@@ -14,8 +14,7 @@ namespace BasesP1.Models
         public string? Nombre { get; set; }
 
         [Required]
-        [StringLength(1)]
-        public string? Activo { get; set; }
+        public Boolean? Activo { get; set; }
 
         [Required]
         [StringLength(30)]

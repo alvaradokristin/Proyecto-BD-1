@@ -9,7 +9,7 @@ namespace BasesP1.Data
         {
         }
 
-        public DbSet<Producto>? Producto { set; get; }
+        public DbSet<Product>? Product { set; get; }
         public DbSet<FamiliaProducto>? FamiliaProducto { set; get; }
     }
 }
