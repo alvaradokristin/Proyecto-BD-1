@@ -1,4 +1,4 @@
--- Script para el proyecto #1 de Bases de Datos I
+-- Script para el proyecto #2 de Bases de Datos I
 
 -- # --------------- ELIMINAR BASE DE DATOS SI EXISTE --------------- #
 DROP DATABASE IF EXISTS sistemacrm;
@@ -404,10 +404,6 @@ CREATE TABLE TareaXCaso (
 --END;
 --GO
 
-<<<<<<< Updated upstream
----- Asignar permisos
---GRANT SELECT ON OBJECT::Cotizacion TO Kristin;
-=======
 -- Asignar permisos
 --GRANT SELECT ON OBJECT::Cotizacion TO Kristin;
 
@@ -481,4 +477,3 @@ EXEC insertarProducto 'PROD001', 'Producto 01', 1, 'Primer producto', 5500, 'FMP
 SELECT @return AS retOutput;
 
 SELECT * FROM Producto
->>>>>>> Stashed changes
