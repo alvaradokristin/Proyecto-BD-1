@@ -31,22 +31,22 @@
 
         <tbody>
             @*CREATE THE TABLES ROWS AND ASSIGN THEM THE INFORMATION FROM THE DB*@
-            @*@foreach (var item in Model.listProds)
+            @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.code</td>
-                    <td>@item.name</td>
-                    <td>@item.active</td>
-                    <td>@item.descripcion</td>
-                    <td>@item.price</td>
-                    <td>@item.family</td>*@
+                    <td>@item.Codigo</td>
+                    <td>@item.Nombre</td>
+                    <td>@item.Activo</td>
+                    <td>@item.Descripcion</td>
+                    <td>@item.PrecioEstandar</td>
+                    <td>@item.CodigoFamilia</td>
 
                     @*ADD A BUTTON TO DELETE THAT APP FROM THE BD*@
-                    @*<td>
-                        <a class="btn btn-outline-danger" href="/Edit/EditProduct?code=@item.codigo">Editar</a>
+                    <td>
+                        <a class="btn btn-outline-danger" href="/Edit/EditProduct?code=@item.Codigo">Editar</a>
                     </td>
                 </tr>
-            }*@
+            }
         </tbody>
     </table>
 </div>

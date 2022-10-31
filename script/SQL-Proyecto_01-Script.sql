@@ -671,3 +671,15 @@ SELECT @return AS retOutputCC;
 
 SELECT * FROM ContactoCliente;
 GO
+
+-- Funcion para seleccionar todos los productos
+CREATE FUNCTION obtenerProductos()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT * FROM Producto
+);
+GO
+
+SELECT * FROM obtenerProductos();
