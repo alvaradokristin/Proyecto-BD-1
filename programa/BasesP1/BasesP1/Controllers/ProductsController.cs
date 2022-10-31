@@ -9,31 +9,14 @@ namespace BasesP1.Controllers
 {
     public class ProductsController : Controller
     {
-        //SqlCommand command = new SqlCommand();
-        //SqlDataReader reader;
 
-        //SqlConnection connection = new SqlConnection();
+        public IConfiguration Configuration { get; }
 
-        //private void FetchData()
-        //{
-        //    try
-        //    {
-        //        connection.Open();
-        //        command.Connection = connection;
-        //        command.CommandText = "SELECT * FROM Producto";
-        //        reader = command.ExecuteReader();
-        //        while (reader.Read())
-        //        {
-        //            Debug.WriteLine("Producto : " + reader["codigo"]);
-        //        }
-        //        connection.Close();
+        public ProductsController(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
 
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debug.WriteLine("Exception: " + ex.ToString());
-        //    }
-        //}
         public IActionResult AddProduct()
         {
             return View();
@@ -50,8 +33,10 @@ namespace BasesP1.Controllers
         }
         public IActionResult ShowProducts()
         {
-            //FetchData();
-            return View();
+            ProductData productData = new ProductData(this.Configuration);
+            List<Product> products = productData.getProducts();
+
+            return View("ShowProducts", products);
         }
     }
 }
