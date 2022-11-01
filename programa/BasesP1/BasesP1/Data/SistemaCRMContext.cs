@@ -11,5 +11,6 @@ namespace BasesP1.Data
 
         public DbSet<Product>? Product { set; get; }
         public DbSet<FamiliaProducto>? FamiliaProducto { set; get; }
+        public DbSet<Client>? Client { set; get; }
     }
 }

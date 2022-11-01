@@ -426,6 +426,9 @@ VALUES	('Editor'),
 INSERT INTO Usuario (userLogin, cedula, nombre, primerApellido, segundoApellido, clave, nombre_rol, codigo_departamento)
 VALUES	('amr', '123456789', 'Aivy', 'Masis', 'Rivera', 'amr123','Editor', 'DP01');
 
+INSERT INTO Usuario (userLogin, cedula, nombre, primerApellido, segundoApellido, clave, nombre_rol, codigo_departamento)
+VALUES	('jsm', '789456123', 'test', 'test1', 'test2', 'jsm123','Visor', 'DP03');
+
 INSERT INTO Moneda (abreviatura, nombre)
 VALUES	('USD', 'dolar'),
 		('CRC', 'colon');
@@ -442,6 +445,9 @@ VALUES	('Tres Rios'),
 
 INSERT INTO Cliente (codigo, nombreCuenta, correo, telefono, celular, sitioWeb, informacionAdicional, zona, sector, abreviatura_moneda, nombre_moneda, login_usuario)
 VALUES	('C01', 'CuentaAMR', 'asd@asd.com', '123456', '456789', 'www.asd.cr', 'NO', 'Cartago', 'Tres Rios', 'CRC', 'colon', 'amr');
+
+INSERT INTO Cliente (codigo, nombreCuenta, correo, telefono, celular, sitioWeb, informacionAdicional, zona, sector, abreviatura_moneda, nombre_moneda, login_usuario)
+VALUES	('C02', 'CuentaJSM', 'zxc@zxc.com', '456123', '789456', 'www.zxc.org', 'NO', 'Heredia', 'San Jose', 'USD', 'dolar', 'jsm');
 
 INSERT INTO FamiliaProducto (codigo, nombre, activo, descripcion)
 VALUES 
@@ -522,9 +528,9 @@ CREATE PROCEDURE insertarProducto
 	@ProActivo bit,
 	@ProDescripcion varchar(30),
 	@ProPrecioEstandar decimal(9,2),
-	@ProCodigoFamilia varchar(10),
-	@Return int OUTPUT
+	@ProCodigoFamilia varchar(10)
 AS
+DECLARE @Return int
 BEGIN
 	BEGIN TRY
 		INSERT INTO Producto VALUES (@ProCodifo, @ProNombre, @ProActivo, @ProDescripcion, 
@@ -554,9 +560,9 @@ CREATE PROCEDURE insertarContactoCliente
 	@CCZona varchar(12),
 	@CCCategoriaTipo varchar(10),
 	@CCNombreTipo varchar(12),
-	@CCAsesor varchar(10),
-	@Return int OUTPUT
+	@CCAsesor varchar(10)
 AS
+DECLARE @Return int
 BEGIN
 	BEGIN TRY
 		INSERT INTO ContactoCliente VALUES 
@@ -579,9 +585,9 @@ CREATE PROCEDURE insertarEjecucion
 	@EjeNombre varchar(12),
 	@EjeFecha date,
 	@EjeCodigoProyecto varchar(10),
-	@EjeCodigoDept varchar(10),
-	@Return int OUTPUT
+	@EjeCodigoDept varchar(10)
 AS
+DECLARE @Return int
 BEGIN
 	BEGIN TRY
 		INSERT INTO Ejecucion VALUES 
@@ -605,9 +611,9 @@ CREATE PROCEDURE insertarCaso
 	@CasoDescripcion varchar(30),
 	@CasoTipo varchar(12),
 	@CasoPrioridad varchar(3),
-	@CasoEstado varchar(12),
-	@Return int OUTPUT
+	@CasoEstado varchar(12)
 AS
+DECLARE @Return int
 BEGIN
 	BEGIN TRY
 		INSERT INTO Caso VALUES 
@@ -643,9 +649,9 @@ CREATE PROCEDURE insertarCotizacionFactura
 	@CotSector varchar(12),
 	@CotAnnoInflacion varchar(4),
 	@CotCaso varchar(10),
-	@CotUsuario varchar(10), -- asesor
-	@Return int OUTPUT
+	@CotUsuario varchar(10) -- asesor
 AS
+DECLARE @Return int
 BEGIN
 	BEGIN TRY
 		INSERT INTO Factura VALUES (@CotNumeroFactura, @FactDetalle)
@@ -664,16 +670,12 @@ BEGIN
 END
 GO
 
-DECLARE @return AS int;
-EXEC insertarProducto 'PROD001', 'Producto 01', 1, 'Primer producto', 5500, 'FMPR0001', @return OUTPUT;
-SELECT @return AS retOutputProd;
+EXEC insertarProducto 'PROD001', 'Producto 01', 1, 'Primer producto', 5500, 'FMPR0001';
 
 SELECT * FROM Producto
 GO
 
-DECLARE @return AS int;
-EXEC insertarContactoCliente 'C01', 'Acercamiento', 'Aivy', 'asd@asd.com', '88888888', 'Sabana, San Jose', 'Primer acercamiento', 'Tres Rios', 'CC', 'Inicio', 'San Jose', 'CC', 'Tipo1', 'amr', @return OUTPUT;
-SELECT @return AS retOutputCC;
+EXEC insertarContactoCliente 'C01', 'Acercamiento', 'Aivy', 'asd@asd.com', '88888888', 'Sabana, San Jose', 'Primer acercamiento', 'Tres Rios', 'CC', 'Inicio', 'San Jose', 'CC', 'Tipo1', 'amr';
 
 SELECT * FROM ContactoCliente;
 GO
