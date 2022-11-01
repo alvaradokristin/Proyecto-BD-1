@@ -58,6 +58,17 @@
                             </div>
                         </li>
 
+                        @*Dropdown to access the Contact views*@
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Contacto a Clientes
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                @*<a class="dropdown-item" asp-controller="Contact" asp-action="ShowClients">Ver todos</a>*@
+                                <a class="dropdown-item" asp-controller="Contact" asp-action="ShowContactByClient">Ver por cliente</a>
+                            </div>
+                        </li>
+
                         @*Dropdown to access the Users view*@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -71,12 +82,15 @@
                         @*Dropdown to access the Product functionalities*@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Productos
+                                Datos de Productos
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" asp-controller="Products" asp-action="EditProduct">Editar producto</a>
-                                <a class="dropdown-item" asp-controller="Products" asp-action="ShowProductReport">Ver reportes</a>
+                                @*<a class="dropdown-item" asp-controller="Products" asp-action="EditProduct">Editar producto</a>*@
                                 <a class="dropdown-item" asp-controller="Products" asp-action="ShowProducts">Ver todos</a>
+                                <a class="dropdown-item" asp-controller="Products" asp-action="ShowProductReport" asp-route-id=1>Productos mas vendidos</a>
+                                <a class="dropdown-item" asp-controller="Products" asp-action="ShowProductReport" asp-route-id=2>Familia de Productos mas vendidos</a>
+                                <a class="dropdown-item" asp-controller="Products" asp-action="ShowProductReport" asp-route-id=3>Productos mas cotizados</a>
+                                <a class="dropdown-item" asp-controller="Products" asp-action="ShowProductReport" asp-route-id=4>Familia de Productos mas cotizados</a>
                             </div>
                         </li>
 

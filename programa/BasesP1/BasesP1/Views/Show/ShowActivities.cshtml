@@ -1,6 +1,10 @@
-﻿
+﻿@{
+    ViewData["Title"] = "Actividades";
+}
+
 <h1>@ViewData["Title"]</h1>
 
+<br />
 
 @*TABLE TO SHOW THE INFORMATION FROM THE SQL TABLE*@
 <div class="table-responsive">
@@ -16,23 +20,15 @@
 
         <tbody>
             @*CREATE THE TABLES ROWS AND ASSIGN THEM THE INFORMATION FROM THE DB*@
-            @foreach (var item in Model.Data)
+            @foreach (var item in Model.Activities)
             {
                 <tr>
                     <td>@item.Codigo</td>
                     <td>@item.Nombre</td>
-                    <td>@item.Activo</td>
                     <td>@item.Descripcion</td>
-
-                    @*If is a report with products add the extar attributes*@
-                    @if (Model.Type == 1 || Model.Type == 3)
-                    {
-                        <td>@item.PrecioEstandar</td>
-                        <td>@item.CodigoFamilia</td>
-                    }
-
-                    <td>@item.CotizacionesVentas</td>
-              
+                    <td>@item.Estado</td>
+                    <td>@item.Tipo</td>
+                    <td>@item.Asesor</td>
                 </tr>
             }
         </tbody>

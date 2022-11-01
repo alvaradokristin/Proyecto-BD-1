@@ -1,25 +1,4 @@
-﻿@{
-    ViewData["Title"] = "Mostrar contacto por cliente";
-
-    //CreatedAtActionResult a list of the table headers
-    string[] tableHeaders = new string[] {
-    "Codigo"
-    ,"Nombre De Contacto"
-    ,"Motivo"
-    ,"Correo"
-    ,"Telefono"
-    ,"Dirección"
-    ,"Descripción"
-    ,"Sector"
-    ,"Estado"
-    ,"Zona"
-    ,"Tipo"
-    ,"Tareas"
-    ,"Actividades"
-    };
-}
-
-<h1>@ViewData["Title"]</h1>
+﻿<h1>@ViewData["Title"]</h1>
 
 <br/>
 
@@ -27,7 +6,7 @@
 <form>
     <div class="mb-3">
         <label for="contact-client-code" class="form-label">Codigo del cliente:</label>
-        <select class="form-select" id="contact-client-code" name="contact-client-code">
+        <select class="form-select auto-wdth" id="contact-client-code" name="contact-client-code">
             <option selected> </option>
             <option value="Cliente1">Cleinte A</option>
             <option value="Cliente2">Cliente B</option>
@@ -40,7 +19,7 @@
     <table class="table">
         <thead>
             <tr>
-                @foreach (var header in tableHeaders)
+                @foreach (var header in Model.Headers)
                 {
                     <th>@header</th>
                 }
@@ -66,14 +45,14 @@
 
                     @*ADD BUTTONS TO ADD OR SHOW TASKS*@
                     @*<td>
-                        <a class="btn btn-outline-info" href="/Show/ShowTasks?code=@item.codigo">Mostrar Tareas</a>
-                        <a class="btn btn-outline-success" href="/Add/AddTasks?code=@item.codigo">Agregar Tareas</a>
+                        <a class="btn btn-outline-info" href="/Show/ShowTasks?code=@item.codigo">Mostrar</a>
+                        <a class="btn btn-outline-success" href="/Add/AddTasks?code=@item.codigo">Agregar</a>
                     </td>*@
 
                     @*ADD BUTTONS TO ADD OR SHOW ACTIVITIES*@
                     @*<td>
-                        <a class="btn btn-outline-info" href="/Show/Activities?code=@item.codigo">Mostrar Actividades</a>
-                        <a class="btn btn-outline-success" href="/Add/AddActivities?code=@item.codigo">Agregar Actividades</a>
+                        <a class="btn btn-outline-info" href="/Show/Activities?code=@item.codigo">Mostrar</a>
+                        <a class="btn btn-outline-success" href="/Add/AddActivities?code=@item.codigo">Agregar</a>
                     </td>
                 </tr>
             }*@

@@ -52,5 +52,9 @@ namespace BasesP1.Models
         [Required]
         [StringLength(12)]
         public string? Tipo { get; set; }
+
+        [Required]
+        [StringLength(10)]
+        public string? Asesor { get; set; }
     }
 }
