@@ -791,4 +791,36 @@ RETURN
 );
 GO
 
-SELECT * FROM obtenerProductos();
+
+CREATE PROCEDURE sp_addClient 
+	@codigo VARCHAR(10), 
+	@nombreCuenta VARCHAR(12), 
+	@correo VARCHAR(20), 
+	@telefono VARCHAR(10), 
+	@celular VARCHAR(10), 
+	@sitioWeb VARCHAR(22), 
+	@informacionAdicional VARCHAR(30), 
+	@zona VARCHAR(12), 
+	@sector VARCHAR(12), 
+	@abreviatura_moneda VARCHAR(4), 
+	@nombre_moneda VARCHAR(12), 
+	@login_usuario VARCHAR(10)
+AS
+DECLARE @Return INT
+BEGIN
+	BEGIN TRY
+    INSERT INTO Cliente(
+			codigo, nombreCuenta, correo, telefono, celular, sitioWeb, informacionAdicional, zona, sector, 
+			abreviatura_moneda, nombre_moneda, login_usuario)
+        VALUES(@codigo, @nombreCuenta, @correo, @telefono, @celular, @sitioWeb, @informacionAdicional, 
+			@zona, @sector, @abreviatura_moneda, @nombre_moneda, @login_usuario)
+		SET @Return = 1
+	END TRY
+
+	BEGIN CATCH
+		PRINT @@error
+		SET @Return = -1
+	END CATCH
+END
+
+SELECT * FROM Cliente
