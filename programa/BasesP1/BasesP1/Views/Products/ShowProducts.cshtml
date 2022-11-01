@@ -1,16 +1,5 @@
 ﻿@{
     ViewData["Title"] = "Productos disponibles";
-
-    //CreatedAtActionResult a list of the table headers
-    string[] tableHeaders = new string[] {
-    "Codigo"
-    ,"Nombre"
-    ,"Activo"
-    ,"Descripcion"
-    ,"Precio"
-    ,"Codigo Familia"
-    ,"Acción"
-    };
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -22,7 +11,7 @@
     <table class="table">
         <thead>
             <tr>
-                @foreach (var header in tableHeaders)
+                @foreach (var header in Model.Headers)
                 {
                     <th>@header</th>
                 }
@@ -31,7 +20,7 @@
 
         <tbody>
             @*CREATE THE TABLES ROWS AND ASSIGN THEM THE INFORMATION FROM THE DB*@
-            @foreach (var item in Model)
+            @foreach (var item in Model.Products)
             {
                 <tr>
                     <td>@item.Codigo</td>
