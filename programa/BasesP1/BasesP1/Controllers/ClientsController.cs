@@ -1,6 +1,7 @@
 ﻿using BasesP1.Data;
 using BasesP1.Models;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Configuration;
 
 namespace BasesP1.Controllers
 {
@@ -13,9 +14,18 @@ namespace BasesP1.Controllers
             Configuration = configuration;
         }
 
-        public IActionResult AddClient()
+        public IActionResult loadAddClientView()
         {
-            return View();
+            ClientData clientData = new ClientData(this.Configuration);
+            List<Zone> zones = clientData.getZones();
+            List<Sector> sectors = clientData.getSectors();
+            List<User> users = clientData.getUsers();
+            ClientDataContainer clientDataContainer = new ClientDataContainer();
+            clientDataContainer.zones = zones;
+            clientDataContainer.sectors = sectors;
+            clientDataContainer.user_logins = users;
+
+            return View("AddClient", clientDataContainer);
         }
         public IActionResult ShowClients()
         {
@@ -44,6 +54,15 @@ namespace BasesP1.Controllers
         public void deleteClient(string codigo)
         {
             System.Diagnostics.Debug.WriteLine(codigo);
+        }
+
+        [HttpPost]
+        public IActionResult AddClient(Client client)
+        {
+            ClientData clientData = new ClientData(this.Configuration);
+            clientData.addClient(client);
+            List<Client> clients = clientData.getClients();
+            return View("Clients", clients);
         }
     }
 }

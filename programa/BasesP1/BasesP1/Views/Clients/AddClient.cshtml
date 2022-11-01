@@ -2,37 +2,39 @@
     ViewData["Title"] = "Agregar Cliente";
 }
 
+@model ClientDataContainer
+
 <h1>@ViewData["Title"]</h1>
 
 @*FORM TO GET THE USER INPUT TO ADD TO THE DATABASE*@
-<form>
+<form asp-action="addClient" asp-controller="Clients" method="post">
     <div class="mb-3">
         <label for="client-code" class="form-label">Código:</label>
-        <input type="text" class="form-control" id="client-code" name="client-code">
+        <input type="text" class="form-control" id="codigo" name="codigo">
     </div>
     <div class="mb-3">
         <label for="client-account-name" class="form-label">Nombre de la cuenta:</label>
-        <input type="text" class="form-control" id="client-account-name" name="client-account-name">
+        <input type="text" class="form-control" id="nombreCuenta" name="nombreCuenta">
     </div>
     <div class="mb-3">
         <label for="client-email" class="form-label">Correo del cliente:</label>
-        <input type="text" class="form-control" id="client-email" name="client-email">    
+        <input type="text" class="form-control" id="correo" name="correo">
     </div>
     <div class="mb-3">
         <label for="client-phone-number" class="form-label">Número de telefono:</label>
-        <input type="text" class="form-control" id="client-phone-number" name="client-phone-number">
+        <input type="text" class="form-control" id="telefono" name="telefono">
     </div>
     <div class="mb-3">
         <label for="client-cellphone-number" class="form-label">Número de celular:</label>
-        <input type="text" class="form-control" id="client-cellphone-number" name="client-cellphone-number">
+        <input type="text" class="form-control" id="celular" name="celular">
     </div>
     <div class="mb-3">
         <label for="client-website" class="form-label">Sitio web:</label>
-        <input type="text" class="form-control" id="client-website" name="client-website">
+        <input type="text" class="form-control" id="sitioWeb" name="sitioWeb">
     </div>
     <div class="mb-3">
         <label for="client-currency" class="form-label">Moneda a utilizar:</label>
-        <select class="form-select" id="client-currency" name="client-currency">
+        <select class="form-select" id="abreviatura_moneda" name="abreviatura_moneda">
             <option selected> </option>
             <option value="CRC">CRC</option>
             <option value="USD">USD</option>
@@ -40,34 +42,34 @@
     </div>
     <div class="mb-3">
         <label for="client-zone" class="form-label">Zona:</label>
-        <select class="form-select" id="client-zone" name="client-zone">
-            <option selected> </option>
-            <option value="Zone1">Zone 1</option>
-            <option value="Zone2">Zone 2</option>
-            <option value="Zone3">Zone 3</option>
+        <select class="form-select" id="zona" name="zona">
+            @foreach (var item in Model.zones)
+            {
+                <option value="@item.nombre">@item.nombre</option>
+            }
         </select>
     </div>
     <div class="mb-3">
         <label for="client-sector" class="form-label">Sector:</label>
-        <select class="form-select" id="client-sector" name="client-sector">
-            <option selected> </option>
-            <option value="Sector1">Sector1</option>
-            <option value="Sector2">Sector2</option>
-            <option value="Sector3">Sector3</option>
+        <select class="form-select" id="sector" name="sector">
+            @foreach (var item in Model.sectors)
+            {
+                <option value="@item.nombre">@item.nombre</option>
+            }
         </select>
     </div>
     <div class="mb-3">
         <label for="client-adviser" class="form-label">Usuario:</label>
-        <select class="form-select" id="client-adviser" name="client-adviser">
-            <option selected> </option>
-            <option value="Usuario1">Usuario1</option>
-            <option value="Usuario2">Usuario2</option>
-            <option value="Usuario3">Usuario3</option>
+        <select class="form-select" id="login_usuario" name="login_usuario">
+            @foreach (var item in Model.user_logins)
+            {
+                <option value="@item.userLogin">@item.userLogin</option>
+            }
         </select>
     </div>
     <div class="mb-3">
         <label for="client-additional-info" class="form-label">Informacion adicional:</label>
-        <textarea class="form-control" id="client-additional-info" rows="3" name="client-additional-info"></textarea>
+        <textarea class="form-control" id="informacionAdicional" rows="3" name="informacionAdicional"></textarea>
     </div>
     <button type="submit" class="btn btn-outline-secondary">Agregar</button>
 </form>
