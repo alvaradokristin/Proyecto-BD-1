@@ -213,12 +213,14 @@ CREATE TABLE ContactoCliente (
 	zona varchar(12) NOT NULL,
 	categoria_tipo varchar(10) NOT NULL,
 	nombre_tipo varchar(12) NOT NULL,
+	asesor varchar(10) NOT NULL,
 	PRIMARY KEY (codigoCliente, motivo),
 	FOREIGN KEY (codigoCliente) REFERENCES Cliente(codigo),
 	FOREIGN KEY (sector) REFERENCES Sector(nombre),
 	FOREIGN KEY (categoria_estado, nombre_estado) REFERENCES Estado(categoria, nombre),
 	FOREIGN KEY (zona) REFERENCES Zona(nombre),
 	FOREIGN KEY (categoria_tipo, nombre_tipo) REFERENCES Tipo(categoria, nombre),
+	FOREIGN KEY (asesor) REFERENCES Usuario(userLogin)
 )
 
 -- Usa Usuario y Estado
@@ -510,6 +512,9 @@ VALUES
 (-1, 'Placeholder para compras no realizadas todavia');
 GO
 
+-- #-----------------------------------#
+-- #          PROCEDIMIENTOS           #
+-- #-----------------------------------#
 -- Procedimiento para poder agregar valores a la tabla de Producto
 CREATE PROCEDURE insertarProducto
 	@ProCodifo varchar(10),
@@ -549,6 +554,7 @@ CREATE PROCEDURE insertarContactoCliente
 	@CCZona varchar(12),
 	@CCCategoriaTipo varchar(10),
 	@CCNombreTipo varchar(12),
+	@CCAsesor varchar(10),
 	@Return int OUTPUT
 AS
 BEGIN
@@ -556,7 +562,7 @@ BEGIN
 		INSERT INTO ContactoCliente VALUES 
 		(@CCCodigoCliente, @CCMotivo, @CCNombreContacto, @CCCorreo, @CCTelefono, 
 		@CCDireccion, @CCDescripcion, @CCSector, @CCCategoriaEstado, @CCNombreEstado, 
-		@CCZona, @CCCategoriaTipo, @CCNombreTipo)
+		@CCZona, @CCCategoriaTipo, @CCNombreTipo, @CCAsesor)
 		SET @Return = 1
 	END TRY
 
@@ -666,10 +672,23 @@ SELECT * FROM Producto
 GO
 
 DECLARE @return AS int;
-EXEC insertarContactoCliente 'C01', 'Acercamiento', 'Aivy', 'asd@asd.com', '88888888', 'Sabana, San Jose', 'Primer acercamiento', 'Tres Rios', 'CC', 'Inicio', 'San Jose', 'CC', 'Tipo1', @return OUTPUT;
+EXEC insertarContactoCliente 'C01', 'Acercamiento', 'Aivy', 'asd@asd.com', '88888888', 'Sabana, San Jose', 'Primer acercamiento', 'Tres Rios', 'CC', 'Inicio', 'San Jose', 'CC', 'Tipo1', 'amr', @return OUTPUT;
 SELECT @return AS retOutputCC;
 
 SELECT * FROM ContactoCliente;
+GO
+
+-- #------------------------------#
+-- #          FUNCIONES           #
+-- #------------------------------#
+-- Funcion para seleccionar todos los productos
+CREATE FUNCTION obtenerFamProd()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT * FROM FamiliaProducto
+);
 GO
 
 -- Funcion para seleccionar todos los productos
@@ -679,6 +698,96 @@ AS
 RETURN
 (
 	SELECT * FROM Producto
+);
+GO
+
+-- Funcion para seleccionar los productos mas vendidos
+CREATE FUNCTION masVendidosProductos()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT TOP 10
+	p.codigo,
+	p.nombre,
+	p.activo,
+	p.descripcion,
+	p.precioEstandar,
+	p.codigo_familia,
+	c.ordenCompra,
+	COUNT(DISTINCT pxc.numero_cotizacion) AS ventas
+	FROM Producto AS p
+	JOIN ProductoXCotizacion AS pxc ON pxc.codigo_producto = p.codigo
+	JOIN Cotizacion AS c ON c.numeroCotizacion = pxc.numero_cotizacion
+	GROUP BY p.codigo, p.nombre, p.activo, p.descripcion, p.precioEstandar, p.codigo_familia, c.ordenCompra
+	HAVING c.ordenCompra != -1 -- si se efectuo la venta
+	ORDER BY ventas DESC
+);
+GO
+
+-- Funcion para seleccionar las familias de productos mas vendidos
+CREATE FUNCTION masVendidosFamProductos()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT TOP 10
+	fp.codigo,
+	fp.nombre,
+	fp.activo,
+	fp.descripcion,
+	c.ordenCompra,
+	COUNT(DISTINCT pxc.numero_cotizacion) AS ventas
+	FROM FamiliaProducto AS fp
+	JOIN Producto AS p ON p.codigo_familia = fp.codigo
+	JOIN ProductoXCotizacion AS pxc ON pxc.codigo_producto = p.codigo
+	JOIN Cotizacion AS c ON c.numeroCotizacion = pxc.numero_cotizacion
+	GROUP BY fp.codigo, fp.nombre, fp.activo, fp.descripcion, c.ordenCompra
+	HAVING c.ordenCompra != -1 -- si se efectuo la venta
+	ORDER BY ventas DESC
+);
+GO
+
+-- Funcion para seleccionar los productos mas cotizados
+CREATE FUNCTION masCotizadosProductos()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT TOP 10
+	p.codigo,
+	p.nombre,
+	p.activo,
+	p.descripcion,
+	p.precioEstandar,
+	p.codigo_familia,
+	COUNT(DISTINCT pxc.numero_cotizacion) AS cotizaciones
+	FROM Producto AS p
+	JOIN ProductoXCotizacion AS pxc ON pxc.codigo_producto = p.codigo
+	JOIN Cotizacion AS c ON c.numeroCotizacion = pxc.numero_cotizacion
+	GROUP BY p.codigo, p.nombre, p.activo, p.descripcion, p.precioEstandar, p.codigo_familia
+	ORDER BY cotizaciones DESC
+);
+GO
+
+-- Funcion para seleccionar las familias de productos mas vendidos
+CREATE FUNCTION masCotizadosFamProductos()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT TOP 10
+	fp.codigo,
+	fp.nombre,
+	fp.activo,
+	fp.descripcion,
+	COUNT(DISTINCT pxc.numero_cotizacion) AS cotizaciones
+	FROM FamiliaProducto AS fp
+	JOIN Producto AS p ON p.codigo_familia = fp.codigo
+	JOIN ProductoXCotizacion AS pxc ON pxc.codigo_producto = p.codigo
+	JOIN Cotizacion AS c ON c.numeroCotizacion = pxc.numero_cotizacion
+	GROUP BY fp.codigo, fp.nombre, fp.activo, fp.descripcion
+	ORDER BY cotizaciones DESC
 );
 GO
 
