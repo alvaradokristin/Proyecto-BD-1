@@ -426,6 +426,9 @@ VALUES	('Editor'),
 INSERT INTO Usuario (userLogin, cedula, nombre, primerApellido, segundoApellido, clave, nombre_rol, codigo_departamento)
 VALUES	('amr', '123456789', 'Aivy', 'Masis', 'Rivera', 'amr123','Editor', 'DP01');
 
+INSERT INTO Usuario (userLogin, cedula, nombre, primerApellido, segundoApellido, clave, nombre_rol, codigo_departamento)
+VALUES	('jsm', '789456123', 'test', 'test1', 'test2', 'jsm123','Visor', 'DP03');
+
 INSERT INTO Moneda (abreviatura, nombre)
 VALUES	('USD', 'dolar'),
 		('CRC', 'colon');
@@ -442,6 +445,9 @@ VALUES	('Tres Rios'),
 
 INSERT INTO Cliente (codigo, nombreCuenta, correo, telefono, celular, sitioWeb, informacionAdicional, zona, sector, abreviatura_moneda, nombre_moneda, login_usuario)
 VALUES	('C01', 'CuentaAMR', 'asd@asd.com', '123456', '456789', 'www.asd.cr', 'NO', 'Cartago', 'Tres Rios', 'CRC', 'colon', 'amr');
+
+INSERT INTO Cliente (codigo, nombreCuenta, correo, telefono, celular, sitioWeb, informacionAdicional, zona, sector, abreviatura_moneda, nombre_moneda, login_usuario)
+VALUES	('C02', 'CuentaJSM', 'zxc@zxc.com', '456123', '789456', 'www.zxc.org', 'NO', 'Heredia', 'San Jose', 'USD', 'dolar', 'jsm');
 
 INSERT INTO FamiliaProducto (codigo, nombre, activo, descripcion)
 VALUES 
@@ -791,4 +797,36 @@ RETURN
 );
 GO
 
-SELECT * FROM obtenerProductos();
+
+ALTER PROCEDURE sp_addClient 
+	@codigo VARCHAR(10), 
+	@nombreCuenta VARCHAR(12), 
+	@correo VARCHAR(20), 
+	@telefono VARCHAR(10), 
+	@celular VARCHAR(10), 
+	@sitioWeb VARCHAR(22), 
+	@informacionAdicional VARCHAR(30), 
+	@zona VARCHAR(12), 
+	@sector VARCHAR(12), 
+	@abreviatura_moneda VARCHAR(4), 
+	@nombre_moneda VARCHAR(12), 
+	@login_usuario VARCHAR(10)
+AS
+DECLARE @Return INT
+BEGIN
+	BEGIN TRY
+    INSERT INTO Cliente(
+			codigo, nombreCuenta, correo, telefono, celular, sitioWeb, informacionAdicional, zona, sector, 
+			abreviatura_moneda, nombre_moneda, login_usuario)
+        VALUES(@codigo, @nombreCuenta, @correo, @telefono, @celular, @sitioWeb, @informacionAdicional, 
+			@zona, @sector, @abreviatura_moneda, @nombre_moneda, @login_usuario)
+		SET @Return = 1
+	END TRY
+
+	BEGIN CATCH
+		PRINT @@error
+		SET @Return = -1
+	END CATCH
+END
+
+SELECT * FROM Cliente

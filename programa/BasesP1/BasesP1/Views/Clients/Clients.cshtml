@@ -2,6 +2,8 @@
     ViewData["Title"] = "Información de clientes";
 }
 
+@model List<Client>
+
 <h1>@ViewData["Title"]</h1>
 
 <main id="main">
@@ -11,7 +13,7 @@
                 <tr>
                     <th scope="col">Nombre de cuenta</th>
                     <th scope="col">Correo electrónico</th>
-                    <th scope="col">Contacto principal</th>
+                    <!--<th scope="col">Contacto principal</th>-->
                     <th scope="col">Moneda</th>
                     <th scope="col">Telefono</th>
                     <th scope="col">Celular</th>
@@ -23,6 +25,28 @@
                     <th scope="col">Acciones</th>
                 </tr>
             </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td hidden><input value="@item.codigo" id="codigo" /></td>
+                        <td>@item.nombreCuenta</td>
+                        <td>@item.correo</td>
+                        <td>@item.nombre_moneda</td>
+                        <td>@item.telefono</td>
+                        <td>@item.celular</td>
+                        <td>@item.sitioWeb</td>
+                        <td>@item.informacionAdicional</td>
+                        <td>@item.login_usuario</td>
+                        <td>@item.zona</td>
+                        <td>@item.sector</td>
+
+                        <td>
+                            <input type="button" value="eliminar" class="btn btn-danger" onclick="location.href='@Url.Action("deleteClient", "Clients")?codigo=' + document.getElementById('codigo').value" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
         </table>
     </div>
 </main>
