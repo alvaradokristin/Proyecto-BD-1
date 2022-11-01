@@ -2,44 +2,41 @@
 using BasesP1.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Data.SqlClient;
+using System.Diagnostics;
 
 namespace BasesP1.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly SistemaCRMContext _context;
 
-        public ProductsController(SistemaCRMContext context)
+        public IConfiguration Configuration { get; }
+
+        public ProductsController(IConfiguration configuration)
         {
-            _context = context;
+            Configuration = configuration;
         }
 
-        // GET: Products
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Producto.ToListAsync());
-        }
-
-        // GET: Products/ShowProducts/5
-        public async Task<IActionResult> Details(string id)
-        {
-            if (id == null || _context.Producto == null)
-            {
-                return NotFound();
-            }
-
-            var producto = await _context.Producto
-                .FirstOrDefaultAsync(m => m.Codigo == id);
-            if (producto == null)
-            {
-                return NotFound();
-            }
-
-            return View(producto);
-        }
         public IActionResult AddProduct()
         {
             return View();
+        }
+
+        public IActionResult EditProduct()
+        {
+            return View();
+        }
+
+        public IActionResult ShowProductReport()
+        {
+            return View();
+        }
+        public IActionResult ShowProducts()
+        {
+            ProductData productData = new ProductData(this.Configuration);
+            List<Product> products = productData.getProducts();
+
+            return View("ShowProducts", products);
         }
     }
 }
