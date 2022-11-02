@@ -35,9 +35,10 @@
     <div class="mb-3">
         <label for="client-currency" class="form-label">Moneda a utilizar:</label>
         <select class="form-select" id="abreviatura_moneda" name="abreviatura_moneda">
-            <option selected> </option>
-            <option value="CRC">CRC</option>
-            <option value="USD">USD</option>
+            @foreach (var item in Model.currencies)
+            {
+                <option value="@item.abreviatura">@item.abreviatura</option>
+            }
         </select>
     </div>
     <div class="mb-3">

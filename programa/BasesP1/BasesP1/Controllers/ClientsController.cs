@@ -20,10 +20,12 @@ namespace BasesP1.Controllers
             List<Zone> zones = clientData.getZones();
             List<Sector> sectors = clientData.getSectors();
             List<User> users = clientData.getUsers();
+            List<Currency> currencies = clientData.getCurrencies();
             ClientDataContainer clientDataContainer = new ClientDataContainer();
             clientDataContainer.zones = zones;
             clientDataContainer.sectors = sectors;
             clientDataContainer.user_logins = users;
+            clientDataContainer.currencies = currencies;
 
             return View("AddClient", clientDataContainer);
         }
@@ -36,15 +38,70 @@ namespace BasesP1.Controllers
         }
         public IActionResult ShowClientsBySector()
         {
-            return View("ClientsBySector");
+            ClientData clientData = new ClientData(this.Configuration);
+            List<Sector> sectors = clientData.getSectors();
+            ClientDataContainer clientDataContainer = new ClientDataContainer();
+            clientDataContainer.sectors = sectors;
+            clientDataContainer.clients = null;
+
+            return View("ClientsBySector", clientDataContainer);
         }
+
+        public IActionResult LoadClientsBySector(string sectorName)
+        {
+            ClientData clientData = new ClientData(this.Configuration);
+            List<Sector> sectors = clientData.getSectors();
+            List<Client> clients = clientData.getClientsBySector(sectorName);
+            ClientDataContainer clientDataContainer = new ClientDataContainer();
+            clientDataContainer.sectors = sectors;
+            clientDataContainer.clients = clients;
+
+            return View("ClientsBySector", clientDataContainer);
+        }
+
         public IActionResult ShowClientsByZone()
         {
-            return View("ClientsByZone");
+            ClientData clientData = new ClientData(this.Configuration);
+            List<Zone> zones = clientData.getZones();
+            ClientDataContainer clientDataContainer = new ClientDataContainer();
+            clientDataContainer.zones = zones;
+            clientDataContainer.clients = null;
+
+
+            return View("ClientsByZone", clientDataContainer);
+        }
+        public IActionResult LoadClientsByZone(string zoneName)
+        {
+            ClientData clientData = new ClientData(this.Configuration);
+            List<Zone> zones = clientData.getZones();
+            List<Client> clients = clientData.getClientsByZone(zoneName);
+            ClientDataContainer clientDataContainer = new ClientDataContainer();
+            clientDataContainer.zones = zones;
+            clientDataContainer.clients = clients;
+
+            return View("ClientsByZone", clientDataContainer);
         }
         public IActionResult ShowClientsByQuotes()
         {
-            return View("ClientsByQuotes");
+            ClientData clientData = new ClientData(this.Configuration);
+            List<Quotation> quotes = clientData.getQuotes();
+            ClientDataContainer clientDataContainer = new ClientDataContainer();
+            clientDataContainer.quotes = quotes;
+            clientDataContainer.clients = null;
+
+            return View("ClientsByQuotes", clientDataContainer);
+        }
+
+        public IActionResult LoadClientsByQuotes(Int16 quotationNumber)
+        {
+            ClientData clientData = new ClientData(this.Configuration);
+            List<Quotation> quotes = clientData.getQuotes();
+            List<Client> clients = clientData.getClientsByQuotes(quotationNumber);
+            ClientDataContainer clientDataContainer = new ClientDataContainer();
+            clientDataContainer.quotes = quotes;
+            clientDataContainer.clients = clients;
+
+            return View("ClientsByQuotes", clientDataContainer);
         }
         public IActionResult ShowClientsByQuotedAmount()
         {
