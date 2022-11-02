@@ -146,7 +146,7 @@ namespace BasesP1.Data
             {
                 connection.Open();
 
-                string sql = $"SELECT userLogin FROM Usuario";
+                string sql = $"SELECT * FROM usuarios()";
                 using (var command = new SqlCommand(sql, connection))
                 {
                     using (var dataReader = command.ExecuteReader())
@@ -155,6 +155,12 @@ namespace BasesP1.Data
                         {
                             User user = new User();
                             user.userLogin = Convert.ToString(dataReader["userLogin"]);
+                            user.cedula = Convert.ToString(dataReader["cedula"]);
+                            user.nombre = Convert.ToString(dataReader["nombre"]);
+                            user.primerApellido = Convert.ToString(dataReader["primerApellido"]);
+                            user.segundoApellido = Convert.ToString(dataReader["segundoApellido"]);
+                            user.nombre_rol = Convert.ToString(dataReader["nombre_rol"]);
+                            user.codigo_departamento = Convert.ToString(dataReader["codigo_departamento"]);
                             users.Add(user);
                         }
                     }

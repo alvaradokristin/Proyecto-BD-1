@@ -36,5 +36,13 @@ namespace BasesP1.Models
         [Required]
         [StringLength(10)]
         public string? codigo_departamento { get; set; }
+
+        public string? nombreCompleto
+        {
+            get
+            {
+                return nombre + " " + primerApellido + " " + segundoApellido;
+            }
+}
     }
 }

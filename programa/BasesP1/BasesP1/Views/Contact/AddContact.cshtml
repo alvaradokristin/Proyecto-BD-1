@@ -1,91 +1,95 @@
-﻿@{
-    ViewData["Title"] = "Agregar Contacto a Cliente";
-}
-
+﻿
 <h1>@ViewData["Title"]</h1>
 
 @*FORM TO GET THE USER INPUT TO ADD TO THE DATABASE*@
-<form>
+<form asp-action="addContact" asp-controller="Contact" method="post">
     @*<div class="mb-3">
         <label for="contact-code" class="form-label">Codigo del cliente:</label>
         <input type="text" class="form-control" id="contact-code" name="contact-code">
     </div>*@
     <div class="mb-3">
         <label for="contact-client-code" class="form-label">Codigo del cliente:</label>
-        <select class="form-select" id="contact-client-code" name="contact-client-code">
+        <select class="form-select" id="CodigoCliente" name="CodigoCliente">
             <option selected> </option>
-            <option value="Cliente1">Cleinte A</option>
-            <option value="Cliente2">Cliente B</option>
+            @foreach (var item in Model.Clients)
+            {
+                <option value="@item.codigo">@item.nombreCuenta</option>
+            }
         </select>
     </div>
     <div class="mb-3">
         <label for="contact-type" class="form-label">Tipo:</label>
-        <select class="form-select" id="contact-type" name="contact-type">
+        <select class="form-select" id="Tipo" name="Tipo">
             <option selected> </option>
-            <option value="Tipo1">Tipo 1</option>
-            <option value="Tipo2">Tipo 2</option>
-            <option value="Tipo3">Tipo 3</option>
+            @foreach (var item in Model.Types)
+            {
+                <option value="@item.Nombre">@item.Nombre</option>
+            }
         </select>
     </div>
     <div class="mb-3">
         <label for="contact-reason" class="form-label">Motivo:</label>
-        <input type="text" class="form-control" id="contact-reason" name="contact-reason">
+        <input type="text" class="form-control" id="Motivo" name="Motivo">
     </div>
     <div class="mb-3">
         <label for="contact-name" class="form-label">Nombre del contacto:</label>
-        <input type="text" class="form-control" id="contact-name" name="contact-name">
+        <input type="text" class="form-control" id="NombreContacto" name="NombreContacto">
     </div>
     <div class="mb-3">
         <label for="contact-email" class="form-label">Correo:</label>
-        <input type="text" class="form-control" id="contact-email" name="contact-email">
+        <input type="text" class="form-control" id="Correo" name="Correo">
     </div>
     <div class="mb-3">
         <label for="contact-phone-number" class="form-label">Número de telefono:</label>
-        <input type="text" class="form-control" id="contact-phone-number" name="contact-phone-number">
+        <input type="text" class="form-control" id="Telefono" name="Telefono">
     </div>
     <div class="mb-3">
         <label for="contact-status" class="form-label">Estado:</label>
-        <select class="form-select" id="contact-status" name="contact-status">
+        <select class="form-select" id="Estado" name="Estado">
             <option selected> </option>
-            <option value="Status1">Status 1</option>
-            <option value="Status2">Status 1</option>
-            <option value="Status3">Status 1</option>
+            @foreach (var item in Model.Status)
+            {
+                <option value="@item.Nombre">@item.Nombre</option>
+            }
         </select>
     </div>
     <div class="mb-3">
         <label for="contact-address" class="form-label">Dirección:</label>
-        <input type="text" class="form-control" id="contact-address" name="contact-address">
+        <input type="text" class="form-control" id="Direccion" name="Direccion">
     </div>
     <div class="mb-3">
         <label for="contact-zone" class="form-label">Zona:</label>
-        <select class="form-select" id="contact-zone" name="contact-zone">
+        <select class="form-select" id="Zona" name="Zona">
             <option selected> </option>
-            <option value="Zone1">Zone 1</option>
-            <option value="Zone2">Zone 2</option>
-            <option value="Zone3">Zone 3</option>
+            @foreach (var item in Model.Zones)
+            {
+                <option value="@item.nombre">@item.nombre</option>
+            }
         </select>
     </div>
     <div class="mb-3">
         <label for="contact-sector" class="form-label">Sector:</label>
-        <select class="form-select" id="contact-sector" name="contact-sector">
+        <select class="form-select" id="Sector" name="Sector">
             <option selected> </option>
-            <option value="Sector1">Sector 1</option>
-            <option value="Sector2">Sector 2</option>
-            <option value="Sector3">Sector 3</option>
+            @foreach (var item in Model.Sectors)
+            {
+                <option value="@item.nombre">@item.nombre</option>
+            }
         </select>
     </div>
     <div class="mb-3">
         <label for="contact-adviser" class="form-label">Asesor:</label>
-        <select class="form-select" id="contact-adviser" name="contact-adviser">
+        <select class="form-select" id="Asesor" name="Asesor">
             <option selected> </option>
-            <option value="User1">User 1</option>
-            <option value="User2">User 2</option>
-            <option value="User3">User 3</option>
+            @foreach (var item in Model.Users)
+            {
+                <option value="@item.userLogin">@item.nombreCompleto</option>
+            }
         </select>
     </div>
     <div class="mb-3">
         <label for="contact-desc" class="form-label">Descripción:</label>
-        <textarea class="form-control" id="contact-desc" rows="3" name="contact-desc"></textarea>
+        <textarea class="form-control" id="Descripcion" rows="3" name="Descripcion"></textarea>
     </div>
     <button type="submit" class="btn btn-outline-secondary">Agregar</button>
 </form>

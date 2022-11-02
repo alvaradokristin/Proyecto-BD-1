@@ -11,15 +11,17 @@ namespace BasesP1.Models
         [Display(Name = "Codigo del Cliente")]
         public string? CodigoCliente { get; set; }
 
-        [Key]
-        [Required]
-        [StringLength(15)]
-        public string? Motivo { get; set; }
+        public string? NombreCuenta { get; set; }
 
         [Required]
         [StringLength(12)]
         [Display(Name = "Nombre del Contacto")]
         public string? NombreContacto { get; set; }
+
+        [Key]
+        [Required]
+        [StringLength(15)]
+        public string? Motivo { get; set; }
 
         [Required]
         [StringLength(20)]

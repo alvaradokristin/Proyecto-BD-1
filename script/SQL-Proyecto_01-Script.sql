@@ -528,9 +528,9 @@ CREATE PROCEDURE insertarProducto
 	@ProActivo bit,
 	@ProDescripcion varchar(30),
 	@ProPrecioEstandar decimal(9,2),
-	@ProCodigoFamilia varchar(10),
-	@Return int OUTPUT
+	@ProCodigoFamilia varchar(10)
 AS
+DECLARE @Return int
 BEGIN
 	BEGIN TRY
 		INSERT INTO Producto VALUES (@ProCodifo, @ProNombre, @ProActivo, @ProDescripcion, 
@@ -555,20 +555,18 @@ CREATE PROCEDURE insertarContactoCliente
 	@CCDireccion varchar(35),
 	@CCDescripcion varchar(30),
 	@CCSector varchar(12),
-	@CCCategoriaEstado varchar(10),
 	@CCNombreEstado varchar(12),
 	@CCZona varchar(12),
-	@CCCategoriaTipo varchar(10),
 	@CCNombreTipo varchar(12),
-	@CCAsesor varchar(10),
-	@Return int OUTPUT
+	@CCAsesor varchar(10)
 AS
+DECLARE @Return int
 BEGIN
 	BEGIN TRY
 		INSERT INTO ContactoCliente VALUES 
 		(@CCCodigoCliente, @CCMotivo, @CCNombreContacto, @CCCorreo, @CCTelefono, 
-		@CCDireccion, @CCDescripcion, @CCSector, @CCCategoriaEstado, @CCNombreEstado, 
-		@CCZona, @CCCategoriaTipo, @CCNombreTipo, @CCAsesor)
+		@CCDireccion, @CCDescripcion, @CCSector, 'CC', @CCNombreEstado, 
+		@CCZona, 'CC', @CCNombreTipo, @CCAsesor)
 		SET @Return = 1
 	END TRY
 
@@ -585,9 +583,9 @@ CREATE PROCEDURE insertarEjecucion
 	@EjeNombre varchar(12),
 	@EjeFecha date,
 	@EjeCodigoProyecto varchar(10),
-	@EjeCodigoDept varchar(10),
-	@Return int OUTPUT
+	@EjeCodigoDept varchar(10)
 AS
+DECLARE @Return int
 BEGIN
 	BEGIN TRY
 		INSERT INTO Ejecucion VALUES 
@@ -611,9 +609,9 @@ CREATE PROCEDURE insertarCaso
 	@CasoDescripcion varchar(30),
 	@CasoTipo varchar(12),
 	@CasoPrioridad varchar(3),
-	@CasoEstado varchar(12),
-	@Return int OUTPUT
+	@CasoEstado varchar(12)
 AS
+DECLARE @Return int
 BEGIN
 	BEGIN TRY
 		INSERT INTO Caso VALUES 
@@ -649,9 +647,9 @@ CREATE PROCEDURE insertarCotizacionFactura
 	@CotSector varchar(12),
 	@CotAnnoInflacion varchar(4),
 	@CotCaso varchar(10),
-	@CotUsuario varchar(10), -- asesor
-	@Return int OUTPUT
+	@CotUsuario varchar(10) -- asesor
 AS
+DECLARE @Return int
 BEGIN
 	BEGIN TRY
 		INSERT INTO Factura VALUES (@CotNumeroFactura, @FactDetalle)
@@ -670,16 +668,12 @@ BEGIN
 END
 GO
 
-DECLARE @return AS int;
-EXEC insertarProducto 'PROD001', 'Producto 01', 1, 'Primer producto', 5500, 'FMPR0001', @return OUTPUT;
-SELECT @return AS retOutputProd;
+EXEC insertarProducto 'PROD001', 'Producto 01', 1, 'Primer producto', 5500, 'FMPR0001';
 
 SELECT * FROM Producto
 GO
 
-DECLARE @return AS int;
-EXEC insertarContactoCliente 'C01', 'Acercamiento', 'Aivy', 'asd@asd.com', '88888888', 'Sabana, San Jose', 'Primer acercamiento', 'Tres Rios', 'CC', 'Inicio', 'San Jose', 'CC', 'Tipo1', 'amr', @return OUTPUT;
-SELECT @return AS retOutputCC;
+EXEC insertarContactoCliente 'C01', 'Acercamiento', 'Aivy', 'asd@asd.com', '88888888', 'Sabana, San Jose', 'Primer acercamiento', 'Tres Rios', 'Inicio', 'San Jose', 'Tipo1', 'amr';
 
 SELECT * FROM ContactoCliente;
 GO
@@ -704,6 +698,35 @@ AS
 RETURN
 (
 	SELECT * FROM Producto
+);
+GO
+
+-- Funcion para seleccionar todos los contactos a clientes
+CREATE FUNCTION obtenerTodosContactos()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT 
+	cc.*,
+	c.nombreCuenta
+	FROM ContactoCliente AS cc
+	JOIN Cliente AS c ON c.codigo = cc.codigoCliente
+);
+GO
+
+-- Funcion para seleccionar todos los contactos a clientes
+CREATE FUNCTION obtenerContactosCliente(@Cliente varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT 
+	cc.*,
+	c.nombreCuenta
+	FROM ContactoCliente AS cc
+	JOIN Cliente AS c ON c.codigo = cc.codigoCliente
+	WHERE codigoCliente = @Cliente
 );
 GO
 
@@ -797,8 +820,60 @@ RETURN
 );
 GO
 
+-- Funcion para seleccionar la informacion basica de los usuarios para usar en los catalogos
+CREATE FUNCTION usuarioBasico()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT
+	userLogin,
+	nombre,
+	primerApellido,
+	segundoApellido
+	FROM Usuario
+);
+GO
 
-ALTER PROCEDURE sp_addClient 
+-- Funcion para seleccionar la informacion de los usuarios
+CREATE FUNCTION usuarios()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT
+	*
+	FROM Usuario
+);
+GO
+
+-- Funcion para seleccionar estado por categoria
+CREATE FUNCTION estadoBasico(@Categoria varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT
+	nombre
+	FROM Estado
+	WHERE categoria = @Categoria
+);
+GO
+
+-- Funcion para seleccionar tipo por categoria
+CREATE FUNCTION tipoBasico(@Categoria varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT
+	nombre
+	FROM Tipo
+	WHERE categoria = @Categoria
+);
+GO
+
+CREATE PROCEDURE sp_addClient 
 	@codigo VARCHAR(10), 
 	@nombreCuenta VARCHAR(12), 
 	@correo VARCHAR(20), 
@@ -829,4 +904,6 @@ BEGIN
 	END CATCH
 END
 
-SELECT * FROM Cliente
+SELECT * FROM Usuario
+
+SELECT * FROM usuarioBasico()
