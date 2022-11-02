@@ -36,10 +36,9 @@
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" asp-controller="Users" asp-action="AddUser">Usuario</a>
-                                <a class="dropdown-item disabled" asp-controller="Home" asp-action="Index">Departamento</a>
-                                <a class="dropdown-item" asp-controller="Products" asp-action="AddProduct">Producto</a>
+                                <a class="dropdown-item" asp-controller="Products" asp-action="LoadAddProduct">Producto</a>
                                 <a class="dropdown-item" asp-controller="Clients" asp-action="loadAddClientView">Cliente</a>
-                                <a class="dropdown-item" asp-controller="Contact" asp-action="AddContact">Contacto Cliente</a>
+                                <a class="dropdown-item" asp-controller="Contact" asp-action="LoadAddContact">Contacto Cliente</a>
                                 <a class="dropdown-item" asp-controller="Quote" asp-action="AddQuote">Cotización</a>
                             </div>
                         </li>
@@ -64,7 +63,7 @@
                                 Contacto a Clientes
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                @*<a class="dropdown-item" asp-controller="Contact" asp-action="ShowClients">Ver todos</a>*@
+                                <a class="dropdown-item" asp-controller="Contact" asp-action="ShowAllContacts">Ver todos</a>
                                 <a class="dropdown-item" asp-controller="Contact" asp-action="ShowContactByClient">Ver por cliente</a>
                             </div>
                         </li>
@@ -95,19 +94,14 @@
                         </li>
 
                         @*Dropdown to access the Quote functionalities*@
-                        <li class="nav-item dropdown">
+                        @*<li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Cotización
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" asp-controller="Products" asp-action="EditProduct">Editar producto</a>
-                                <a class="dropdown-item" asp-controller="Products" asp-action="ShowProductReport">Ver reportes</a>
-                                <a class="dropdown-item" asp-controller="Products" asp-action="ShowProducts">Ver todos</a>
+                                <a class="dropdown-item" asp-controller="Quote" asp-action="AddQuote">Agregar Cotización</a>
                             </div>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
-                        </li>
+                        </li>*@
                     </ul>
                 </div>
             </div>

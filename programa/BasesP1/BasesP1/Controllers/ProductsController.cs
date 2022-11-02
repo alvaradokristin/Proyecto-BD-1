@@ -1,11 +1,6 @@
 ﻿using BasesP1.Data;
 using BasesP1.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Dynamic;
 
 namespace BasesP1.Controllers
@@ -20,7 +15,7 @@ namespace BasesP1.Controllers
             Configuration = configuration;
         }
 
-        public IActionResult AddProduct()
+        public IActionResult LoadAddProduct()
         {
             ViewData["Title"] = "Agregar Producto";
 
@@ -31,46 +26,35 @@ namespace BasesP1.Controllers
             ProdFamilyData productData = new ProdFamilyData(this.Configuration);
             List<FamiliaProducto> prodFam = productData.getProdFamilies();
 
-            ////Create a product model to store the values for the new product
-            //Product newProduct = new Product();
-
-            ////Asign the data from the website input into an object/variables
-            //newProduct.Codigo = Request.Form["app-code"];
-            //newProduct.Nombre = Request.Form["app-code"];
-            ////newProduct.Activo = bool.Parse(Request.Form["app-code"]);
-            //newProduct.Descripcion = Request.Form["app-code"];
-            //newProduct.PrecioEstandar = decimal.Parse(Request.Form["app-code"]);
-            //newProduct.CodigoFamilia = Request.Form["app-code"];
-
             model.Families = prodFam;
             return View("AddProduct", model);
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
-        public IActionResult Create([Bind] Product newProduct)
+        public IActionResult AddProduct(Product newProduct)
         {
-            //Create an object to store the data from the form and send it to the DB
-            //Product newProduct = new Product();
-
-            //Get the data from the form
-            //newProduct.Codigo = Request.Form["prod-code"];
+            //Create a model that will contain different models
+            dynamic model = new ExpandoObject();
 
             ProductData productData = new ProductData(this.Configuration);
+            productData.addProduct(newProduct);
 
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    productData.addProduct(newProduct);
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("Exception: " + ex.ToString());
-            }
+            List<Product> products = productData.getProducts();
+            string[] tableHeaders = new string[] {
+                "Codigo"
+                ,"Nombre"
+                ,"Activo"
+                ,"Descripcion"
+                ,"Precio"
+                ,"Codigo Familia"
+                ,"Acción"
+            };
 
-            return View();
+            //Add elements to the general model
+            model.Products = products;
+            model.Headers = tableHeaders;
+
+            return View("ShowProducts", model);
         }
 
         public IActionResult EditProduct()

@@ -60,21 +60,17 @@ namespace BasesP1.Data
                 string connectionString = Configuration["ConnectionStrings:RealConnection"];
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    int temp = 0;
-                    SqlCommand cmd = new SqlCommand("insertarProducto", connection);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@ProCodifo", newProduct.Codigo);
-                    cmd.Parameters.AddWithValue("@ProNombre", newProduct.Nombre);
-                    cmd.Parameters.AddWithValue("@ProActivo", newProduct.Activo);
-                    cmd.Parameters.AddWithValue("@ProDescripcion", newProduct.Descripcion);
-                    cmd.Parameters.AddWithValue("@ProPrecioEstandar", newProduct.PrecioEstandar);
-                    cmd.Parameters.AddWithValue("@ProCodigoFamilia", newProduct.CodigoFamilia);
-                    cmd.Parameters.AddWithValue("@Return", temp);
                     connection.Open();
-                    cmd.ExecuteNonQuery();
-                    connection.Close();
+
+                    string sql = $"EXEC [dbo].[insertarProducto] '{newProduct.Codigo}','{newProduct.Nombre}','{newProduct.Activo}','{newProduct.Descripcion}'" +
+                        $",{newProduct.PrecioEstandar},'{newProduct.CodigoFamilia}'";
+
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        command.ExecuteNonQuery();
+                        connection.Close();
+                    }
                 }
-                Debug.WriteLine("Success!");
             }
             catch (Exception ex)
             {

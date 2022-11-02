@@ -1,0 +1,45 @@
+﻿
+<h1>@ViewData["Title"]</h1>
+
+<br />
+
+@*TABLE TO SHOW THE INFORMATION FROM THE SQL TABLE*@
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                @foreach (var header in Model.Headers)
+                {
+                    <th>@header</th>
+                }
+            </tr>
+        </thead>
+
+        <tbody>
+            @*CREATE THE TABLES ROWS AND ASSIGN THEM THE INFORMATION FROM THE DB*@
+            @foreach (var item in Model.Contacts)
+            {
+                <tr>
+                    <td>@item.CodigoCliente</td>
+                    <td>@item.NombreCuenta</td>
+                    <td>@item.NombreContacto</td>
+                    <td>@item.Motivo</td>
+                    <td>@item.Correo</td>
+                    <td>@item.Telefono</td>
+                    <td>@item.Direccion</td>
+                    <td>@item.Descripcion</td>
+                    <td>@item.Sector</td>
+                    <td>@item.Estado</td>
+                    <td>@item.Zona</td>
+                    <td>@item.Tipo</td>
+                    <td>@item.Asesor</td>
+
+                    @*ADD A BUTTON TO DELETE THAT APP FROM THE BD*@
+                    <td>
+                        <a class="btn btn-outline-danger" href="/Edit/EditProduct?code=@item.CodigoCliente">Detalles</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

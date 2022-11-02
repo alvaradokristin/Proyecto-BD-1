@@ -6,7 +6,7 @@ namespace BasesP1.Controllers
     {
         public IActionResult AddQuote()
         {
-            return View();
+            return View("AddQuote");
         }
     }
 }
