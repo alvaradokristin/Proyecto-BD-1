@@ -163,5 +163,30 @@ namespace BasesP1.Data
             }
             return users;
         }
+        public List<Currency> getCurrencies()
+        {
+            List<Currency> currencies = new List<Currency>();
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = $"SELECT abreviatura FROM Moneda";
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            Currency currency = new Currency();
+                            currency.abreviatura = Convert.ToString(dataReader["abreviatura"]);
+                            currencies.Add(currency);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return currencies;
+        }
     }
 }

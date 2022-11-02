@@ -9,10 +9,14 @@
         <div class="mb-3">
             <label for="client-sector" class="form-label">Sector:</label>
             <select class="form-select" id="client-sector" name="client-sector" style="width: auto">
-                <option selected value="Sector1">Sector1</option>
-                <option value="Sector2">Sector2</option>
-                <option value="Sector3">Sector3</option>
+                @foreach (var item in Model.sectors)
+                {
+                    <option value="@item.nombre">@item.nombre</option>
+                }
             </select>
+            <td>
+                <input type="button" value="buscar" class="btn btn-" onclick="location.href='@Url.Action("deleteClient", "Clients")?codigo=' + document.getElementById('codigo').value" />
+            </td>
         </div>
         <table class="table">
             <thead>

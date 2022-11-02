@@ -20,10 +20,12 @@ namespace BasesP1.Controllers
             List<Zone> zones = clientData.getZones();
             List<Sector> sectors = clientData.getSectors();
             List<User> users = clientData.getUsers();
+            List<Currency> currencies = clientData.getCurrencies();
             ClientDataContainer clientDataContainer = new ClientDataContainer();
             clientDataContainer.zones = zones;
             clientDataContainer.sectors = sectors;
             clientDataContainer.user_logins = users;
+            clientDataContainer.currencies = currencies;
 
             return View("AddClient", clientDataContainer);
         }
@@ -36,7 +38,10 @@ namespace BasesP1.Controllers
         }
         public IActionResult ShowClientsBySector()
         {
-            return View("ClientsBySector");
+            ClientData clientData = new ClientData(this.Configuration);
+            List<Sector> sectors = clientData.getSectors();
+
+            return View("ClientsBySector", sectors);
         }
         public IActionResult ShowClientsByZone()
         {
