@@ -52,5 +52,7 @@ namespace BasesP1.Models
         [Required]
         [StringLength(10)]
         public string? login_usuario { get; set; }
+
+        public Int16? numeroCotizacion { get; set; }
     }
 }

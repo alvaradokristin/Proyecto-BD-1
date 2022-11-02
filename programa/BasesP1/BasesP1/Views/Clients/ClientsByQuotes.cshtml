@@ -1,25 +1,28 @@
 ﻿@{
-    ViewData["Title"] = "Información de clientes por sector";
+    ViewData["Title"] = "Información de clientes por cotizaciones";
 }
+@model ClientDataContainer
 
 <h1>@ViewData["Title"]</h1>
 
 <main id="main">
     <div class="container">
         <div class="mb-3">
-            <label for="client-sector" class="form-label">Cotización:</label>
-            <select class="form-select" id="client-quotes" name="client-quotes" style="width: auto">
-                <option selected value="Cotización1">Cotización1</option>
-                <option value="Cotización2">Cotización2</option>
-                <option value="Cotización3">Cotización3</option>
+            <label for="client-sector" class="form-label">Numero de cotizacion:</label>
+            <select class="form-select" id="quotationNumber" name="quotationNumber" style="width: auto">
+                @foreach (var item in Model.quotes)
+                {
+                    <option value="@item.numeroCotizacion">@item.numeroCotizacion</option>
+                }
             </select>
+            <br />
+            <input type="button" value="buscar" class="btn btn-success" onclick="location.href='@Url.Action("LoadClientsByQuotes", "Clients")?quotationNumber=' + document.getElementById('quotationNumber').value" />
         </div>
         <table class="table">
             <thead>
                 <tr>
                     <th scope="col">Nombre de cuenta</th>
                     <th scope="col">Correo electrónico</th>
-                    <th scope="col">Contacto principal</th>
                     <th scope="col">Moneda</th>
                     <th scope="col">Telefono</th>
                     <th scope="col">Celular</th>
@@ -28,9 +31,32 @@
                     <th scope="col">Nombre de usuario</th>
                     <th scope="col">Zona</th>
                     <th scope="col">Sector</th>
-                    <th scope="col">Acciones</th>
+                    <th scope="col">Numero de Cotizacion</th>
                 </tr>
             </thead>
+            <tbody>
+                @if (Model.clients != null)
+                {
+                    @foreach (var item in Model.clients)
+                    {
+                        <tr>
+                            <td hidden><input value="@item.codigo" id="codigo" /></td>
+                            <td>@item.nombreCuenta</td>
+                            <td>@item.correo</td>
+                            <td>@item.nombre_moneda</td>
+                            <td>@item.telefono</td>
+                            <td>@item.celular</td>
+                            <td>@item.sitioWeb</td>
+                            <td>@item.informacionAdicional</td>
+                            <td>@item.login_usuario</td>
+                            <td>@item.zona</td>
+                            <td>@item.sector</td>
+                            <td>@item.numeroCotizacion</td>
+                        </tr>
+                    }
+                }
+
+            </tbody>
         </table>
     </div>
 </main>

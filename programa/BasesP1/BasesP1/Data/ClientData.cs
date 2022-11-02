@@ -194,5 +194,159 @@ namespace BasesP1.Data
             }
             return currencies;
         }
+
+        public List<Client> getClientsBySector(string sectorName)
+        {
+            List<Client> clients = new List<Client>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = $"EXEC [dbo].[sp_getClientsBySector]'{sectorName}'";
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+
+                            Client client = new Client();
+
+                            client.codigo = Convert.ToString(dataReader["codigo"]);
+                            client.nombreCuenta = Convert.ToString(dataReader["nombreCuenta"]);
+                            client.correo = Convert.ToString(dataReader["correo"]);
+                            client.telefono = Convert.ToString(dataReader["telefono"]);
+                            client.celular = Convert.ToString(dataReader["celular"]);
+                            client.sitioWeb = Convert.ToString(dataReader["sitioWeb"]);
+                            client.informacionAdicional = Convert.ToString(dataReader["informacionAdicional"]);
+                            client.zona = Convert.ToString(dataReader["zona"]);
+                            client.sector = Convert.ToString(dataReader["sector"]);
+                            client.abreviatura_moneda = Convert.ToString(dataReader["abreviatura_moneda"]);
+                            client.nombre_moneda = Convert.ToString(dataReader["nombre_moneda"]);
+                            client.login_usuario = Convert.ToString(dataReader["login_usuario"]);
+
+                            clients.Add(client);
+                        }
+
+                    }
+                }
+                connection.Close();
+            }
+
+            return clients;
+        }
+
+        public List<Client> getClientsByZone(string zoneName)
+        {
+            List<Client> clients = new List<Client>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = $"EXEC [dbo].[sp_getClientsByZone]'{zoneName}'";
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+
+                            Client client = new Client();
+
+                            client.codigo = Convert.ToString(dataReader["codigo"]);
+                            client.nombreCuenta = Convert.ToString(dataReader["nombreCuenta"]);
+                            client.correo = Convert.ToString(dataReader["correo"]);
+                            client.telefono = Convert.ToString(dataReader["telefono"]);
+                            client.celular = Convert.ToString(dataReader["celular"]);
+                            client.sitioWeb = Convert.ToString(dataReader["sitioWeb"]);
+                            client.informacionAdicional = Convert.ToString(dataReader["informacionAdicional"]);
+                            client.zona = Convert.ToString(dataReader["zona"]);
+                            client.sector = Convert.ToString(dataReader["sector"]);
+                            client.abreviatura_moneda = Convert.ToString(dataReader["abreviatura_moneda"]);
+                            client.nombre_moneda = Convert.ToString(dataReader["nombre_moneda"]);
+                            client.login_usuario = Convert.ToString(dataReader["login_usuario"]);
+
+                            clients.Add(client);
+                        }
+
+                    }
+                }
+                connection.Close();
+            }
+
+            return clients;
+        }
+
+        public List<Quotation> getQuotes()
+        {
+            List<Quotation> quotes = new List<Quotation>();
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = $"SELECT numeroCotizacion FROM Cotizacion";
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            Quotation quotation = new Quotation();
+                            quotation.numeroCotizacion = Convert.ToInt16(dataReader["numeroCotizacion"]);
+                            quotes.Add(quotation);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return quotes;
+        }
+
+        public List<Client> getClientsByQuotes(Int16 quotationNumber)
+        {
+            List<Client> clients = new List<Client>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = $"EXEC [dbo].[sp_getClientsByQuotes]'{quotationNumber}'";
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+
+                            Client client = new Client();
+
+                            client.nombreCuenta = Convert.ToString(dataReader["nombreCuenta"]);
+                            client.correo = Convert.ToString(dataReader["correo"]);
+                            client.telefono = Convert.ToString(dataReader["telefono"]);
+                            client.celular = Convert.ToString(dataReader["celular"]);
+                            client.sitioWeb = Convert.ToString(dataReader["sitioWeb"]);
+                            client.informacionAdicional = Convert.ToString(dataReader["informacionAdicional"]);
+                            client.zona = Convert.ToString(dataReader["zona"]);
+                            client.sector = Convert.ToString(dataReader["sector"]);
+                            client.nombre_moneda = Convert.ToString(dataReader["nombre_moneda"]);
+                            client.login_usuario = Convert.ToString(dataReader["login_usuario"]);
+                            client.numeroCotizacion = Convert.ToInt16(dataReader["numeroCotizacion"]);
+
+                            clients.Add(client);
+                        }
+
+                    }
+                }
+                connection.Close();
+            }
+
+            return clients;
+        }
     }
 }

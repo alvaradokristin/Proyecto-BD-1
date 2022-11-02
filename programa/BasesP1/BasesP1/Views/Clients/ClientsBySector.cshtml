@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Información de clientes por sector";
 }
+@model ClientDataContainer
 
 <h1>@ViewData["Title"]</h1>
 
@@ -8,22 +9,20 @@
     <div class="container">
         <div class="mb-3">
             <label for="client-sector" class="form-label">Sector:</label>
-            <select class="form-select" id="client-sector" name="client-sector" style="width: auto">
+            <select class="form-select" id="sectorName" name="sectorName" style="width: auto">
                 @foreach (var item in Model.sectors)
                 {
                     <option value="@item.nombre">@item.nombre</option>
                 }
             </select>
-            <td>
-                <input type="button" value="buscar" class="btn btn-" onclick="location.href='@Url.Action("deleteClient", "Clients")?codigo=' + document.getElementById('codigo').value" />
-            </td>
+            <br />
+            <input type="button" value="buscar" class="btn btn-success" onclick="location.href='@Url.Action("LoadClientsBySector", "Clients")?sectorName=' + document.getElementById('sectorName').value" />
         </div>
         <table class="table">
             <thead>
                 <tr>
                     <th scope="col">Nombre de cuenta</th>
                     <th scope="col">Correo electrónico</th>
-                    <th scope="col">Contacto principal</th>
                     <th scope="col">Moneda</th>
                     <th scope="col">Telefono</th>
                     <th scope="col">Celular</th>
@@ -31,9 +30,30 @@
                     <th scope="col">Información adicional</th>
                     <th scope="col">Nombre de usuario</th>
                     <th scope="col">Zona</th>
-                    <th scope="col">Acciones</th>
+                    <th scope="col">Sector</th>
                 </tr>
             </thead>
+            <tbody>
+                @if(Model.clients != null){
+                    @foreach (var item in Model.clients)
+                    {
+                        <tr>
+                            <td hidden><input value="@item.codigo" id="codigo" /></td>
+                            <td>@item.nombreCuenta</td>
+                            <td>@item.correo</td>
+                            <td>@item.nombre_moneda</td>
+                            <td>@item.telefono</td>
+                            <td>@item.celular</td>
+                            <td>@item.sitioWeb</td>
+                            <td>@item.informacionAdicional</td>
+                            <td>@item.login_usuario</td>
+                            <td>@item.zona</td>
+                            <td>@item.sector</td>
+                        </tr>
+                    }
+                }
+                
+            </tbody>
         </table>
     </div>
 </main>
