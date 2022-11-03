@@ -28,5 +28,9 @@ namespace BasesP1.Models
         [Required]
         [StringLength(10)]
         public string? Asesor { get; set; }
+
+        public string? TipoQuery { get; set; }
+        public string? FKCont { get; set; }
+        public string? FKMot { get; set; }
     }
 }

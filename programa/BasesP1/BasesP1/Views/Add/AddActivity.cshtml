@@ -5,44 +5,56 @@
 <h1>@ViewData["Title"]</h1>
 
 @*FORM TO GET THE USER INPUT TO ADD TO THE DATABASE*@
-<form>
+<form asp-action="addActivity" asp-controller="Add" method="post">
+    <div style="display:none">
+        <label for="activity-code" class="form-label">Tipo de Query:</label>
+        <input type="number" class="form-control" id="TipoQuery" name="TipoQuery" value="@Model.ParamType">
+    </div>
+    <div style="display:none">
+        <label for="activity-code" class="form-label">Key:</label>
+        <input type="text" class="form-control" id="FKCont" name="FKCont" value="@Model.ParamKey">
+    </div>
+    <div style="display:none">
+        <label for="activity-code" class="form-label">Motivo:</label>
+        <input type="text" class="form-control" id="FKMot" name="FKMot" value="@Model.ParamMot">
+    </div>
     <div class="mb-3">
         <label for="activity-code" class="form-label">Código de actividad:</label>
-        <input type="text" class="form-control" id="activity-code" name="activity-code">
+        <input type="text" class="form-control" id="Codigo" name="Codigo">
     </div>
     <div class="mb-3">
         <label for="activity-name" class="form-label">Nombre de la actividad:</label>
-        <input type="text" class="form-control" id="activity-name" name="activity-name">
+        <input type="text" class="form-control" id="Nombre" name="Nombre">
     </div>
     <div class="mb-3">
         <label for="activity-desc" class="form-label">Descripción de la actividad:</label>
-        <textarea class="form-control" id="activity-desc" rows="3" name="activity-desc"></textarea>
+        <textarea class="form-control" id="Descripcion" rows="3" name="Descripcion"></textarea>
     </div>
     <div class="mb-3">
         <label for="activity-status" class="form-label">Estado:</label>
-        <select class="form-select" id="activity-status" name="activity-status">
-            <option selected> </option>
-            <option value="Estado1">Estado 1</option>
-            <option value="Estado2">Estado 2</option>
-            <option value="Estado3">Estado 3</option>
+        <select class="form-select" id="Estado" name="Estado">
+            @foreach (var item in Model.Status)
+            {
+                    <option value="@item.Nombre">@item.Nombre</option>
+            }
         </select>
     </div>
     <div class="mb-3">
         <label for="activity-type" class="form-label">Tipo:</label>
-        <select class="form-select" id="activity-type" name="activity-type">
-            <option selected> </option>
-            <option value="Tipo1">Tipo 1</option>
-            <option value="Tipo2">Tipo 2</option>
-            <option value="Tipo3">Tipo 3</option>
+        <select class="form-select" id="Tipo" name="Tipo">
+            @foreach (var item in Model.Types)
+            {
+                <option value="@item.Nombre">@item.Nombre</option>
+            }
         </select>
     </div>
     <div class="mb-3">
         <label for="client-adviser" class="form-label">Asesor:</label>
-        <select class="form-select" id="client-adviser" name="client-adviser">
-            <option selected> </option>
-            <option value="User1">User 1</option>
-            <option value="User2">User 2</option>
-            <option value="User3">User 3</option>
+        <select class="form-select" id="Asesor" name="Asesor">
+            @foreach (var item in Model.Users)
+            {
+                <option value="@item.userLogin">@item.nombreCompleto</option>
+            }
         </select>
     </div>
     <button type="submit" class="btn btn-outline-secondary">Agregar</button>

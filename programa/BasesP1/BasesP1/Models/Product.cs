@@ -30,6 +30,7 @@ namespace BasesP1.Models
         [Display(Name = "Codigo de Familia Producto")]
         public string? CodigoFamilia { get; set; }
         public int? CotizacionesVentas { get; set; }
+        public string? CodigoOriginal { get; set; }
 
     }
 }
