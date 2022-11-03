@@ -234,7 +234,7 @@ CREATE TABLE Tarea (
 	nombre_estado varchar(12) NOT NULL,
 	usuario_asignado varchar(10) NOT NULL,
 	FOREIGN KEY (categoria_estado, nombre_estado) REFERENCES Estado(categoria, nombre),
-	FOREIGN KEY (usuario_asignado) REFERENCES Usuario(cedula)
+	FOREIGN KEY (usuario_asignado) REFERENCES Usuario(userLogin)
 )
 
 -- Usa Estado, Tipo y Usuario
@@ -249,7 +249,7 @@ CREATE TABLE Actividad (
 	usuario_asignado varchar(10) NOT NULL,
 	FOREIGN KEY (categoria_estado, nombre_estado) REFERENCES Estado(categoria, nombre),
 	FOREIGN KEY (categoria_tipo, nombre_tipo) REFERENCES Tipo(categoria, nombre),
-	FOREIGN KEY (usuario_asignado) REFERENCES Usuario(cedula)
+	FOREIGN KEY (usuario_asignado) REFERENCES Usuario(userLogin)
 )
 
 -- Usa Tipo, Prioridad, Actividad, Estado, Cotizacion
@@ -451,7 +451,10 @@ VALUES	('C02', 'CuentaJSM', 'zxc@zxc.com', '456123', '789456', 'www.zxc.org', 'N
 
 INSERT INTO FamiliaProducto (codigo, nombre, activo, descripcion)
 VALUES 
-('FMPR0001', 'FamiliaP 01', 1, 'Primera familia de producto');
+('FMPR0001', 'FamiliaP 01', 1, 'Primera familia de producto'),
+('FMPR0002', 'FamiliaP 02', 0, 'Segunda familia de producto'),
+('FMPR0003', 'FamiliaP 03', 1, 'Tercera familia de producto'),
+('FMPR0004', 'FamiliaP 04', 0, 'Cuarta familia de producto');
 
 -- Agregar estados
 -- CC: ContactoCliente
@@ -535,6 +538,41 @@ BEGIN
 	BEGIN TRY
 		INSERT INTO Producto VALUES (@ProCodifo, @ProNombre, @ProActivo, @ProDescripcion, 
 		@ProPrecioEstandar, @ProCodigoFamilia)
+		SET @Return = 1
+	END TRY
+
+	BEGIN CATCH
+		PRINT @@error
+		SET @Return = -1
+	END CATCH
+END
+GO
+
+-- Procedimiento para poder ediatr un Producto
+CREATE PROCEDURE editarProducto
+	@ProCodigo varchar(10),
+	@NewProCodigo varchar(10),
+	@ProNombre varchar(12),
+	@ProActivo bit,
+	@ProDescripcion varchar(30),
+	@ProPrecioEstandar decimal(9,2),
+	@ProCodigoFamilia varchar(10)
+AS
+DECLARE @Return int
+BEGIN
+	BEGIN TRY
+		UPDATE Producto SET
+		codigo = @NewProCodigo,
+		nombre = @ProNombre,
+		activo = @ProActivo,
+		descripcion = @ProDescripcion,
+		precioEstandar = @ProPrecioEstandar,
+		codigo_familia = @ProCodigoFamilia
+		WHERE codigo = @ProCodigo
+
+		UPDATE ProductoXCotizacion SET
+		codigo_producto = @NewProCodigo
+		WHERE codigo_producto = @ProCodigo
 		SET @Return = 1
 	END TRY
 
@@ -668,14 +706,74 @@ BEGIN
 END
 GO
 
-EXEC insertarProducto 'PROD001', 'Producto 01', 1, 'Primer producto', 5500, 'FMPR0001';
+-- Procedimiento para poder agregar una Tarea a un Contacto Cliente
+CREATE PROCEDURE insertarTareaContacto
+	@TCCodigo varchar(10),
+	@TCNombre varchar(12),
+	@TCDescripcion varchar(30),
+	@TCFechaInicio date,
+	@TCFechaFinalizacion date,
+	@TCEstado varchar(12),
+	@TCUsuarioAsignado varchar(10),
+	@TCClienteContacto varchar(10),
+	@TCMotivoContacto varchar(15)
+AS
+DECLARE @Return int
+BEGIN
+	BEGIN TRY
+		INSERT INTO Tarea VALUES (@TCCodigo, @TCNombre, @TCDescripcion, @TCFechaInicio, 
+		@TCFechaFinalizacion, 'Tarea', @TCEstado, @TCUsuarioAsignado)
+		INSERT INTO TareaXContactoCliente VALUES 
+		(@TCClienteContacto, @TCMotivoContacto, @TCCodigo)
+		SET @Return = 1
+	END TRY
 
-SELECT * FROM Producto
+	BEGIN CATCH
+		PRINT @@error
+		SET @Return = -1
+	END CATCH
+END
+GO
+
+-- Procedimiento para poder agregar una Tarea a un Contacto Cliente
+CREATE PROCEDURE insertarActividadContacto
+	@ACCodigo varchar(10),
+	@ACNombre varchar(12),
+	@ACDescripcion varchar(30),
+	@ACEstado varchar(12),
+	@ACTipo varchar(12),
+	@ACAsesor varchar(10),
+	@ACClienteContacto varchar(10),
+	@ACMotivoContacto varchar(15)
+AS
+DECLARE @Return int
+BEGIN
+	BEGIN TRY
+		INSERT INTO Actividad VALUES (@ACCodigo, @ACNombre, @ACDescripcion, 'Actividad', 
+		@ACEstado, 'Actividad', @ACTipo, @ACAsesor)
+		INSERT INTO ActividadXContactoCliente VALUES 
+		(@ACClienteContacto, @ACMotivoContacto, @ACCodigo)
+		SET @Return = 1
+	END TRY
+
+	BEGIN CATCH
+		PRINT @@error
+		SET @Return = -1
+	END CATCH
+END
+GO
+
+EXEC insertarProducto 'PROD001', 'Producto 01', 1, 'Primer producto', 5500, 'FMPR0001';
+EXEC insertarProducto 'PROD002', 'Producto 02', 1, 'Segundo producto', 3500, 'FMPR0001';
+EXEC insertarProducto 'PROD003', 'Producto 03', 0, 'Tercero producto', 4500, 'FMPR0002';
+EXEC insertarProducto 'PROD004', 'Producto 04', 0, 'Cuarto producto', 6000, 'FMPR0003';
+EXEC insertarProducto 'PROD005', 'Producto 05', 1, 'Quinto producto', 5533, 'FMPR0004';
+EXEC insertarProducto 'PROD006', 'Producto 06', 0, 'Sexto producto', 5030, 'FMPR0004';
+EXEC insertarProducto 'PROD006', 'Producto 07', 0, 'Setimo producto', 15500, 'FMPR0003';
+EXEC insertarProducto 'PROD006', 'Producto 08', 1, 'Octavo producto', 7777, 'FMPR0003';
 GO
 
 EXEC insertarContactoCliente 'C01', 'Acercamiento', 'Aivy', 'asd@asd.com', '88888888', 'Sabana, San Jose', 'Primer acercamiento', 'Tres Rios', 'Inicio', 'San Jose', 'Tipo1', 'amr';
-
-SELECT * FROM ContactoCliente;
 GO
 
 -- #------------------------------#
@@ -698,6 +796,18 @@ AS
 RETURN
 (
 	SELECT * FROM Producto
+);
+GO
+
+-- Funcion para seleccionar los datos de un producto
+CREATE FUNCTION obtenerProducto(@Codigo varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT * 
+	FROM Producto
+	WHERE codigo = @Codigo
 );
 GO
 
@@ -727,6 +837,38 @@ RETURN
 	FROM ContactoCliente AS cc
 	JOIN Cliente AS c ON c.codigo = cc.codigoCliente
 	WHERE codigoCliente = @Cliente
+);
+GO
+
+-- Funcion para seleccionar todas las tareas por contacto
+CREATE FUNCTION obtenerTareasContacto(@Contacto varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT 
+	t.*,
+	txc.cliente_contacto,
+	txc.motivo_contacto
+	FROM Tarea AS t
+	JOIN TareaXContactoCliente AS txc ON t.codigo = txc.codigo_tarea
+	WHERE cliente_contacto = @Contacto
+);
+GO
+
+-- Funcion para seleccionar todas las actividades por contacto
+CREATE FUNCTION obtenerActividadesContacto(@Contacto varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT 
+	a.*,
+	axc.cliente_contacto,
+	axc.motivo_contacto
+	FROM Actividad AS a
+	JOIN ActividadXContactoCliente AS axc ON a.codigo = axc.codigo_actividad
+	WHERE cliente_contacto = @Contacto
 );
 GO
 
@@ -904,11 +1046,7 @@ BEGIN
 	END CATCH
 END
 
-SELECT * FROM Usuario
-
-SELECT * FROM usuarioBasico()
-
-
+GO
 CREATE PROCEDURE sp_getClientsBySector @param_sector VARCHAR(12)
 AS 
 BEGIN
@@ -916,6 +1054,7 @@ BEGIN
 	WHERE sector = @param_sector
 END
 
+GO
 CREATE PROCEDURE sp_getClientsByZone @param_zona VARCHAR(12)
 AS 
 BEGIN
@@ -972,7 +1111,7 @@ VALUES	(01, 'oport01', '2019-8-8', '09-2022', '2023-8-8', 20.3, 'descrip1', 'si'
 		'San Jose', 'San Jose', '2021', 'C001', 'jsm'),
 		(04, 'oport04', '2018-11-11', '11-2022', '2016-11-11', 60.3, 'descrip4', 'no', 'Compet2', 02, 002 , 'Pausa', 'Cotizacion', 'Tipo1', 'E002',
 		'Heredia', 'Barva', '2022', 'C002', 'jsm');
-
+GO
 
 CREATE PROCEDURE sp_getClientsByQuotes @param_numeroCotizacion SMALLINT
 AS 
@@ -986,4 +1125,18 @@ BEGIN
 	WHERE ct.numeroCotizacion = @param_numeroCotizacion
 END
 
-SELECT * FROM Cotizacion
+INSERT INTO ProductoXCotizacion (codigo_producto, numero_cotizacion)
+VALUES
+('PROD001', 1),
+('PROD002', 1),
+('PROD003', 1),
+('PROD001', 2),
+('PROD002', 2),
+('PROD003', 2),
+('PROD003', 3),
+('PROD001', 3),
+('PROD002', 3),
+('PROD004', 3),
+('PROD005', 3),
+('PROD006', 4),
+('PROD001', 4);

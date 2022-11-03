@@ -52,6 +52,38 @@ namespace BasesP1.Data
             return products;
         }
 
+        //Method to get the data from one product
+        public Product getProduct(string codigo)
+        {
+            Product product = new Product();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = $"SELECT * FROM obtenerProducto('{codigo}')";
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            product.Codigo = "" + reader["codigo"];
+                            product.Nombre = "" + reader["nombre"];
+                            product.Activo = bool.Parse("" + reader["activo"]);
+                            product.Descripcion = "" + reader["descripcion"];
+                            product.PrecioEstandar = Convert.ToDecimal("" + reader["precioEstandar"]);
+                            product.CodigoFamilia = "" + reader["codigo_familia"];
+                        }
+                        reader.Close();
+                    }
+                }
+                connection.Close();
+            }
+            return product;
+        }
+
         //Method to to add a new method to the DB
         public void addProduct(Product newProduct)
         {
@@ -63,6 +95,32 @@ namespace BasesP1.Data
                     connection.Open();
 
                     string sql = $"EXEC [dbo].[insertarProducto] '{newProduct.Codigo}','{newProduct.Nombre}','{newProduct.Activo}','{newProduct.Descripcion}'" +
+                        $",{newProduct.PrecioEstandar},'{newProduct.CodigoFamilia}'";
+
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        command.ExecuteNonQuery();
+                        connection.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Exception: " + ex.ToString());
+            }
+        }
+
+        //Method to to edit a product
+        public void editProduct(Product newProduct)
+        {
+            try
+            {
+                string connectionString = Configuration["ConnectionStrings:RealConnection"];
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string sql = $"EXEC [dbo].[editarProducto] '{newProduct.CodigoOriginal}','{newProduct.Codigo}','{newProduct.Nombre}','{newProduct.Activo}','{newProduct.Descripcion}'" +
                         $",{newProduct.PrecioEstandar},'{newProduct.CodigoFamilia}'";
 
                     using (var command = new SqlCommand(sql, connection))

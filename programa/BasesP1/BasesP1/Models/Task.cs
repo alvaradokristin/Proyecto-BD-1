@@ -19,11 +19,11 @@ namespace BasesP1.Models
 
         [Required]
         [Display(Name = "Fecha de Inicio")]
-        public DateTime? FechaInicio { get; set; }
+        public string? FechaInicio { get; set; }
 
         [Required]
         [Display(Name = "Fecha de Finalizacion")]
-        public DateTime? FechaFinalizacion { get; set; }
+        public string? FechaFinalizacion { get; set; }
 
         [Required]
         [StringLength(12)]
@@ -32,5 +32,9 @@ namespace BasesP1.Models
         [Required]
         [StringLength(10)]
         public string? Asesor { get; set; }
+
+        public string? TipoQuery { get; set; }
+        public string? FKCont { get; set; }
+        public string? FKMot { get; set; }
     }
 }

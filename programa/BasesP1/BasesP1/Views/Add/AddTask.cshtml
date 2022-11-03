@@ -5,43 +5,55 @@
 <h1>@ViewData["Title"]</h1>
 
 @*FORM TO GET THE USER INPUT TO ADD TO THE DATABASE*@
-<form>
+<form asp-action="addTask" asp-controller="Add" method="post">
+    @*<div style="display:none">
+        <label for="activity-code" class="form-label">Tipo de Query:</label>
+        <input type="number" class="form-control" id="TipoQuery" name="TipoQuery" value="@Model.ParamType">
+    </div>*@
+    <div style="display:none">
+        <label for="activity-code" class="form-label">Key:</label>
+        <input type="text" class="form-control" id="FKCont" name="FKCont" value="@Model.ParamKey">
+    </div>
+    <div style="display:none">
+        <label for="activity-code" class="form-label">Motivo:</label>
+        <input type="text" class="form-control" id="FKMot" name="FKMot" value="@Model.ParamMot">
+    </div>
     <div class="mb-3">
         <label for="task-code" class="form-label">Código de Tarea:</label>
-        <input type="text" class="form-control" id="task-code" name="task-code">
+        <input type="text" class="form-control" id="Codigo" name="Codigo">
     </div>
     <div class="mb-3">
         <label for="task-name" class="form-label">Nombre de la tarea:</label>
-        <input type="text" class="form-control" id="task-name" name="task-name">
+        <input type="text" class="form-control" id="Nombre" name="Nombre">
     </div>
     <div class="mb-3">
         <label for="task-desc" class="form-label">Descripción de la tarea:</label>
-        <textarea class="form-control" id="task-desc" rows="3" name="task-desc"></textarea>
+        <textarea class="form-control" id="Descripcion" rows="3" name="Descripcion"></textarea>
     </div>
     <div class="mb-3">
         <label for="task-start-date" class="form-label">Fecha de inicio:</label>
-        <input type="text" class="form-control" id="task-start-date" name="task-start-date">
+        <input type="text" class="form-control" id="FechaInicio" name="FechaInicio" placeholder="AAA-MM-DD">
     </div>
     <div class="mb-3">
         <label for="task-end-date" class="form-label">Fecha de finalización:</label>
-        <input type="text" class="form-control" id="task-end-date" name="task-end-date">
+        <input type="text" class="form-control" id="FechaFinalizacion" name="FechaFinalizacion" placeholder="AAA-MM-DD">
     </div>
     <div class="mb-3">
         <label for="task-status" class="form-label">Estado:</label>
-        <select class="form-select" id="task-status" name="task-status">
-            <option selected> </option>
-            <option value="Estado1">Estado 1</option>
-            <option value="Estado2">Estado 2</option>
-            <option value="Estado3">Estado 3</option>
+        <select class="form-select" id="Estado" name="Estado">
+            @foreach (var item in Model.Status)
+            {
+                <option value="@item.Nombre">@item.Nombre</option>
+            }
         </select>
     </div>
     <div class="mb-3">
         <label for="client-adviser" class="form-label">Asesor:</label>
-        <select class="form-select" id="client-adviser" name="client-adviser">
-            <option selected> </option>
-            <option value="User1">User 1</option>
-            <option value="User2">User 2</option>
-            <option value="User3">User 3</option>
+        <select class="form-select" id="Asesor" name="Asesor">
+            @foreach (var item in Model.Users)
+            {
+                <option value="@item.userLogin">@item.nombreCompleto</option>
+            }
         </select>
     </div>
     <button type="submit" class="btn btn-outline-secondary">Agregar</button>

@@ -56,10 +56,53 @@ namespace BasesP1.Controllers
 
             return View("ShowProducts", model);
         }
-
-        public IActionResult EditProduct()
+        
+        [Route("Products/EditProduct/code={prod}")]
+        public IActionResult LoadEditProduct(string prod)
         {
-            return View();
+            ViewData["Title"] = "Editar Producto - " + prod;
+
+            //Create a model that will contain different models
+            dynamic model = new ExpandoObject();
+
+            //Get all the available product families
+            ProdFamilyData famProdData = new ProdFamilyData(this.Configuration);
+            List<FamiliaProducto> prodFam = famProdData.getProdFamilies();
+
+            //Get the data from the product
+            ProductData productData = new ProductData(this.Configuration);
+            Product product = productData.getProduct(prod);
+
+            model.Families = prodFam;
+            model.Product = product;
+            return View("EditProduct", model);
+        }
+
+        [HttpPost]
+        public IActionResult EditProduct(Product product)
+        {
+            //Create a model that will contain different models
+            dynamic model = new ExpandoObject();
+
+            ProductData productData = new ProductData(this.Configuration);
+            productData.editProduct(product);
+
+            List<Product> products = productData.getProducts();
+            string[] tableHeaders = new string[] {
+                "Codigo"
+                ,"Nombre"
+                ,"Activo"
+                ,"Descripcion"
+                ,"Precio"
+                ,"Codigo Familia"
+                ,"Acción"
+            };
+
+            //Add elements to the general model
+            model.Products = products;
+            model.Headers = tableHeaders;
+
+            return View("ShowProducts", model);
         }
 
         [Route("Products/ShowProductReport/{type:int}")]
