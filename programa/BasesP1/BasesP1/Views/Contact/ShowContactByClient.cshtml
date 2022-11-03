@@ -3,59 +3,68 @@
 <br/>
 
 @*FORM TO SELECT THE CLIENT YOU WANT TO DISPLAY THE CONTACTS FROM*@
-<form>
-    <div class="mb-3">
-        <label for="contact-client-code" class="form-label">Codigo del cliente:</label>
-        <select class="form-select auto-wdth" id="contact-client-code" name="contact-client-code">
-            <option selected> </option>
-            <option value="Cliente1">Cleinte A</option>
-            <option value="Cliente2">Cliente B</option>
+
+<div class="mb-3">
+    <label for="contact-client-code" class="form-label">Nombre de la cuenta:</label>
+    <div class="input-group w-25">
+        <select class="form-select auto-wdth" id="CodigoCliente" name="CodigoCliente">
+            @foreach (var item in Model.Clients)
+            {
+                <option value="@item.codigo">@item.nombreCuenta</option>
+            }
         </select>
+        <button type="submit" class="btn btn-outline-dark" onclick="location.href='@Url.Action("LoadContactsByClient", "Contact")?CodigoCliente=' + document.getElementById('CodigoCliente').value">Buscar</button>
     </div>
-</form>
+</div>
+
 
 @*TABLE TO SHOW THE INFORMATION FROM THE SQL TABLE*@
-<div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr>
-                @foreach (var header in Model.Headers)
-                {
-                    <th>@header</th>
-                }
-            </tr>
-        </thead>
-
-        <tbody>
-            @*CREATE THE TABLES ROWS AND ASSIGN THEM THE INFORMATION FROM THE DB*@
-            @*@foreach (var item in Model.listVal)
-            {
+@if (Model.Contacts != null)
+{
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>@item.code</td>
-                    <td>@item.name</td>
-                    <td>@item.reason</td>
-                    <td>@item.email</td>
-                    <td>@item.phone</td>
-                    <td>@item.address</td>
-                    <td>@item.descripcion</td>
-                    <td>@item.sector</td>
-                    <td>@item.status</td>
-                    <td>@item.zone</td>
-                    <td>@item.type</td>*@
-
-                    @*ADD BUTTONS TO ADD OR SHOW TASKS*@
-                    @*<td>
-                        <a class="btn btn-outline-info" href="/Show/ShowTasks?code=@item.codigo">Mostrar</a>
-                        <a class="btn btn-outline-success" href="/Add/AddTasks?code=@item.codigo">Agregar</a>
-                    </td>*@
-
-                    @*ADD BUTTONS TO ADD OR SHOW ACTIVITIES*@
-                    @*<td>
-                        <a class="btn btn-outline-info" href="/Show/Activities?code=@item.codigo">Mostrar</a>
-                        <a class="btn btn-outline-success" href="/Add/AddActivities?code=@item.codigo">Agregar</a>
-                    </td>
+                    @foreach (var header in Model.Headers)
+                    {
+                        <th>@header</th>
+                    }
                 </tr>
-            }*@
-        </tbody>
-    </table>
-</div>
+            </thead>
+
+            <tbody>
+                @*CREATE THE TABLE ROWS AND ASSIGN THEM THE INFORMATION FROM THE DB*@
+                @foreach (var item in Model.Contacts)
+                {
+                    <tr>
+                        <td>@item.CodigoCliente</td>
+                        <td>@item.NombreCuenta</td>
+                        <td>@item.NombreContacto</td>
+                        <td>@item.Motivo</td>
+                        <td>@item.Correo</td>
+                        <td>@item.Telefono</td>
+                        <td>@item.Direccion</td>
+                        <td>@item.Descripcion</td>
+                        <td>@item.Sector</td>
+                        <td>@item.Estado</td>
+                        <td>@item.Zona</td>
+                        <td>@item.Tipo</td>
+                        <td>@item.Asesor</td>
+
+                        @*ADD BUTTONS TO ADD OR SHOW TASKS*@
+                        <td>
+                            <a class="btn btn-outline-info" href="/Show/ShowTasks/clt=@item.CodigoCliente">Mostrar</a>
+                            <a class="btn btn-outline-success" href="/Add/AddTask/type=1/key=@item.CodigoCliente&mtv=@item.Motivo">Agregar</a>
+                        </td>
+
+                        @*ADD BUTTONS TO ADD OR SHOW ACTIVITIES*@
+                        <td>
+                            <a class="btn btn-outline-info" href="/Show/ShowActivities/clt=@item.CodigoCliente">Mostrar</a>
+                            <a class="btn btn-outline-success" href="/Add/AddActivity/type=1/key=@item.CodigoCliente&mtv=@item.Motivo">Agregar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

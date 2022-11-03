@@ -35,8 +35,20 @@
                     <td>@item.Asesor</td>
 
                     @*ADD A BUTTON TO DELETE THAT APP FROM THE BD*@
-                    <td>
+                    @*<td>
                         <a class="btn btn-outline-danger" href="/Edit/EditProduct?code=@item.CodigoCliente">Detalles</a>
+                    </td>*@
+
+                    @*ADD BUTTONS TO ADD OR SHOW TASKS*@
+                    <td>
+                        <a class="btn btn-outline-info" href="/Show/ShowTasks/clt=@item.CodigoCliente">Mostrar</a>
+                        <a class="btn btn-outline-success" href="/Add/AddTask/type=1/key=@item.CodigoCliente&mtv=@item.Motivo">Agregar</a>
+                    </td>
+
+                    @*ADD BUTTONS TO ADD OR SHOW ACTIVITIES*@
+                    <td>
+                        <a class="btn btn-outline-info" href="/Show/ShowActivities/clt=@item.CodigoCliente">Mostrar</a>
+                        <a class="btn btn-outline-success" href="/Add/AddActivity/type=1/key=@item.CodigoCliente&mtv=@item.Motivo">Agregar</a>
                     </td>
                 </tr>
             }

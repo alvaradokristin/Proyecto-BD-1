@@ -139,5 +139,48 @@ namespace BasesP1.Data
             }
             return contacts;
         }
+
+        //Method to get all the products available on the DB
+        public List<Contact> getClientsByContact(string CodigoCliente)
+        {
+            List<Contact> contacts = new List<Contact>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = $"SELECT * FROM obtenerContactosCliente('{CodigoCliente}')";
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Contact contact = new Contact();
+
+                            contact.CodigoCliente = "" + reader["codigoCliente"];
+                            contact.Motivo = "" + reader["motivo"];
+                            contact.NombreContacto = "" + reader["nombreContacto"];
+                            contact.Correo = "" + reader["correo"];
+                            contact.Telefono = "" + reader["telefono"];
+                            contact.Direccion = "" + reader["direccion"];
+                            contact.Descripcion = "" + reader["descripcion"];
+                            contact.Sector = "" + reader["sector"];
+                            contact.Estado = "" + reader["nombre_estado"];
+                            contact.Zona = "" + reader["zona"];
+                            contact.Tipo = "" + reader["nombre_tipo"];
+                            contact.Asesor = "" + reader["asesor"];
+                            contact.NombreCuenta = "" + reader["nombreCuenta"];
+
+                            contacts.Add(contact);
+                        }
+                        reader.Close();
+                    }
+                }
+                connection.Close();
+            }
+            return contacts;
+        }
     }
 }
