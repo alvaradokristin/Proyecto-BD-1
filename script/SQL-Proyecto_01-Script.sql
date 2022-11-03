@@ -521,6 +521,57 @@ VALUES
 (-1, 'Placeholder para compras no realizadas todavia');
 GO
 
+INSERT INTO Compra (ordenCompra, detalle)
+VALUES	(01, 'Ninguna'),
+		(02, 'Ninguna');
+
+
+INSERT INTO Factura (numeroFactura, detalle)
+VALUES	(001, 'no detalle'),
+		(002, 'no detalle');
+
+INSERT INTO Proyecto (codigo)
+VALUES	('P001'),
+		('P002'),
+		('P003'),
+		('P004');
+
+
+INSERT INTO Ejecucion (codigo, nombre, fecha, codigo_proyecto, codigo_departamento)
+VALUES	('E001', 'Ejecucion1', '2022-10-10', 'P003', 'DP02'),
+		('E002', 'Ejecucion2', '2021-11-11', 'P002', 'DP03');
+
+INSERT INTO Caso (codigo, origen, asunto, direccion, descripcion, categoria_tipo, nombre_tipo, tipo_prioridad, categoria_estado, nombre_estado)
+VALUES	('C001', 'Origen 01', 'asunto1', 'direccion del caso', 'descripcion del caso', 'Caso', 'Tipo2', 'P3', 'Caso', 'En Progreso'),
+		('C002', 'Origen 02', 'asunto2', 'direccion del caso2', 'descripcion del caso2', 'Caso', 'Tipo1', 'P1', 'Caso', 'Inicio');
+
+
+INSERT INTO Inflacion (anno, porcentaje)
+VALUES	('2019', 9.20),
+		('2020', 0.20),
+		('2021', 1.20),
+		('2022', 2.20);
+
+
+INSERT INTO Competencia (nombre)
+VALUES	('Compet1'),
+		('Compet2'),
+		('Compet3');
+GO
+
+INSERT INTO Cotizacion (numeroCotizacion, nombreOportunidad, fecha, mesAnnoCierre, fechaCierre, 
+probabilidad, descripcion, seNego, nombre_competencia, ordenCompra, numero_factura, nombre_etapa, 
+categoria_tipo, nombre_tipo, codigo_ejecucion, zona, sector, anno_inflacion, codigo_caso, login_usuario)
+VALUES	(01, 'oport01', '2019-8-8', '09-2022', '2023-8-8', 20.3, 'descrip1', 'si', 'Compet1', 01, 001, 'Negociacion', 'Cotizacion', 'Tipo1', 'E001',
+		'Cartago', 'Tres Rios', '2019', 'C001', 'amr'),
+		(02, 'oport02', '2020-9-9', '08-2022', '2024-9-9', 30.3, 'descrip2', 'si', 'Compet2', 02, 002, 'Cotizacion', 'Cotizacion', 'Tipo2', 'E002',
+		'Heredia', 'Barva', '2020', 'C002', 'amr'),
+		(03, 'oport03', '2021-10-10', '10-2022', '2025-10-10', 40.3, 'descrip3', 'no', 'Compet3', 01, 001, 'Finalizado', 'Cotizacion', 'Tipo3', 'E001',
+		'San Jose', 'San Jose', '2021', 'C001', 'jsm'),
+		(04, 'oport04', '2018-11-11', '11-2022', '2016-11-11', 60.3, 'descrip4', 'no', 'Compet2', 02, 002 , 'Pausa', 'Cotizacion', 'Tipo1', 'E002',
+		'Heredia', 'Barva', '2022', 'C002', 'jsm');
+GO
+
 -- #-----------------------------------#
 -- #          PROCEDIMIENTOS           #
 -- #-----------------------------------#
@@ -773,6 +824,23 @@ EXEC insertarProducto 'PROD006', 'Producto 07', 0, 'Setimo producto', 15500, 'FM
 EXEC insertarProducto 'PROD006', 'Producto 08', 1, 'Octavo producto', 7777, 'FMPR0003';
 GO
 
+INSERT INTO ProductoXCotizacion (codigo_producto, numero_cotizacion)
+VALUES
+('PROD001', 1),
+('PROD002', 1),
+('PROD003', 1),
+('PROD001', 2),
+('PROD002', 2),
+('PROD003', 2),
+('PROD003', 3),
+('PROD001', 3),
+('PROD002', 3),
+('PROD004', 3),
+('PROD005', 3),
+('PROD006', 4),
+('PROD001', 4);
+GO
+
 EXEC insertarContactoCliente 'C01', 'Acercamiento', 'Aivy', 'asd@asd.com', '88888888', 'Sabana, San Jose', 'Primer acercamiento', 'Tres Rios', 'Inicio', 'San Jose', 'Tipo1', 'amr';
 GO
 
@@ -872,26 +940,34 @@ RETURN
 );
 GO
 
+-- Vista para tomar las cotizaciones com compras
+CREATE VIEW CotizacionesCompra AS (
+	SELECT DISTINCT
+		pxc.codigo_producto
+	FROM ProductoXCotizacion AS pxc
+	JOIN Cotizacion AS c ON c.numeroCotizacion = pxc.numero_cotizacion
+	WHERE c.ordenCompra != -1 -- si se efectuo la venta
+);
+GO
+
 -- Funcion para seleccionar los productos mas vendidos
 CREATE FUNCTION masVendidosProductos()
 RETURNS TABLE
 AS
 RETURN
 (
-	SELECT TOP 10
+	SELECT DISTINCT TOP 10
 	p.codigo,
 	p.nombre,
 	p.activo,
 	p.descripcion,
 	p.precioEstandar,
 	p.codigo_familia,
-	c.ordenCompra,
 	COUNT(DISTINCT pxc.numero_cotizacion) AS ventas
 	FROM Producto AS p
 	JOIN ProductoXCotizacion AS pxc ON pxc.codigo_producto = p.codigo
-	JOIN Cotizacion AS c ON c.numeroCotizacion = pxc.numero_cotizacion
-	GROUP BY p.codigo, p.nombre, p.activo, p.descripcion, p.precioEstandar, p.codigo_familia, c.ordenCompra
-	HAVING c.ordenCompra != -1 -- si se efectuo la venta
+	GROUP BY p.codigo, p.nombre, p.activo, p.descripcion, p.precioEstandar, p.codigo_familia
+	HAVING p.codigo IN (SELECT * FROM CotizacionesCompra) -- si se efectuo la venta
 	ORDER BY ventas DESC
 );
 GO
@@ -902,19 +978,17 @@ RETURNS TABLE
 AS
 RETURN
 (
-	SELECT TOP 10
+	SELECT DISTINCT TOP 10
 	fp.codigo,
 	fp.nombre,
 	fp.activo,
 	fp.descripcion,
-	c.ordenCompra,
 	COUNT(DISTINCT pxc.numero_cotizacion) AS ventas
 	FROM FamiliaProducto AS fp
 	JOIN Producto AS p ON p.codigo_familia = fp.codigo
 	JOIN ProductoXCotizacion AS pxc ON pxc.codigo_producto = p.codigo
-	JOIN Cotizacion AS c ON c.numeroCotizacion = pxc.numero_cotizacion
-	GROUP BY fp.codigo, fp.nombre, fp.activo, fp.descripcion, c.ordenCompra
-	HAVING c.ordenCompra != -1 -- si se efectuo la venta
+	JOIN CotizacionesCompra AS cc ON cc.codigo_producto = pxc.codigo_producto
+	GROUP BY fp.codigo, fp.nombre, fp.activo, fp.descripcion
 	ORDER BY ventas DESC
 );
 GO
@@ -925,7 +999,7 @@ RETURNS TABLE
 AS
 RETURN
 (
-	SELECT TOP 10
+	SELECT DISTINCT TOP 10
 	p.codigo,
 	p.nombre,
 	p.activo,
@@ -947,7 +1021,7 @@ RETURNS TABLE
 AS
 RETURN
 (
-	SELECT TOP 10
+	SELECT DISTINCT TOP 10
 	fp.codigo,
 	fp.nombre,
 	fp.activo,
@@ -1061,56 +1135,6 @@ BEGIN
 	SELECT * FROM Cliente
 	WHERE zona = @param_zona
 END
-
-
-INSERT INTO Compra (ordenCompra, detalle)
-VALUES	(01, 'Ninguna'),
-		(02, 'Ninguna');
-
-
-INSERT INTO Factura (numeroFactura, detalle)
-VALUES	(001, 'no detalle'),
-		(002, 'no detalle');
-
-INSERT INTO Proyecto (codigo)
-VALUES	('P001'),
-		('P002'),
-		('P003'),
-		('P004');
-
-
-INSERT INTO Ejecucion (codigo, nombre, fecha, codigo_proyecto, codigo_departamento)
-VALUES	('E001', 'Ejecucion1', '2022-10-10', 'P003', 'DP02'),
-		('E002', 'Ejecucion2', '2021-11-11', 'P002', 'DP03');
-
-INSERT INTO Caso (codigo, origen, asunto, direccion, descripcion, categoria_tipo, nombre_tipo, tipo_prioridad, categoria_estado, nombre_estado)
-VALUES	('C001', 'Origen 01', 'asunto1', 'direccion del caso', 'descripcion del caso', 'Caso', 'Tipo2', 'P3', 'Caso', 'En Progreso'),
-		('C002', 'Origen 02', 'asunto2', 'direccion del caso2', 'descripcion del caso2', 'Caso', 'Tipo1', 'P1', 'Caso', 'Inicio');
-
-
-INSERT INTO Inflacion (anno, porcentaje)
-VALUES	('2019', 9.20),
-		('2020', 0.20),
-		('2021', 1.20),
-		('2022', 2.20);
-
-
-INSERT INTO Competencia (nombre)
-VALUES	('Compet1'),
-		('Compet2'),
-		('Compet3');
-
-INSERT INTO Cotizacion (numeroCotizacion, nombreOportunidad, fecha, mesAnnoCierre, fechaCierre, 
-probabilidad, descripcion, seNego, nombre_competencia, ordenCompra, numero_factura, nombre_etapa, 
-categoria_tipo, nombre_tipo, codigo_ejecucion, zona, sector, anno_inflacion, codigo_caso, login_usuario)
-VALUES	(01, 'oport01', '2019-8-8', '09-2022', '2023-8-8', 20.3, 'descrip1', 'si', 'Compet1', 01, 001, 'Negociacion', 'Cotizacion', 'Tipo1', 'E001',
-		'Cartago', 'Tres Rios', '2019', 'C001', 'amr'),
-		(02, 'oport02', '2020-9-9', '08-2022', '2024-9-9', 30.3, 'descrip2', 'si', 'Compet2', 02, 002, 'Cotizacion', 'Cotizacion', 'Tipo2', 'E002',
-		'Heredia', 'Barva', '2020', 'C002', 'amr'),
-		(03, 'oport03', '2021-10-10', '10-2022', '2025-10-10', 40.3, 'descrip3', 'no', 'Compet3', 01, 001, 'Finalizado', 'Cotizacion', 'Tipo3', 'E001',
-		'San Jose', 'San Jose', '2021', 'C001', 'jsm'),
-		(04, 'oport04', '2018-11-11', '11-2022', '2016-11-11', 60.3, 'descrip4', 'no', 'Compet2', 02, 002 , 'Pausa', 'Cotizacion', 'Tipo1', 'E002',
-		'Heredia', 'Barva', '2022', 'C002', 'jsm');
 GO
 
 CREATE PROCEDURE sp_getClientsByQuotes @param_numeroCotizacion SMALLINT
@@ -1124,19 +1148,3 @@ BEGIN
 		JOIN Cotizacion ct ON c.login_usuario = ct.login_usuario
 	WHERE ct.numeroCotizacion = @param_numeroCotizacion
 END
-
-INSERT INTO ProductoXCotizacion (codigo_producto, numero_cotizacion)
-VALUES
-('PROD001', 1),
-('PROD002', 1),
-('PROD003', 1),
-('PROD001', 2),
-('PROD002', 2),
-('PROD003', 2),
-('PROD003', 3),
-('PROD001', 3),
-('PROD002', 3),
-('PROD004', 3),
-('PROD005', 3),
-('PROD006', 4),
-('PROD001', 4);
