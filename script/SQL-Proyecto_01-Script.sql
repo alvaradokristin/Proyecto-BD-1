@@ -974,7 +974,7 @@ VALUES	(01, 'oport01', '2019-8-8', '09-2022', '2023-8-8', 20.3, 'descrip1', 'si'
 		'Heredia', 'Barva', '2022', 'C002', 'jsm');
 
 
-ALTER PROCEDURE sp_getClientsByQuotes @param_numeroCotizacion SMALLINT
+CREATE PROCEDURE sp_getClientsByQuotes @param_numeroCotizacion SMALLINT
 AS 
 BEGIN
 
@@ -985,3 +985,5 @@ BEGIN
 		JOIN Cotizacion ct ON c.login_usuario = ct.login_usuario
 	WHERE ct.numeroCotizacion = @param_numeroCotizacion
 END
+
+SELECT * FROM Cotizacion
