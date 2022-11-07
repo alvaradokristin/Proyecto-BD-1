@@ -1,4 +1,4 @@
--- Script para el proyecto #2 de Bases de Datos I
+-- Script para el proyecto #3 de Bases de Datos I
 
 -- # --------------- ELIMINAR BASE DE DATOS SI EXISTE --------------- #
 DROP DATABASE IF EXISTS sistemacrm;
@@ -390,38 +390,32 @@ CREATE TABLE TareaXCaso (
 )
 
 -- #----------------------------#
--- #       CREAR USUARIOS       #
--- #----------------------------#
----- Ejemplo de como crear un usuario
---CREATE LOGIN kalva WITH PASSWORD = 'MyPass0102'
---GO
-
----- Asignar permisos de administrador
---IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = N'Kristin')
---BEGIN
---    CREATE USER Kristin FOR LOGIN kalva
---    EXEC sp_addrolemember N'db_owner', N'Kristin'
---END;
---GO
-
--- Asignar permisos
---GRANT SELECT ON OBJECT::Cotizacion TO Kristin;
-
--- #----------------------------#
 -- #          INSERTS           #
 -- #----------------------------#
+
+DECLARE @maxElement AS int,
+@randomMarca AS int,
+@randomColor AS int;
 
 INSERT INTO Departamento (codigo,nombre)
 VALUES	('DP01', 'Desarrollo'),
 		('DP02', 'Backend'),
 		('DP03', 'Frontend'),
 		('DP04', 'Debugging'),
-		('DP05', 'QA');
+		('DP05', 'QA'),
+		('DP06', 'Ventas'),
+		('DP07', 'Serv Cliente'),
+		('DP08', 'Operaciones'),
+		('DP09', 'UX'),
+		('DP10', 'Disenno'),
+		('DP11', 'Proyectos');
+
 
 INSERT INTO Rol (nombre)
 VALUES	('Editor'),
 		('Visor'),
-		('Reportero');
+		('Reportero'),
+		('Admin');
 
 INSERT INTO Usuario (userLogin, cedula, nombre, primerApellido, segundoApellido, clave, nombre_rol, codigo_departamento)
 VALUES	('amr', '123456789', 'Aivy', 'Masis', 'Rivera', 'amr123','Editor', 'DP01');
@@ -477,18 +471,18 @@ VALUES
 -- CC: ContactoCliente
 INSERT INTO Tipo (categoria, nombre)
 VALUES
-('CC', 'Tipo1'),
-('CC', 'Tipo2'),
-('CC', 'Tipo3'),
-('Actividad', 'Tipo1'),
-('Actividad', 'Tipo2'),
-('Actividad', 'Tipo3'),
-('Cotizacion', 'Tipo1'),
-('Cotizacion', 'Tipo2'),
-('Cotizacion', 'Tipo3'),
-('Caso', 'Tipo1'),
-('Caso', 'Tipo2'),
-('Caso', 'Tipo3');
+('CC', 'Tipo 1'),
+('CC', 'Tipo 2'),
+('CC', 'Tipo 3'),
+('Actividad', 'Tipo 1'),
+('Actividad', 'Tipo 2'),
+('Actividad', 'Tipo 3'),
+('Cotizacion', 'Tipo 1'),
+('Cotizacion', 'Tipo 2'),
+('Cotizacion', 'Tipo 3'),
+('Caso', 'Tipo 1'),
+('Caso', 'Tipo 2'),
+('Caso', 'Tipo 3');
 
 INSERT INTO Etapa (nombre)
 VALUES
