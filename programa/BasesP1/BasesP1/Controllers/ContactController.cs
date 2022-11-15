@@ -74,7 +74,6 @@ namespace BasesP1.Controllers
             tableHeaders.Add("Zona");
             tableHeaders.Add("Tipo");
             tableHeaders.Add("Login Asesor");
-            tableHeaders.Add("Acción");
             tableHeaders.Add("Tareas");
             tableHeaders.Add("Actividades");
 
@@ -189,7 +188,6 @@ namespace BasesP1.Controllers
             tableHeaders.Add("Zona");
             tableHeaders.Add("Tipo");
             tableHeaders.Add("Login Asesor");
-            //tableHeaders.Add("Acción");
             tableHeaders.Add("Tareas");
             tableHeaders.Add("Actividades");
 

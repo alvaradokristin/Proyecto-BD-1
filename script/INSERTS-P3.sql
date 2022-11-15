@@ -139,7 +139,7 @@ END;
 
 -- Compra
 SET @maxElement = 100;
-WHILE @maxElement < 251
+WHILE @maxElement < 351
 BEGIN
 	INSERT INTO Compra VALUES (
 	@maxElement,

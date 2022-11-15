@@ -1,0 +1,105 @@
+﻿@using System.Linq;
+@model List<StackedViewModel>
+@{
+    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.FirstOrDefault().LstData.Select(x => x.DimensionOne).ToList());
+    var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.LstData.Select(w => w.Quantity)).ToList());
+    var label2 = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.StackedDimensionOne).ToList());
+
+    ViewData["Title"] = "Bar Chart";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Bar</title>
+</head>
+<body>
+    @*FORM TO SELECT THE TYPE OF REPORT YPU WANT TO VIEW*@
+    <div class="mb-3">
+        <label for="contact-client-code" class="form-label">Selecione el reporte a visualizar:</label>
+        <div class="input-group w-50">
+            <select class="form-select auto-wdth" id="ReportType" name="ReportType">
+                <option value="cvpd">Cotizaciones y Ventas por departamento</option>
+                <option value="vcpma">Ventas y cotizaciones por mes, por año</option>
+                <option value="vcpmavp">Ventas y cotizaciones por mes, por año, en valor presente</option>
+            </select>
+            <button type="submit" class="btn btn-outline-info" onclick="location.href='@Url.Action("BarsGraphReport", "Reports")?ReportType=' + document.getElementById('ReportType').value">Buscar</button>
+        </div>
+    </div>
+
+    @*THE CHART FOR THE REPORTS*@
+    @if (Model.Skip(1).Any())
+    {
+        <div class="box-body">
+
+            <div class="chart-container">
+                <canvas id = "chartStacked" style = "width:100%; height:500px"></canvas>
+            </div>
+        </div>
+    }
+</body>
+</html>
+
+<script type="text/javascript">
+    $(function () {
+        var chartName = "chartStacked";
+        var ctx = document.getElementById(chartName).getContext('2d');
+        var XLabels = @Html.Raw(XLabels);
+        var YValues = @Html.Raw(YValues);
+        var label = @Html.Raw(label2);
+        var aux = 0;
+        var barChartData = {
+            labels: @Html.Raw(label2),
+            datasets: []
+        }
+        XLabels.forEach(function (a, i) {
+            var data = [];
+            YValues.forEach(function (a, i) {
+                data.push(a[aux]);
+            });
+            barChartData.datasets.push({
+                label: XLabels[aux],
+                backgroundColor: random_rgba(),
+                data: data
+            });
+            aux++;
+        });
+        var options = {
+            maintainAspectRatio: false,
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 0,
+                        beginAtZero: true
+                    },
+                    stacked: true,
+                    gridLines: {
+                        display: true,
+                        color: "rgba(255,99,164,0.2)"
+                    }
+                }],
+                xAxes: [{
+                    stacked: true,
+                    gridLines: {
+                        display: false
+                    }
+                }]
+            }
+        };
+
+        function random_rgba() {
+            var o = Math.round,
+                r = Math.random,
+                s = 255;
+            return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + r().toFixed(1) + ')';
+        }
+        var myChart = new Chart(ctx, {
+            options: options,
+            data: barChartData,
+            type: 'bar'
+        });
+    });
+</script>
+

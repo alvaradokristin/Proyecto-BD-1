@@ -281,7 +281,7 @@ CREATE TABLE Cotizacion (
 	descripcion varchar(30) NOT NULL,
 	seNego varchar(15) NOT NULL,
 	nombre_competencia varchar(15) NOT NULL, -- contraQuien
-	ordenCompra smallint, -- -1 si no se ha hecho la compra todavia
+	ordenCompra smallint UNIQUE, -- -1 si no se ha hecho la compra todavia
 	numero_factura smallint NOT NULL,
 	nombre_etapa varchar(12) NOT NULL,
 	categoria_tipo varchar(10) NOT NULL,
@@ -433,15 +433,16 @@ VALUES	('Cartago'),
 		('Heredia');
 
 INSERT INTO Sector (nombre)
-VALUES	('Tres Rios'),
-		('San Jose'),
-		('Barva');
+VALUES	('Gobierno'),
+		('Turismo'),
+		('Residencial'),
+		('Hoteleria');
 
 INSERT INTO Cliente (codigo, nombreCuenta, correo, telefono, celular, sitioWeb, informacionAdicional, zona, sector, abreviatura_moneda, nombre_moneda, login_usuario)
-VALUES	('C01', 'CuentaAMR', 'asd@asd.com', '123456', '456789', 'www.asd.cr', 'NO', 'Cartago', 'Tres Rios', 'CRC', 'colon', 'amr');
+VALUES	('C01', 'CuentaAMR', 'asd@asd.com', '123456', '456789', 'www.asd.cr', 'NO', 'Cartago', 'Hoteleria', 'CRC', 'colon', 'amr');
 
 INSERT INTO Cliente (codigo, nombreCuenta, correo, telefono, celular, sitioWeb, informacionAdicional, zona, sector, abreviatura_moneda, nombre_moneda, login_usuario)
-VALUES	('C02', 'CuentaJSM', 'zxc@zxc.com', '456123', '789456', 'www.zxc.org', 'NO', 'Heredia', 'San Jose', 'USD', 'dolar', 'jsm');
+VALUES	('C02', 'CuentaJSM', 'zxc@zxc.com', '456123', '789456', 'www.zxc.org', 'NO', 'Heredia', 'Turismo', 'USD', 'dolar', 'jsm');
 
 INSERT INTO FamiliaProducto (codigo, nombre, activo, descripcion)
 VALUES 
@@ -489,7 +490,7 @@ VALUES
 ('Cotizacion'),
 ('Negociacion'),
 ('Pausa'),
-('Finalizado');
+('Facturada');
 
 INSERT INTO Prioridad (tipo)
 VALUES
@@ -508,16 +509,11 @@ VALUES
 ('Origen 05'),
 ('Origen 06');
 
--- Agregar valor a Compra para usar en Caso
--- Es un valor especifico para usar en cotizaciones que todavia no se acepta la compra
-INSERT INTO Compra (ordenCompra, detalle)
-VALUES
-(-1, 'Placeholder para compras no realizadas todavia');
-GO
-
 INSERT INTO Compra (ordenCompra, detalle)
 VALUES	(01, 'Ninguna'),
-		(02, 'Ninguna');
+		(02, 'Ninguna'),
+		(03, 'Ninguna'),
+		(04, 'Ninguna');
 
 
 INSERT INTO Factura (numeroFactura, detalle)
@@ -556,13 +552,13 @@ INSERT INTO Cotizacion (numeroCotizacion, nombreOportunidad, fecha, mesAnnoCierr
 probabilidad, descripcion, seNego, nombre_competencia, ordenCompra, numero_factura, nombre_etapa, 
 categoria_tipo, nombre_tipo, codigo_ejecucion, zona, sector, anno_inflacion, codigo_caso, login_usuario)
 VALUES	(01, 'oport01', '2019-8-8', '09-2022', '2023-8-8', 20.3, 'descrip1', 'si', 'Compet1', 01, 001, 'Negociacion', 'Cotizacion', 'Tipo 1', 'E001',
-		'Cartago', 'Tres Rios', '2019', 'C001', 'amr'),
+		'Cartago', 'Turismo', '2019', 'C001', 'amr'),
 		(02, 'oport02', '2020-9-9', '08-2022', '2024-9-9', 30.3, 'descrip2', 'si', 'Compet2', 02, 002, 'Cotizacion', 'Cotizacion', 'Tipo 2', 'E002',
-		'Heredia', 'Barva', '2020', 'C002', 'amr'),
-		(03, 'oport03', '2021-10-10', '10-2022', '2025-10-10', 40.3, 'descrip3', 'no', 'Compet3', 01, 001, 'Finalizado', 'Cotizacion', 'Tipo 3', 'E001',
-		'San Jose', 'San Jose', '2021', 'C001', 'jsm'),
-		(04, 'oport04', '2018-11-11', '11-2022', '2016-11-11', 60.3, 'descrip4', 'no', 'Compet2', 02, 002 , 'Pausa', 'Cotizacion', 'Tipo 1', 'E002',
-		'Heredia', 'Barva', '2022', 'C002', 'jsm');
+		'Heredia', 'Gobierno', '2020', 'C002', 'amr'),
+		(03, 'oport03', '2021-10-10', '10-2022', '2025-10-10', 40.3, 'descrip3', 'no', 'Compet3', 04, 001, 'Facturada', 'Cotizacion', 'Tipo 3', 'E001',
+		'San Jose', 'Residencial', '2021', 'C001', 'jsm'),
+		(04, 'oport04', '2018-11-11', '11-2022', '2016-11-11', 60.3, 'descrip4', 'no', 'Compet2', 03, 002 , 'Pausa', 'Cotizacion', 'Tipo 1', 'E002',
+		'Heredia', 'Hoteleria', '2022', 'C002', 'jsm');
 GO
 
 -- #-----------------------------------#
@@ -933,13 +929,13 @@ RETURN
 );
 GO
 
--- Vista para tomar las cotizaciones com compras
+-- Vista para tomar las cotizaciones con compras
 CREATE VIEW CotizacionesCompra AS (
 	SELECT DISTINCT
 		pxc.codigo_producto
 	FROM ProductoXCotizacion AS pxc
 	JOIN Cotizacion AS c ON c.numeroCotizacion = pxc.numero_cotizacion
-	WHERE c.ordenCompra != -1 -- si se efectuo la venta
+	WHERE c.nombre_etapa = 'Facturada' -- si se efectuo la venta
 );
 GO
 
@@ -965,6 +961,26 @@ RETURN
 );
 GO
 
+-- Funcion para seleccionar las cotizaciones y ventas por departamento
+CREATE FUNCTION cotVentaXDepartamento()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT
+		d.codigo,
+		d.nombre,
+		SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN 1 ELSE 0 END) AS ventas,
+		SUM(CASE WHEN c.nombre_etapa != 'Facturada' THEN 1 ELSE 0 END) AS cotizaciones
+	FROM Departamento AS d
+	JOIN Usuario AS u ON u.codigo_departamento = d.codigo
+	JOIN Cotizacion AS c ON c.login_usuario = u.userLogin
+	GROUP BY d.codigo, d.nombre
+);
+GO
+
+------------------------ FIX ---------------------------
+--------------------------------------------------------
 -- Funcion para seleccionar las familias de productos mas vendidos
 CREATE FUNCTION masVendidosFamProductos()
 RETURNS TABLE
@@ -983,6 +999,24 @@ RETURN
 	JOIN CotizacionesCompra AS cc ON cc.codigo_producto = pxc.codigo_producto
 	GROUP BY fp.codigo, fp.nombre, fp.activo, fp.descripcion
 	ORDER BY ventas DESC
+);
+GO
+
+-- Funcion para seleccionar las familias de productos vendidos
+CREATE FUNCTION ventasFamProductos()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT
+	fp.codigo,
+	fp.nombre,
+	COUNT(DISTINCT pxc.numero_cotizacion) AS ventas
+	FROM FamiliaProducto AS fp
+	JOIN Producto AS p ON p.codigo_familia = fp.codigo
+	JOIN ProductoXCotizacion AS pxc ON pxc.codigo_producto = p.codigo
+	JOIN CotizacionesCompra AS cc ON cc.codigo_producto = pxc.codigo_producto
+	GROUP BY fp.codigo, fp.nombre
 );
 GO
 
