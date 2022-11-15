@@ -1,4 +1,4 @@
--- Script para el proyecto #2 de Bases de Datos I
+-- Script para el proyecto #3 de Bases de Datos I
 
 -- # --------------- ELIMINAR BASE DE DATOS SI EXISTE --------------- #
 DROP DATABASE IF EXISTS sistemacrm;
@@ -281,7 +281,7 @@ CREATE TABLE Cotizacion (
 	descripcion varchar(30) NOT NULL,
 	seNego varchar(15) NOT NULL,
 	nombre_competencia varchar(15) NOT NULL, -- contraQuien
-	ordenCompra smallint, -- -1 si no se ha hecho la compra todavia
+	ordenCompra smallint UNIQUE, -- -1 si no se ha hecho la compra todavia
 	numero_factura smallint NOT NULL,
 	nombre_etapa varchar(12) NOT NULL,
 	categoria_tipo varchar(10) NOT NULL,
@@ -390,38 +390,32 @@ CREATE TABLE TareaXCaso (
 )
 
 -- #----------------------------#
--- #       CREAR USUARIOS       #
--- #----------------------------#
----- Ejemplo de como crear un usuario
---CREATE LOGIN kalva WITH PASSWORD = 'MyPass0102'
---GO
-
----- Asignar permisos de administrador
---IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = N'Kristin')
---BEGIN
---    CREATE USER Kristin FOR LOGIN kalva
---    EXEC sp_addrolemember N'db_owner', N'Kristin'
---END;
---GO
-
--- Asignar permisos
---GRANT SELECT ON OBJECT::Cotizacion TO Kristin;
-
--- #----------------------------#
 -- #          INSERTS           #
 -- #----------------------------#
+
+DECLARE @maxElement AS int,
+@randomMarca AS int,
+@randomColor AS int;
 
 INSERT INTO Departamento (codigo,nombre)
 VALUES	('DP01', 'Desarrollo'),
 		('DP02', 'Backend'),
 		('DP03', 'Frontend'),
 		('DP04', 'Debugging'),
-		('DP05', 'QA');
+		('DP05', 'QA'),
+		('DP06', 'Ventas'),
+		('DP07', 'Serv Cliente'),
+		('DP08', 'Operaciones'),
+		('DP09', 'UX'),
+		('DP10', 'Disenno'),
+		('DP11', 'Proyectos');
+
 
 INSERT INTO Rol (nombre)
 VALUES	('Editor'),
 		('Visor'),
-		('Reportero');
+		('Reportero'),
+		('Admin');
 
 INSERT INTO Usuario (userLogin, cedula, nombre, primerApellido, segundoApellido, clave, nombre_rol, codigo_departamento)
 VALUES	('amr', '123456789', 'Aivy', 'Masis', 'Rivera', 'amr123','Editor', 'DP01');
@@ -439,15 +433,16 @@ VALUES	('Cartago'),
 		('Heredia');
 
 INSERT INTO Sector (nombre)
-VALUES	('Tres Rios'),
-		('San Jose'),
-		('Barva');
+VALUES	('Gobierno'),
+		('Turismo'),
+		('Residencial'),
+		('Hoteleria');
 
 INSERT INTO Cliente (codigo, nombreCuenta, correo, telefono, celular, sitioWeb, informacionAdicional, zona, sector, abreviatura_moneda, nombre_moneda, login_usuario)
-VALUES	('C01', 'CuentaAMR', 'asd@asd.com', '123456', '456789', 'www.asd.cr', 'NO', 'Cartago', 'Tres Rios', 'CRC', 'colon', 'amr');
+VALUES	('C01', 'CuentaAMR', 'asd@asd.com', '123456', '456789', 'www.asd.cr', 'NO', 'Cartago', 'Hoteleria', 'CRC', 'colon', 'amr');
 
 INSERT INTO Cliente (codigo, nombreCuenta, correo, telefono, celular, sitioWeb, informacionAdicional, zona, sector, abreviatura_moneda, nombre_moneda, login_usuario)
-VALUES	('C02', 'CuentaJSM', 'zxc@zxc.com', '456123', '789456', 'www.zxc.org', 'NO', 'Heredia', 'San Jose', 'USD', 'dolar', 'jsm');
+VALUES	('C02', 'CuentaJSM', 'zxc@zxc.com', '456123', '789456', 'www.zxc.org', 'NO', 'Heredia', 'Turismo', 'USD', 'dolar', 'jsm');
 
 INSERT INTO FamiliaProducto (codigo, nombre, activo, descripcion)
 VALUES 
@@ -477,25 +472,25 @@ VALUES
 -- CC: ContactoCliente
 INSERT INTO Tipo (categoria, nombre)
 VALUES
-('CC', 'Tipo1'),
-('CC', 'Tipo2'),
-('CC', 'Tipo3'),
-('Actividad', 'Tipo1'),
-('Actividad', 'Tipo2'),
-('Actividad', 'Tipo3'),
-('Cotizacion', 'Tipo1'),
-('Cotizacion', 'Tipo2'),
-('Cotizacion', 'Tipo3'),
-('Caso', 'Tipo1'),
-('Caso', 'Tipo2'),
-('Caso', 'Tipo3');
+('CC', 'Tipo 1'),
+('CC', 'Tipo 2'),
+('CC', 'Tipo 3'),
+('Actividad', 'Tipo 1'),
+('Actividad', 'Tipo 2'),
+('Actividad', 'Tipo 3'),
+('Cotizacion', 'Tipo 1'),
+('Cotizacion', 'Tipo 2'),
+('Cotizacion', 'Tipo 3'),
+('Caso', 'Tipo 1'),
+('Caso', 'Tipo 2'),
+('Caso', 'Tipo 3');
 
 INSERT INTO Etapa (nombre)
 VALUES
 ('Cotizacion'),
 ('Negociacion'),
 ('Pausa'),
-('Finalizado');
+('Facturada');
 
 INSERT INTO Prioridad (tipo)
 VALUES
@@ -514,16 +509,11 @@ VALUES
 ('Origen 05'),
 ('Origen 06');
 
--- Agregar valor a Compra para usar en Caso
--- Es un valor especifico para usar en cotizaciones que todavia no se acepta la compra
-INSERT INTO Compra (ordenCompra, detalle)
-VALUES
-(-1, 'Placeholder para compras no realizadas todavia');
-GO
-
 INSERT INTO Compra (ordenCompra, detalle)
 VALUES	(01, 'Ninguna'),
-		(02, 'Ninguna');
+		(02, 'Ninguna'),
+		(03, 'Ninguna'),
+		(04, 'Ninguna');
 
 
 INSERT INTO Factura (numeroFactura, detalle)
@@ -542,8 +532,8 @@ VALUES	('E001', 'Ejecucion1', '2022-10-10', 'P003', 'DP02'),
 		('E002', 'Ejecucion2', '2021-11-11', 'P002', 'DP03');
 
 INSERT INTO Caso (codigo, origen, asunto, direccion, descripcion, categoria_tipo, nombre_tipo, tipo_prioridad, categoria_estado, nombre_estado)
-VALUES	('C001', 'Origen 01', 'asunto1', 'direccion del caso', 'descripcion del caso', 'Caso', 'Tipo2', 'P3', 'Caso', 'En Progreso'),
-		('C002', 'Origen 02', 'asunto2', 'direccion del caso2', 'descripcion del caso2', 'Caso', 'Tipo1', 'P1', 'Caso', 'Inicio');
+VALUES	('C001', 'Origen 01', 'asunto1', 'direccion del caso', 'descripcion del caso', 'Caso', 'Tipo 2', 'P3', 'Caso', 'En Progreso'),
+		('C002', 'Origen 02', 'asunto2', 'direccion del caso2', 'descripcion del caso2', 'Caso', 'Tipo 1', 'P1', 'Caso', 'Inicio');
 
 
 INSERT INTO Inflacion (anno, porcentaje)
@@ -551,7 +541,6 @@ VALUES	('2019', 9.20),
 		('2020', 0.20),
 		('2021', 1.20),
 		('2022', 2.20);
-
 
 INSERT INTO Competencia (nombre)
 VALUES	('Compet1'),
@@ -562,14 +551,14 @@ GO
 INSERT INTO Cotizacion (numeroCotizacion, nombreOportunidad, fecha, mesAnnoCierre, fechaCierre, 
 probabilidad, descripcion, seNego, nombre_competencia, ordenCompra, numero_factura, nombre_etapa, 
 categoria_tipo, nombre_tipo, codigo_ejecucion, zona, sector, anno_inflacion, codigo_caso, login_usuario)
-VALUES	(01, 'oport01', '2019-8-8', '09-2022', '2023-8-8', 20.3, 'descrip1', 'si', 'Compet1', 01, 001, 'Negociacion', 'Cotizacion', 'Tipo1', 'E001',
-		'Cartago', 'Tres Rios', '2019', 'C001', 'amr'),
-		(02, 'oport02', '2020-9-9', '08-2022', '2024-9-9', 30.3, 'descrip2', 'si', 'Compet2', 02, 002, 'Cotizacion', 'Cotizacion', 'Tipo2', 'E002',
-		'Heredia', 'Barva', '2020', 'C002', 'amr'),
-		(03, 'oport03', '2021-10-10', '10-2022', '2025-10-10', 40.3, 'descrip3', 'no', 'Compet3', 01, 001, 'Finalizado', 'Cotizacion', 'Tipo3', 'E001',
-		'San Jose', 'San Jose', '2021', 'C001', 'jsm'),
-		(04, 'oport04', '2018-11-11', '11-2022', '2016-11-11', 60.3, 'descrip4', 'no', 'Compet2', 02, 002 , 'Pausa', 'Cotizacion', 'Tipo1', 'E002',
-		'Heredia', 'Barva', '2022', 'C002', 'jsm');
+VALUES	(01, 'oport01', '2019-8-8', '09-2022', '2023-8-8', 20.3, 'descrip1', 'si', 'Compet1', 01, 001, 'Negociacion', 'Cotizacion', 'Tipo 1', 'E001',
+		'Cartago', 'Turismo', '2019', 'C001', 'amr'),
+		(02, 'oport02', '2020-9-9', '08-2022', '2024-9-9', 30.3, 'descrip2', 'si', 'Compet2', 02, 002, 'Cotizacion', 'Cotizacion', 'Tipo 2', 'E002',
+		'Heredia', 'Gobierno', '2020', 'C002', 'amr'),
+		(03, 'oport03', '2021-10-10', '10-2022', '2025-10-10', 40.3, 'descrip3', 'no', 'Compet3', 04, 001, 'Facturada', 'Cotizacion', 'Tipo 3', 'E001',
+		'San Jose', 'Residencial', '2021', 'C001', 'jsm'),
+		(04, 'oport04', '2018-11-11', '11-2022', '2016-11-11', 60.3, 'descrip4', 'no', 'Compet2', 03, 002 , 'Pausa', 'Cotizacion', 'Tipo 1', 'E002',
+		'Heredia', 'Hoteleria', '2022', 'C002', 'jsm');
 GO
 
 -- #-----------------------------------#
@@ -940,13 +929,13 @@ RETURN
 );
 GO
 
--- Vista para tomar las cotizaciones com compras
+-- Vista para tomar las cotizaciones con compras
 CREATE VIEW CotizacionesCompra AS (
 	SELECT DISTINCT
 		pxc.codigo_producto
 	FROM ProductoXCotizacion AS pxc
 	JOIN Cotizacion AS c ON c.numeroCotizacion = pxc.numero_cotizacion
-	WHERE c.ordenCompra != -1 -- si se efectuo la venta
+	WHERE c.nombre_etapa = 'Facturada' -- si se efectuo la venta
 );
 GO
 
@@ -972,6 +961,26 @@ RETURN
 );
 GO
 
+-- Funcion para seleccionar las cotizaciones y ventas por departamento
+CREATE FUNCTION cotVentaXDepartamento()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT
+		d.codigo,
+		d.nombre,
+		SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN 1 ELSE 0 END) AS ventas,
+		SUM(CASE WHEN c.nombre_etapa != 'Facturada' THEN 1 ELSE 0 END) AS cotizaciones
+	FROM Departamento AS d
+	JOIN Usuario AS u ON u.codigo_departamento = d.codigo
+	JOIN Cotizacion AS c ON c.login_usuario = u.userLogin
+	GROUP BY d.codigo, d.nombre
+);
+GO
+
+------------------------ FIX ---------------------------
+--------------------------------------------------------
 -- Funcion para seleccionar las familias de productos mas vendidos
 CREATE FUNCTION masVendidosFamProductos()
 RETURNS TABLE
@@ -990,6 +999,24 @@ RETURN
 	JOIN CotizacionesCompra AS cc ON cc.codigo_producto = pxc.codigo_producto
 	GROUP BY fp.codigo, fp.nombre, fp.activo, fp.descripcion
 	ORDER BY ventas DESC
+);
+GO
+
+-- Funcion para seleccionar las familias de productos vendidos
+CREATE FUNCTION ventasFamProductos()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT
+	fp.codigo,
+	fp.nombre,
+	COUNT(DISTINCT pxc.numero_cotizacion) AS ventas
+	FROM FamiliaProducto AS fp
+	JOIN Producto AS p ON p.codigo_familia = fp.codigo
+	JOIN ProductoXCotizacion AS pxc ON pxc.codigo_producto = p.codigo
+	JOIN CotizacionesCompra AS cc ON cc.codigo_producto = pxc.codigo_producto
+	GROUP BY fp.codigo, fp.nombre
 );
 GO
 

@@ -14,7 +14,7 @@ namespace BasesP1.Data
         {
             Configuration = configuration;
         }
-        //Method to to add a new method to the DB
+        //Method to add a new method to the DB
         public void addContact(Contact newContact)
         {
             try

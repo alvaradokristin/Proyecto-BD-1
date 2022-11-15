@@ -1,0 +1,120 @@
+﻿@using System.Linq;
+@model List<SimpleReportViewModel>
+@{
+    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.DimensionOne).ToList());
+    var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.Quantity).ToList());
+    ViewData["Title"] = "Pie Chart";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Pie</title>
+</head>
+<body>
+    @*FORM TO SELECT THE TYPE OF REPORT YPU WANT TO VIEW*@
+    <div class="mb-3">
+        <label for="contact-client-code" class="form-label">Selecione el reporte a visualizar:</label>
+        <div class="input-group w-50">
+            <select class="form-select auto-wdth" id="ReportType" name="ReportType">
+                <option value="fpv">Familias de productos vendidos</option>
+                <option value="vps">Ventas por sector</option>
+                <option value="vpz">Ventas por zona</option>
+                <option value="vpd">Ventas por departamento</option>
+                <option value="cpe">Casos por estado</option>
+                <option value="ccpt">Cantidad de cotizaciones por tipo</option>
+                <option value="cpt">Casos por tipo</option> @*PORCENTAGE*@
+            </select>
+            <button type="submit" class="btn btn-outline-info" onclick="location.href='@Url.Action("CircularGraphReport", "Reports")?ReportType=' + document.getElementById('ReportType').value">Buscar</button>
+        </div>
+    </div>
+
+    @*THE CHART FOR THE REPORTS*@
+    @if (Model.FirstOrDefault() != null)
+    {
+        <div class="box-body">
+
+            <div class="chart-container">
+                <canvas id="chart" style="width:100%; height:500px"></canvas>
+            </div>
+        </div>
+    }
+</body>
+</html>
+
+<script type="text/javascript">
+    $(function () {
+        var chartName = "chart";
+        var ctx = document.getElementById(chartName).getContext('2d');
+        var data = {
+            labels: @Html.Raw(XLabels),
+            datasets: [{
+                label: "Drinks Chart",
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 0, 0)',
+                    'rgba(0, 255, 0)',
+                    'rgba(0, 0, 255)',
+                    'rgba(192, 192, 192)',
+                    'rgba(255, 255, 0)',
+                    'rgba(255, 0, 255)'
+                ],
+                borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255, 0, 0)',
+                    'rgba(0, 255, 0)',
+                    'rgba(0, 0, 255)',
+                    'rgba(192, 192, 192)',
+                    'rgba(255, 255, 0)',
+                    'rgba(255, 0, 255)'
+                ],
+                borderWidth: 1,
+                data: @Html.Raw(YValues)
+        }]
+        };
+
+        var options = {
+            maintainAspectRatio: false,
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 0,
+                        beginAtZero: true
+                    },
+                    gridLines: {
+                        display: true,
+                        color: "rgba(255,99,164,0.2)"
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        min: 0,
+                        beginAtZero: true
+                    },
+                    gridLines: {
+                        display: false
+                    }
+                }]
+            }
+        };
+
+        var myChart = new Chart(ctx, {
+            options: options,
+            data: data,
+            type: 'pie'
+
+        });
+    });
+</script>
