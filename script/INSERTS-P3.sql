@@ -25,7 +25,7 @@ END;
 
 -- Producto
 SET @maxElement = 100;
-WHILE @maxElement < 201
+WHILE @maxElement < 351
 BEGIN
 	BEGIN TRY
 		
@@ -139,7 +139,7 @@ END;
 
 -- Compra
 SET @maxElement = 100;
-WHILE @maxElement < 351
+WHILE @maxElement < 551
 BEGIN
 	INSERT INTO Compra VALUES (
 	@maxElement,
@@ -174,7 +174,7 @@ END;
 
 -- Cotizacion
 SET @maxElement = 100;
-WHILE @maxElement < 301
+WHILE @maxElement < 551
 BEGIN
 	BEGIN TRY
 
@@ -213,7 +213,7 @@ END;
 
 -- ProductoXCotizacion
 SET @maxElement = 100;
-WHILE @maxElement < 601
+WHILE @maxElement < 2101
 BEGIN
 	BEGIN TRY
 
