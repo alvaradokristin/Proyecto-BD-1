@@ -174,7 +174,7 @@ END;
 
 -- Cotizacion
 SET @maxElement = 100;
-WHILE @maxElement < 451
+WHILE @maxElement < 551
 BEGIN
 	BEGIN TRY
 
@@ -213,7 +213,7 @@ END;
 
 -- ProductoXCotizacion
 SET @maxElement = 100;
-WHILE @maxElement < 1101
+WHILE @maxElement < 2101
 BEGIN
 	BEGIN TRY
 

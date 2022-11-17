@@ -253,7 +253,11 @@ namespace BasesP1.Controllers
             //Create a model that wll store several models to be use in View
             dynamic model = new ExpandoObject();
 
+            ReportsData reportData = new ReportsData(this.Configuration);
+            List<String> yearMonth = reportData.getYearMonth();
+
             model.Data = null;
+            model.Dates = yearMonth;
 
             return View("TableReport", model);
         }
@@ -320,6 +324,8 @@ namespace BasesP1.Controllers
             ProductData queryProd = new ProductData(this.Configuration);
             ReportsData queryReport = new ReportsData(this.Configuration);
 
+            List<String> yearMonth = queryReport.getYearMonth();
+
             switch (ReportType)
             {
                 case "ttpmv":
@@ -363,6 +369,8 @@ namespace BasesP1.Controllers
                     // Default
                     break;
             }
+
+            model.Dates = yearMonth;
 
             return View(model);
         }

@@ -36,6 +36,13 @@
                 }
             </select>
         </div>
+        <div class="mb-3">
+            <label for="order-filter" class="form-label mr-2">Ordenar de manera:</label>
+            <select class="form-select auto-wdth" id="OrderBy" name="OrderBy">
+                <option value="DESC">Descendente</option>
+                <option value="ASC">Ascendente</option>
+            </select>
+        </div>
         <button type="submit" class="btn btn-outline-info" onclick="location.href='@Url.Action("TableReport", "Reports")?ReportType=' + document.getElementById('ReportType').value">Buscar</button>
         </div>
     </div>
