@@ -1171,6 +1171,46 @@ RETURN
 );
 GO
 
+CREATE FUNCTION ventasxsector()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT COUNT(numeroCotizacion) AS numero_de_ventas, sector 
+	FROM Cotizacion 
+	WHERE nombre_etapa = 'Facturada' 
+	GROUP BY sector
+);
+GO
+
+CREATE FUNCTION ventasxzona()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT COUNT(numeroCotizacion) AS numero_de_ventas, zona 
+	FROM Cotizacion 
+	WHERE nombre_etapa = 'Facturada' 
+	GROUP BY zona
+);
+GO
+
+CREATE FUNCTION ventasxdepartamento()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT (SELECT CONVERT(DECIMAL (5,2), (( COUNT(numeroCotizacion) * 1.0 / (SELECT COUNT(numeroCotizacion) FROM Cotizacion WHERE nombre_etapa = 'Facturada' ) ) * 100 ))) AS Porcentaje, d.nombre AS departamento
+	FROM Cotizacion c
+		JOIN Ejecucion e ON c.codigo_ejecucion = e.codigo
+			JOIN Departamento d ON e.codigo_departamento = d.codigo
+	WHERE nombre_etapa = 'Facturada' 
+	GROUP BY d.nombre
+);
+GO
+
+SELECT * FROM ventasxdepartamento()
+
 CREATE PROCEDURE sp_addClient 
 	@codigo VARCHAR(10), 
 	@nombreCuenta VARCHAR(12), 
@@ -1230,6 +1270,3 @@ BEGIN
 		JOIN Cotizacion ct ON c.login_usuario = ct.login_usuario
 	WHERE ct.numeroCotizacion = @param_numeroCotizacion
 END
-
-
-SELECT * FROM cotVentaXDepartamento()

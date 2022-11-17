@@ -175,5 +175,102 @@ namespace BasesP1.Data
             }
             return data;
         }
+        public List<SimpleReportViewModel> getSellsBySector()
+        {
+            //Structure where the data from the report will be save
+            List<SimpleReportViewModel> data = new List<SimpleReportViewModel>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                //Show the sells by sectors
+                string sql = $"SELECT * FROM ventasxsector()";
+
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            data.Add(new SimpleReportViewModel
+                            {
+                                DimensionOne = "" + dataReader["sector"],
+                                Quantity = int.Parse("" + dataReader["numero_de_ventas"])
+                            });
+                        }
+
+                    }
+                }
+                connection.Close();
+            }
+            return data;
+        }
+        public List<SimpleReportViewModel> getSellsByZone()
+        {
+            //Structure where the data from the report will be save
+            List<SimpleReportViewModel> data = new List<SimpleReportViewModel>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                //Show the sells by zones
+                string sql = $"SELECT * FROM ventasxzona()";
+
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            data.Add(new SimpleReportViewModel
+                            {
+                                DimensionOne = "" + dataReader["zona"],
+                                Quantity = int.Parse("" + dataReader["numero_de_ventas"])
+                            });
+                        }
+
+                    }
+                }
+                connection.Close();
+            }
+            return data;
+        }
+        public List<SimpleReportViewModel> getSellsByDepartment()
+        {
+            //Structure where the data from the report will be save
+            List<SimpleReportViewModel> data = new List<SimpleReportViewModel>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                //Show the sells by zones
+                string sql = $"SELECT * FROM ventasxdepartamento()";
+
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            data.Add(new SimpleReportViewModel
+                            {
+                                DimensionOne = "" + dataReader["departamento"],
+                                Percentage = double.Parse("" + dataReader["Porcentaje"])
+                            });
+                        }
+
+                    }
+                }
+                connection.Close();
+            }
+            return data;
+        }
     }
 }
+

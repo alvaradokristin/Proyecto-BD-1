@@ -85,6 +85,14 @@ namespace BasesP1.Controllers
             return View("CircularGraphReport", dataModel);
         }
 
+        public IActionResult LoadCircularPercentageGraphReport()
+        {
+            ReportsData reportData = new ReportsData(this.Configuration);
+            List<SimpleReportViewModel> dataModel = new List<SimpleReportViewModel>();
+
+            return View("CircularPercentageGraphReport", dataModel);
+        }
+
         public IActionResult CircularGraphReport(string ReportType)
         {
             ReportsData reportData = new ReportsData(this.Configuration);
@@ -95,8 +103,32 @@ namespace BasesP1.Controllers
                 case "fpv":
                     dataModel = reportData.getCFamilySales();
                     break;
-                case "other":
-                    // Code specific to PersonalPolicy
+                case "vps":
+                    dataModel = reportData.getSellsBySector();
+                    break;
+                case "vpz":
+                    dataModel = reportData.getSellsByZone();
+                    break;
+                case "vpd":
+                    dataModel = reportData.getSellsByDepartment();
+                    break;
+                case null:
+                    // Code for "any-other-than" cases :)
+                    break;
+            }
+
+            return View(dataModel);
+        }
+
+        public IActionResult CircularPercentageGraphReport(string ReportType)
+        {
+            ReportsData reportData = new ReportsData(this.Configuration);
+            List<SimpleReportViewModel> dataModel = new List<SimpleReportViewModel>();
+
+            switch (ReportType)
+            {
+                case "vpd":
+                    dataModel = reportData.getSellsByDepartment();
                     break;
                 case null:
                     // Code for "any-other-than" cases :)
