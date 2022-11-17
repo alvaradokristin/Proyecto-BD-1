@@ -1,5 +1,79 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@*FORM TO SELECT THE TYPE OF REPORT YPU WANT TO VIEW*@
+<div class="mb-3">
+    <label for="contact-client-code" class="form-label">Selecione el reporte a visualizar:</label>
+    <div class="input-group w-50">
+        <select class="form-select auto-wdth" id="ReportType" name="ReportType">
+            <option value="ttpmv">Top 10 de productos más vendidos</option>
+            <option value="ttpmc">Top 10 de productos más cotizados</option>
+            <option value="ttccmv">Top 10 de clientes con mayores ventas</option>
+            <option value="ttvcmv">Top 10 de vendedores con mayores ventas</option>
+            <option value="ttcdccma">Top 10 de cotizaciones con diferencia entre creación y cierre más altos</option>
+            <option value="tftscma">Top 15 de tareas sin cerrar más antiguas</option>
+            <option value="cepu">Cantidad de ejecuciones por usuario</option>
+            <option value="ctpu">Cantidad de tareas por usuario</option>
+        </select>
+        <button type="submit" class="btn btn-outline-info" onclick="location.href='@Url.Action("TableReport", "Reports")?ReportType=' + document.getElementById('ReportType').value">Buscar</button>
+    </div>
+</div>
+
+@*TABLE TO SHOW THE INFORMATION FROM THE SQL TABLE*@
+@if (Model.Data != null)
+{
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    @foreach (var header in Model.Headers)
+                    {
+                        <th>@header</th>
+                    }
+                </tr>
+            </thead>
+
+            <tbody>
+                @*CREATE THE TABLES ROWS AND ASSIGN THEM THE INFORMATION FROM THE DB*@
+
+                @*TOP 10 PRODUCTS ... *@
+                @if (Model.Type == "ttpmv" || Model.Type == "ttpmc")
+                {
+                    foreach (var item in Model.Data)
+                    {
+                        <tr>
+                            <td>@item.Codigo</td>
+                            <td>@item.Nombre</td>
+                            <td>@item.Activo</td>
+                            <td>@item.Descripcion</td>
+                            <td>@item.PrecioEstandar</td>
+                            <td>@item.CodigoFamilia</td>
+                            <td>@item.CotizacionesVentas</td>
+
+                        </tr>
+                    }
+                }
+
+                @*TOP 10 CLIENTS ... *@
+                @if (Model.Type == "ttccmv")
+                {
+                    foreach (var item in Model.Data)
+                    {
+                        <tr>
+                            <td>@item.codigo</td>
+                            <td>@item.nombreCuenta</td>
+                            <td>@item.telefono</td>
+                            <td>@item.celular</td>
+                            <td>@item.correo</td>
+                            <td>@item.informacionAdicional</td>
+                            <td>@item.login_usuario</td>
+                            <td>@item.abreviatura_moneda</td>
+                            <td>@item.sector</td>
+                            <td>@item.sitioWeb</td>
+                            <td>@item.zona</td>
+                            <td>@item.numeroCotizacion</td>
+
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
 }
