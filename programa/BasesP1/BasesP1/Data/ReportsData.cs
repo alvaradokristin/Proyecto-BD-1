@@ -91,5 +91,89 @@ namespace BasesP1.Data
             }
             return data;
         }
+
+        //Method to get the data for the quotes and sells by month and year
+        public List<StackedViewModel> getBQuotesSellsByMonthYear()
+        {
+            //Structure where the data fro the report will be save
+            List<StackedViewModel> data = new List<StackedViewModel>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = $"SELECT * FROM cotVentasMesAnno()";
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            data.Add(new StackedViewModel
+                            {
+                                StackedDimensionOne = "" + dataReader["annoMes"],
+                                LstData = new List<SimpleReportViewModel>()
+                                {
+                                    new SimpleReportViewModel()
+                                    {
+                                        DimensionOne="Ventas",
+                                        Quantity = int.Parse("" + dataReader["ventas"])
+                                    },
+                                    new SimpleReportViewModel()
+                                    {
+                                        DimensionOne="Cotizaciones",
+                                        Quantity = int.Parse("" + dataReader["cotizaciones"])
+                                    },
+                                }
+                            });
+                        }
+
+                    }
+                }
+                connection.Close();
+            }
+            return data;
+        }
+
+        //Method to get the data for the 10 clients with the most sells
+        public List<Client> getTClientMostSells()
+        {
+            //Structure where the data fro the report will be save
+            List<Client> data = new List<Client>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = $"SELECT * FROM masVentasClientes()";
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            data.Add(new Client
+                            {
+                                codigo = "" + dataReader["codigo"],
+                                nombreCuenta = "" + dataReader["nombreCuenta"],
+                                celular = "" + dataReader["celular"],
+                                correo = "" + dataReader["correo"],
+                                informacionAdicional = "" + dataReader["informacionAdicional"],
+                                login_usuario = "" + dataReader["asesor"],
+                                abreviatura_moneda = "" + dataReader["abreviatura_moneda"],
+                                sector = "" + dataReader["sector"],
+                                sitioWeb = "" + dataReader["sitioWeb"],
+                                telefono = "" + dataReader["telefono"],
+                                zona = "" + dataReader["zona"],
+                                numeroCotizacion = Convert.ToInt16("" + dataReader["ventas"])
+                            });
+                        }
+                    }
+                }
+            }
+            return data;
+        }
     }
 }

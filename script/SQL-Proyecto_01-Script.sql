@@ -430,7 +430,11 @@ VALUES	('USD', 'dolar'),
 INSERT INTO Zona (nombre)
 VALUES	('Cartago'),
 		('San Jose'),
-		('Heredia');
+		('Heredia'),
+		('Alajuela'),
+		('Guanacaste'),
+		('Limon'),
+		('Puntarenas');
 
 INSERT INTO Sector (nombre)
 VALUES	('Gobierno'),
@@ -930,7 +934,7 @@ RETURN
 GO
 
 -- Vista para tomar las cotizaciones con compras
-CREATE VIEW CotizacionesCompra AS (
+CREATE VIEW cotizacionesCompra AS (
 	SELECT DISTINCT
 		pxc.codigo_producto
 	FROM ProductoXCotizacion AS pxc
@@ -952,11 +956,40 @@ RETURN
 	p.descripcion,
 	p.precioEstandar,
 	p.codigo_familia,
-	COUNT(DISTINCT pxc.numero_cotizacion) AS ventas
+	SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN 1 ELSE 0 END) AS ventas
 	FROM Producto AS p
 	JOIN ProductoXCotizacion AS pxc ON pxc.codigo_producto = p.codigo
+	JOIN Cotizacion AS c ON c.numeroCotizacion = pxc.numero_cotizacion
 	GROUP BY p.codigo, p.nombre, p.activo, p.descripcion, p.precioEstandar, p.codigo_familia
-	HAVING p.codigo IN (SELECT * FROM CotizacionesCompra) -- si se efectuo la venta
+	ORDER BY ventas DESC
+);
+GO
+
+-- Funcion para seleccionar los 10 clientes con mas ventas
+CREATE FUNCTION masVentasClientes()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT TOP 10
+		cl.codigo,
+		cl.nombreCuenta,
+		cl.celular,
+		cl.correo,
+		cl.informacionAdicional,
+		cl.login_usuario AS asesor,
+		cl.abreviatura_moneda,
+		cl.nombre_moneda,
+		cl.sector,
+		cl.sitioWeb,
+		cl.telefono,
+		cl.zona,
+		SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN 1 ELSE 0 END) AS ventas
+	FROM Cliente AS cl
+	JOIN Usuario AS u ON u.userLogin = cl.login_usuario
+	JOIN Cotizacion AS c ON c.login_usuario = u.userLogin
+	GROUP BY cl.abreviatura_moneda, cl.celular, cl.codigo, cl.correo, cl.informacionAdicional, cl.login_usuario,
+		cl.nombre_moneda, cl.nombreCuenta, cl.sector, cl.sitioWeb, cl.telefono, cl.zona
 	ORDER BY ventas DESC
 );
 GO
@@ -979,8 +1012,6 @@ RETURN
 );
 GO
 
------------------------- FIX ---------------------------
---------------------------------------------------------
 -- Funcion para seleccionar las familias de productos mas vendidos
 CREATE FUNCTION masVendidosFamProductos()
 RETURNS TABLE
@@ -1033,7 +1064,7 @@ RETURN
 	p.descripcion,
 	p.precioEstandar,
 	p.codigo_familia,
-	COUNT(DISTINCT pxc.numero_cotizacion) AS cotizaciones
+	SUM(CASE WHEN c.nombre_etapa != 'Facturada' THEN 1 ELSE 0 END) AS cotizaciones
 	FROM Producto AS p
 	JOIN ProductoXCotizacion AS pxc ON pxc.codigo_producto = p.codigo
 	JOIN Cotizacion AS c ON c.numeroCotizacion = pxc.numero_cotizacion
@@ -1113,6 +1144,30 @@ RETURN
 	nombre
 	FROM Tipo
 	WHERE categoria = @Categoria
+);
+GO
+
+-- Vista para obtener el anno y mes por fecha de cotizacion
+CREATE VIEW CotAnnoMes 
+AS SELECT DISTINCT
+	c.fecha,
+	CAST(DATEPART(YEAR, c.fecha) AS varchar(4)) + '-' + CAST(DATEPART(MONTH, c.fecha) AS varchar(4)) AS annoMes
+FROM Cotizacion AS c;
+GO
+
+-- Funcion para seleccionar cantidad de ventas y cotizaciones por mes por año
+CREATE FUNCTION cotVentasMesAnno()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT
+		cam.annoMes,
+		SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN 1 ELSE 0 END) AS ventas,
+		SUM(CASE WHEN c.nombre_etapa != 'Facturada' THEN 1 ELSE 0 END) AS cotizaciones
+	FROM Cotizacion AS c
+	JOIN CotAnnoMes AS cam ON cam.fecha = c.fecha
+	GROUP BY cam.annoMes
 );
 GO
 

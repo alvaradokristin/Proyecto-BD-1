@@ -24,6 +24,8 @@
                 <option value="cvpd">Cotizaciones y Ventas por departamento</option>
                 <option value="vcpma">Ventas y cotizaciones por mes, por año</option>
                 <option value="vcpmavp">Ventas y cotizaciones por mes, por año, en valor presente</option>
+                <option value="vpspd">Ventas por sector por departamento</option>
+                <option value="vpzpd">Ventas por zona por departamento</option>
             </select>
             <button type="submit" class="btn btn-outline-info" onclick="location.href='@Url.Action("BarsGraphReport", "Reports")?ReportType=' + document.getElementById('ReportType').value">Buscar</button>
         </div>
