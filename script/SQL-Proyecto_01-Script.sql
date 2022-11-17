@@ -1155,6 +1155,16 @@ AS SELECT DISTINCT
 FROM Cotizacion AS c;
 GO
 
+-- Funcion para seleccionar los distintos año-mes
+CREATE FUNCTION cotDisMesAnno()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT annoMes FROM CotAnnoMes
+);
+GO
+
 -- Funcion para seleccionar cantidad de ventas y cotizaciones por mes por año
 CREATE FUNCTION cotVentasMesAnno()
 RETURNS TABLE
@@ -1208,8 +1218,6 @@ RETURN
 	GROUP BY d.nombre
 );
 GO
-
-SELECT * FROM ventasxdepartamento()
 
 CREATE PROCEDURE sp_addClient 
 	@codigo VARCHAR(10), 

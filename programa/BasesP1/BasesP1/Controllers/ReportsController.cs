@@ -14,10 +14,63 @@ namespace BasesP1.Controllers
             Configuration = configuration;
         }
 
+        //Method to create a list of all DimensionOne on a List<SimpleReportViewModel>
+        public List<String> getAllDimOne(List<SimpleReportViewModel> model)
+        {
+            List<String> data = model.Select(x => x.DimensionOne).ToList();
+
+            return data;
+        }
+
+        //Method to create a list of all Quantities on a List<SimpleReportViewModel>
+        public List<int> getAllQuantities(List<SimpleReportViewModel> model)
+        {
+            List<int> data = model.Select(x => x.Quantity).ToList();
+
+            return data;
+        }
+
+        //Method to create a list of all Quantities on a List<SimpleReportViewModel> (Percentage / %)
+        public List<double> getAllQuantitiesPer(List<SimpleReportViewModel> model)
+        {
+            List<double> data = model.Select(x => x.Percentage).ToList();
+
+            return data;
+        }
+
+        //Method to create a list of all StackedDimensionOne on a List<StackedViewModel>
+        public List<String> getAllSDO(List<StackedViewModel> model)
+        {
+            List<String> data = model.Select(x => x.StackedDimensionOne).ToList();
+
+            return data;
+        }
+
+        //Method to create a list of all XLabels on a List<StackedViewModel>
+        public List<String> getAllxL(List<StackedViewModel> model)
+        {
+            List<String> data = model.FirstOrDefault().LstData.Select(x => x.DimensionOne).ToList();
+
+            return data;
+        }
+
+        //Method to create a list of all YValues on a List<StackedViewModel>
+        public List<IEnumerable<int>> getAllyV(List<StackedViewModel> model)
+        {
+            List<IEnumerable<int>> data = model.Select(x => x.LstData.Select(w => w.Quantity)).ToList();
+
+            return data;
+        }
+
         public IActionResult LoadBarsGraphReport()
         {
+            //Create a model that wll store several models to be use in View
+            dynamic model = new ExpandoObject();
+
             ReportsData reportData = new ReportsData(this.Configuration);
             List<StackedViewModel> dataModel = new List<StackedViewModel>();
+
+            List<String> yearMonth = reportData.getYearMonth();
 
             Random rnd = new Random();
 
@@ -45,13 +98,24 @@ namespace BasesP1.Controllers
                }
             });
 
-            return View("BarsGraphReport", dataModel);
+            model.XLabels = getAllxL(dataModel);
+            model.YValues = getAllyV(dataModel);
+            model.label2 = getAllSDO(dataModel);
+            model.Dates = yearMonth;
+            model.Show = false;
+
+            return View("BarsGraphReport", model);
         }
 
         public IActionResult BarsGraphReport(string ReportType)
         {
+            //Create a model that wll store several models to be use in View
+            dynamic model = new ExpandoObject();
+
             ReportsData reportData = new ReportsData(this.Configuration);
             List<StackedViewModel> dataModel = new List<StackedViewModel>();
+
+            List<String> yearMonth = reportData.getYearMonth();
 
             switch (ReportType)
             {
@@ -74,29 +138,60 @@ namespace BasesP1.Controllers
                     break;
             }
 
-            return View(dataModel);
+            model.XLabels = getAllxL(dataModel);
+            model.YValues = getAllyV(dataModel);
+            model.label2 = getAllSDO(dataModel);
+            model.Dates = yearMonth;
+            model.Show = true;
+
+            return View(model);
         }
 
         public IActionResult LoadCircularGraphReport()
         {
+            //Create a model that wll store several models to be use in View
+            dynamic model = new ExpandoObject();
+
             ReportsData reportData = new ReportsData(this.Configuration);
             List<SimpleReportViewModel> dataModel = new List<SimpleReportViewModel>();
 
-            return View("CircularGraphReport", dataModel);
+            List<String> yearMonth = reportData.getYearMonth();
+
+            model.XLabels = getAllDimOne(dataModel);
+            model.YValues = getAllQuantities(dataModel);
+            model.Dates = yearMonth;
+            model.Show = false;
+
+            return View("CircularGraphReport", model);
         }
 
         public IActionResult LoadCircularPercentageGraphReport()
         {
+            //Create a model that wll store several models to be use in View
+            dynamic model = new ExpandoObject();
+
             ReportsData reportData = new ReportsData(this.Configuration);
             List<SimpleReportViewModel> dataModel = new List<SimpleReportViewModel>();
 
-            return View("CircularPercentageGraphReport", dataModel);
+            List<String> yearMonth = reportData.getYearMonth();
+
+            model.XLabels = getAllDimOne(dataModel);
+            model.YValues = getAllQuantitiesPer(dataModel);
+            model.Dates = yearMonth;
+            model.Show = false;
+
+            return View("CircularPercentageGraphReport", model);
         }
 
         public IActionResult CircularGraphReport(string ReportType)
         {
+            //Create a model that wll store several models to be use in View
+            dynamic model = new ExpandoObject();
+
             ReportsData reportData = new ReportsData(this.Configuration);
             List<SimpleReportViewModel> dataModel = new List<SimpleReportViewModel>();
+
+            List<String> yearMonth = reportData.getYearMonth();
 
             switch (ReportType)
             {
@@ -117,13 +212,23 @@ namespace BasesP1.Controllers
                     break;
             }
 
-            return View(dataModel);
+            model.XLabels = getAllDimOne(dataModel);
+            model.YValues = getAllQuantities(dataModel);
+            model.Dates = yearMonth;
+            model.Show = true;
+
+            return View(model);
         }
 
         public IActionResult CircularPercentageGraphReport(string ReportType)
         {
+            //Create a model that wll store several models to be use in View
+            dynamic model = new ExpandoObject();
+
             ReportsData reportData = new ReportsData(this.Configuration);
             List<SimpleReportViewModel> dataModel = new List<SimpleReportViewModel>();
+
+            List<String> yearMonth = reportData.getYearMonth();
 
             switch (ReportType)
             {
@@ -135,7 +240,12 @@ namespace BasesP1.Controllers
                     break;
             }
 
-            return View(dataModel);
+            model.XLabels = getAllDimOne(dataModel);
+            model.YValues = getAllQuantitiesPer(dataModel);
+            model.Dates = yearMonth;
+            model.Show = true;
+
+            return View(model);
         }
 
         public IActionResult LoadTableReport()
