@@ -1,8 +1,8 @@
 ﻿@using System.Linq;
-@model List<SimpleReportViewModel>
 @{
-    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.DimensionOne).ToList());
-    var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.Percentage).ToList());
+    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.XLabels);
+    var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.YValues);
+
     ViewData["Title"] = "Pie Chart";
 }
 
@@ -22,12 +22,36 @@
                 <option value="vpd">Ventas por departamento</option>
                 <option value="cpt">Casos por tipo</option> @*PORCENTAGE*@
             </select>
+            @*<button type="submit" class="btn btn-outline-info" onclick="location.href='@Url.Action("CircularPercentageGraphReport", "Reports")?ReportType=' + document.getElementById('ReportType').value">Buscar</button>*@
+        </div>
+    </div>
+
+    @*FORM TO SELECT THE DATE RANGE*@
+    <div class="mb-3">
+        <label for="date-filter" class="form-label">Rango de fechas a filtrar:</label>
+        <div class="w-50">
+            <div class="input-group mb-3">
+                <label for="date-filter-from" class="form-label mr-2">Desde:</label>
+                <select class="form-select auto-wdth mr-4" id="From" name="From">
+                    @foreach (var item in Model.Dates)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
+                <label for="date-filter-to" class="form-label mr-2">Hasta:</label>
+                <select class="form-select auto-wdth" id="To" name="To">
+                    @foreach (var item in Model.Dates)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
+            </div>
             <button type="submit" class="btn btn-outline-info" onclick="location.href='@Url.Action("CircularPercentageGraphReport", "Reports")?ReportType=' + document.getElementById('ReportType').value">Buscar</button>
         </div>
     </div>
 
     @*THE CHART FOR THE REPORTS*@
-    @if (Model.FirstOrDefault() != null)
+    @if (Model.Show)
     {
         <div class="box-body">
 

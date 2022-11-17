@@ -1,9 +1,8 @@
 ﻿@using System.Linq;
-@model List<StackedViewModel>
 @{
-    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.FirstOrDefault().LstData.Select(x => x.DimensionOne).ToList());
-    var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.LstData.Select(w => w.Quantity)).ToList());
-    var label2 = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.StackedDimensionOne).ToList());
+    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.XLabels);
+    var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.YValues);
+    var label2 = Newtonsoft.Json.JsonConvert.SerializeObject(Model.label2);
 
     ViewData["Title"] = "Bar Chart";
 }
@@ -27,12 +26,36 @@
                 <option value="vpspd">Ventas por sector por departamento</option>
                 <option value="vpzpd">Ventas por zona por departamento</option>
             </select>
+            @*<button type="submit" class="btn btn-outline-info" onclick="location.href='@Url.Action("BarsGraphReport", "Reports")?ReportType=' + document.getElementById('ReportType').value">Buscar</button>*@
+        </div>
+    </div>
+
+    @*FORM TO SELECT THE DATE RANGE*@
+    <div class="mb-3">
+        <label for="date-filter" class="form-label">Rango de fechas a filtrar:</label>
+        <div class="w-50">
+            <div class="input-group mb-3">
+                <label for="date-filter-from" class="form-label mr-2">Desde:</label>
+                <select class="form-select auto-wdth mr-4" id="From" name="From">
+                    @foreach (var item in Model.Dates)
+                    {
+                    <option value="@item">@item</option>
+                    }
+                </select>
+                <label for="date-filter-to" class="form-label mr-2">Hasta:</label>
+                <select class="form-select auto-wdth" id="To" name="To">
+                    @foreach (var item in Model.Dates)
+                    {
+                    <option value="@item">@item</option>
+                    }
+                </select>
+            </div>
             <button type="submit" class="btn btn-outline-info" onclick="location.href='@Url.Action("BarsGraphReport", "Reports")?ReportType=' + document.getElementById('ReportType').value">Buscar</button>
         </div>
     </div>
 
     @*THE CHART FOR THE REPORTS*@
-    @if (Model.Skip(1).Any())
+    @if (Model.Show)
     {
         <div class="box-body">
 

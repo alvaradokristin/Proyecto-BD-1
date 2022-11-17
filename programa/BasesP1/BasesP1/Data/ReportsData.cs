@@ -12,6 +12,36 @@ namespace BasesP1.Data
             Configuration = configuration;
         }
 
+        //Method to get all the year-monmths from quote dates
+        public List<String> getYearMonth()
+        {
+            //Structure where the data fro the report will be save
+            List<String> data = new List<String>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                //Query to be use
+                string sql = $"SELECT * FROM cotDisMesAnno()";
+
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            data.Add("" + dataReader["annoMes"]);
+                        }
+
+                    }
+                }
+                connection.Close();
+            }
+            return data;
+        }
+
         //Method to get the data for the family products sales (circular) report
         public List<SimpleReportViewModel> getCFamilySales()
         {
