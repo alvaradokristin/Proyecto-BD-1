@@ -1175,3 +1175,6 @@ BEGIN
 		JOIN Cotizacion ct ON c.login_usuario = ct.login_usuario
 	WHERE ct.numeroCotizacion = @param_numeroCotizacion
 END
+
+
+SELECT * FROM cotVentaXDepartamento()
