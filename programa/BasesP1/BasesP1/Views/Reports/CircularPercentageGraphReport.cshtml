@@ -2,7 +2,7 @@
 @model List<SimpleReportViewModel>
 @{
     var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.DimensionOne).ToList());
-    var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.Quantity).ToList());
+    var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.Percentage).ToList());
     ViewData["Title"] = "Pie Chart";
 }
 
@@ -19,13 +19,10 @@
         <label for="contact-client-code" class="form-label">Selecione el reporte a visualizar:</label>
         <div class="input-group w-50">
             <select class="form-select auto-wdth" id="ReportType" name="ReportType">
-                <option value="fpv">Familias de productos vendidos</option>
-                <option value="vps">Ventas por sector</option>
-                <option value="vpz">Ventas por zona</option>
-                <option value="cpe">Casos por estado</option>
-                <option value="ccpt">Cantidad de cotizaciones por tipo</option>
+                <option value="vpd">Ventas por departamento</option>
+                <option value="cpt">Casos por tipo</option> @*PORCENTAGE*@
             </select>
-            <button type="submit" class="btn btn-outline-info" onclick="location.href='@Url.Action("CircularGraphReport", "Reports")?ReportType=' + document.getElementById('ReportType').value">Buscar</button>
+            <button type="submit" class="btn btn-outline-info" onclick="location.href='@Url.Action("CircularPercentageGraphReport", "Reports")?ReportType=' + document.getElementById('ReportType').value">Buscar</button>
         </div>
     </div>
 

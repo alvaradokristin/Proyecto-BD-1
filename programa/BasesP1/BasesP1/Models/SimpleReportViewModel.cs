@@ -4,5 +4,6 @@
     {
         public string DimensionOne { get; set; }
         public int Quantity { get; set; }
+        public double Percentage { get; set; }
     }
 }
