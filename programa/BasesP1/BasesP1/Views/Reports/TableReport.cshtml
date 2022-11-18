@@ -80,10 +80,18 @@
                             <td>@item.Nombre</td>
                             <td>@item.Activo</td>
                             <td>@item.Descripcion</td>
-                            <td>@item.PrecioEstandar</td>
                             <td>@item.CodigoFamilia</td>
-                            <td>@item.CotizacionesVentas</td>
+                            <td>@item.PrecioEstandar</td>
 
+                            @if (Model.Type == "ttpmv")
+                            {
+                                <td>@item.Monto</td>
+                            }
+
+                            @if (Model.Type == "ttpmc")
+                            {
+                                <td>@item.CotizacionesVentas</td>
+                            }
                         </tr>
                     }
                 }
