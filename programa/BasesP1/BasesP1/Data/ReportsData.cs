@@ -227,7 +227,7 @@ namespace BasesP1.Data
                             data.Add(new SimpleReportViewModel
                             {
                                 DimensionOne = "" + dataReader["sector"],
-                                Quantity = int.Parse("" + dataReader["numero_de_ventas"])
+                                Quantity = int.Parse("" + dataReader["Monto"])
                             });
                         }
 
@@ -259,7 +259,7 @@ namespace BasesP1.Data
                             data.Add(new SimpleReportViewModel
                             {
                                 DimensionOne = "" + dataReader["zona"],
-                                Quantity = int.Parse("" + dataReader["numero_de_ventas"])
+                                Quantity = int.Parse("" + dataReader["Monto"])
                             });
                         }
 

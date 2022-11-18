@@ -1186,8 +1186,10 @@ RETURNS TABLE
 AS
 RETURN
 (
-	SELECT COUNT(numeroCotizacion) AS numero_de_ventas, sector 
-	FROM Cotizacion 
+	SELECT CAST(SUM(p.precioEstandar) AS INT) AS Monto, sector
+	FROM Cotizacion c
+	JOIN ProductoXCotizacion pxc ON c.numeroCotizacion = pxc.numero_cotizacion
+		JOIN Producto p ON pxc.codigo_producto = p.codigo
 	WHERE nombre_etapa = 'Facturada' 
 	GROUP BY sector
 );
@@ -1198,8 +1200,10 @@ RETURNS TABLE
 AS
 RETURN
 (
-	SELECT COUNT(numeroCotizacion) AS numero_de_ventas, zona 
-	FROM Cotizacion 
+	SELECT CAST(SUM(p.precioEstandar) AS INT) AS Monto, zona 
+	FROM Cotizacion c
+	JOIN ProductoXCotizacion pxc ON c.numeroCotizacion = pxc.numero_cotizacion
+		JOIN Producto p ON pxc.codigo_producto = p.codigo
 	WHERE nombre_etapa = 'Facturada' 
 	GROUP BY zona
 );
