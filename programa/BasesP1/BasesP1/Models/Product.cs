@@ -31,6 +31,7 @@ namespace BasesP1.Models
         public string? CodigoFamilia { get; set; }
         public int? CotizacionesVentas { get; set; }
         public string? CodigoOriginal { get; set; }
+        public double? Monto { get; set; }
 
     }
 }
