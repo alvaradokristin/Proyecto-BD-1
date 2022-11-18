@@ -54,5 +54,6 @@ namespace BasesP1.Models
         public string? login_usuario { get; set; }
 
         public Int16? numeroCotizacion { get; set; }
+        public double? monto { get; set; }
     }
 }

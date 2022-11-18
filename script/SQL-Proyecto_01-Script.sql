@@ -865,6 +865,16 @@ AS SELECT DISTINCT
 FROM Cotizacion AS c;
 GO
 
+-- Vista para obtener los montos de los productos por cotizacion
+CREATE VIEW CotMontos
+AS SELECT
+		pxc.numero_cotizacion,
+		SUM(p.precioEstandar) AS monto
+	FROM ProductoXCotizacion AS pxc
+	JOIN Producto AS p ON p.codigo = pxc.codigo_producto
+	GROUP BY pxc.numero_cotizacion;
+GO
+
 -- #------------------------------#
 -- #          FUNCIONES           #
 -- #------------------------------#
@@ -1129,8 +1139,8 @@ RETURN
 );
 GO
 
--- Funcion para seleccionar los 10 clientes con mas ventas
-CREATE FUNCTION masVentasClientes()
+-- Funcion para seleccionar los 10 clientes con mas ventas DESC
+CREATE FUNCTION masVentasClientesDESC(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
 RETURN
@@ -1148,13 +1158,48 @@ RETURN
 		cl.sitioWeb,
 		cl.telefono,
 		cl.zona,
-		SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN 1 ELSE 0 END) AS ventas
+		SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN 1 ELSE 0 END) AS ventas,
+		SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN cm.monto ELSE 0 END) AS monto
 	FROM Cliente AS cl
 	JOIN Usuario AS u ON u.userLogin = cl.login_usuario
 	JOIN Cotizacion AS c ON c.login_usuario = u.userLogin
+	JOIN CotMontos AS cm ON cm.numero_cotizacion = c.numeroCotizacion
+	JOIN todasCotEnRangoFechas(@Desde, @Hasta) AS tcerf ON tcerf.numeroCotizacion = cm.numero_cotizacion
 	GROUP BY cl.abreviatura_moneda, cl.celular, cl.codigo, cl.correo, cl.informacionAdicional, cl.login_usuario,
 		cl.nombre_moneda, cl.nombreCuenta, cl.sector, cl.sitioWeb, cl.telefono, cl.zona
-	ORDER BY ventas DESC
+	ORDER BY monto DESC
+);
+GO
+
+-- Funcion para seleccionar los 10 clientes con menos ventas ASC
+CREATE FUNCTION masVentasClientesASC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT TOP 10
+		cl.codigo,
+		cl.nombreCuenta,
+		cl.celular,
+		cl.correo,
+		cl.informacionAdicional,
+		cl.login_usuario AS asesor,
+		cl.abreviatura_moneda,
+		cl.nombre_moneda,
+		cl.sector,
+		cl.sitioWeb,
+		cl.telefono,
+		cl.zona,
+		SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN 1 ELSE 0 END) AS ventas,
+		SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN cm.monto ELSE 0 END) AS monto
+	FROM Cliente AS cl
+	JOIN Usuario AS u ON u.userLogin = cl.login_usuario
+	JOIN Cotizacion AS c ON c.login_usuario = u.userLogin
+	JOIN CotMontos AS cm ON cm.numero_cotizacion = c.numeroCotizacion
+	JOIN todasCotEnRangoFechas(@Desde, @Hasta) AS tcerf ON tcerf.numeroCotizacion = cm.numero_cotizacion
+	GROUP BY cl.abreviatura_moneda, cl.celular, cl.codigo, cl.correo, cl.informacionAdicional, cl.login_usuario,
+		cl.nombre_moneda, cl.nombreCuenta, cl.sector, cl.sitioWeb, cl.telefono, cl.zona
+	ORDER BY monto DESC
 );
 GO
 
@@ -1323,7 +1368,7 @@ RETURN
 GO
 
 -- Funcion para seleccionar cantidad de ventas y cotizaciones por mes por año
-CREATE FUNCTION cotVentasMesAnno()
+CREATE FUNCTION cotVentasMesAnnoCant(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
 RETURN
@@ -1333,6 +1378,25 @@ RETURN
 		SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN 1 ELSE 0 END) AS ventas,
 		SUM(CASE WHEN c.nombre_etapa != 'Facturada' THEN 1 ELSE 0 END) AS cotizaciones
 	FROM Cotizacion AS c
+	JOIN todasCotEnRangoFechas(@Desde, @Hasta) AS tcerf ON tcerf.numeroCotizacion = c.numeroCotizacion
+	JOIN CotAnnoMes AS cam ON cam.fecha = c.fecha
+	GROUP BY cam.annoMes
+);
+GO
+
+-- Funcion para seleccionar monto de ventas y cotizaciones por mes por año
+CREATE FUNCTION cotVentasMesAnnoMonto(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT
+		cam.annoMes,
+		SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN cm.monto ELSE 0 END) AS ventas,
+		SUM(CASE WHEN c.nombre_etapa != 'Facturada' THEN cm.monto ELSE 0 END) AS cotizaciones
+	FROM Cotizacion AS c
+	JOIN CotMontos AS cm ON cm.numero_cotizacion = c.numeroCotizacion
+	JOIN todasCotEnRangoFechas(@Desde, @Hasta) AS tcerf ON tcerf.numeroCotizacion = cm.numero_cotizacion
 	JOIN CotAnnoMes AS cam ON cam.fecha = c.fecha
 	GROUP BY cam.annoMes
 );

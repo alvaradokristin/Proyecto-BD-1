@@ -1,6 +1,7 @@
 ﻿using BasesP1.Models;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace BasesP1.Data
 {
@@ -123,8 +124,8 @@ namespace BasesP1.Data
             return data;
         }
 
-        //Method to get the data for the quotes and sells by month and year
-        public List<StackedViewModel> getBQuotesSellsByMonthYear()
+        //Method to get the data for the quotes and sells by month and year (Quantity)
+        public List<StackedViewModel> getBQuotesSellsByMonthYearQuantity(string from, string to)
         {
             //Structure where the data fro the report will be save
             List<StackedViewModel> data = new List<StackedViewModel>();
@@ -134,7 +135,8 @@ namespace BasesP1.Data
             {
                 connection.Open();
 
-                string sql = $"SELECT * FROM cotVentasMesAnno()";
+                //Get the amount of quotes and sells
+                string sql = $"SELECT * FROM cotVentasMesAnnoCant('{from}', '{to}')";
                 using (var command = new SqlCommand(sql, connection))
                 {
                     using (var dataReader = command.ExecuteReader())
@@ -167,8 +169,53 @@ namespace BasesP1.Data
             return data;
         }
 
+        //Method to get the data for the quotes and sells by month and year (Amount of money)
+        public List<StackedViewModel> getBQuotesSellsByMonthYearAmount(string from, string to)
+        {
+            //Structure where the data fro the report will be save
+            List<StackedViewModel> data = new List<StackedViewModel>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                //Get how much money the quotes and sells made
+                string sql = $"SELECT * FROM cotVentasMesAnnoMonto('{from}', '{to}')";
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            data.Add(new StackedViewModel
+                            {
+                                StackedDimensionOne = "" + dataReader["annoMes"],
+                                LstData = new List<SimpleReportViewModel>()
+                                {
+                                    new SimpleReportViewModel()
+                                    {
+                                        DimensionOne="Ventas",
+                                        Percentage = double.Parse("" + dataReader["ventas"])
+                                    },
+                                    new SimpleReportViewModel()
+                                    {
+                                        DimensionOne="Cotizaciones",
+                                        Percentage = double.Parse("" + dataReader["cotizaciones"])
+                                    },
+                                }
+                            });
+                        }
+
+                    }
+                }
+                connection.Close();
+            }
+            return data;
+        }
+
         //Method to get the data for the 10 clients with the most sells
-        public List<Client> getTClientMostSells()
+        public List<Client> getTClientMostSells(string from, string to, string order)
         {
             //Structure where the data fro the report will be save
             List<Client> data = new List<Client>();
@@ -178,7 +225,18 @@ namespace BasesP1.Data
             {
                 connection.Open();
 
-                string sql = $"SELECT * FROM masVentasClientes()";
+                string sqlFunction = "";
+
+                if (order == "DESC")
+                {
+                    sqlFunction = $"masVentasClientesDESC('{from}', '{to}')";
+                }
+                else
+                {
+                    sqlFunction = $"masVentasClientesASC('{from}', '{to}')";
+                }
+
+                string sql = $"SELECT * FROM {sqlFunction}";
                 using (var command = new SqlCommand(sql, connection))
                 {
                     using (var dataReader = command.ExecuteReader())
@@ -198,7 +256,8 @@ namespace BasesP1.Data
                                 sitioWeb = "" + dataReader["sitioWeb"],
                                 telefono = "" + dataReader["telefono"],
                                 zona = "" + dataReader["zona"],
-                                numeroCotizacion = Convert.ToInt16("" + dataReader["ventas"])
+                                numeroCotizacion = Convert.ToInt16("" + dataReader["ventas"]),
+                                monto = double.Parse("" + dataReader["monto"])
                             });
                         }
                     }

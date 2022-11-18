@@ -62,6 +62,14 @@ namespace BasesP1.Controllers
             return data;
         }
 
+        //Method to create a list of all YValues on a List<StackedViewModel>
+        public List<IEnumerable<double>> getAllyVDouble(List<StackedViewModel> model)
+        {
+            List<IEnumerable<double>> data = model.Select(x => x.LstData.Select(w => w.Percentage)).ToList();
+
+            return data;
+        }
+
         public IActionResult LoadBarsGraphReport()
         {
             //Create a model that wll store several models to be use in View
@@ -121,9 +129,19 @@ namespace BasesP1.Controllers
             {
                 case "cvpd":
                     dataModel = reportData.getBQuotesSellsByDept(filters.From, filters.To);
+                    model.XLabels = getAllxL(dataModel);
+                    model.YValues = getAllyV(dataModel);
                     break;
                 case "vcpma":
-                    dataModel = reportData.getBQuotesSellsByMonthYear();
+                    //How many sells/quotes
+                    //dataModel = reportData.getBQuotesSellsByMonthYearQuantity(filters.From, filters.To);
+                    //model.XLabels = getAllxL(dataModel);
+                    //model.YValues = getAllyV(dataModel);
+
+                    //Amount of money
+                    dataModel = reportData.getBQuotesSellsByMonthYearAmount(filters.From, filters.To);
+                    model.XLabels = getAllxL(dataModel);
+                    model.YValues = getAllyVDouble(dataModel);
                     break;
                 case "vcpmavp":
                     // Code specific to PersonalPolicy
@@ -138,8 +156,7 @@ namespace BasesP1.Controllers
                     break;
             }
 
-            model.XLabels = getAllxL(dataModel);
-            model.YValues = getAllyV(dataModel);
+            
             model.label2 = getAllSDO(dataModel);
             model.Dates = yearMonth;
             model.Show = true;
@@ -320,6 +337,7 @@ namespace BasesP1.Controllers
                     tableHeaders.Add("Sitio Web");
                     tableHeaders.Add("Zona");
                     tableHeaders.Add("Ventas");
+                    tableHeaders.Add("Monto");
                     break;
                 case null:
                     // Code for "any-other-than" cases :)
@@ -367,7 +385,7 @@ namespace BasesP1.Controllers
                     break;
                 case "ttccmv":
                     //Get the data from the query
-                    client = queryReport.getTClientMostSells();
+                    client = queryReport.getTClientMostSells(filters.From, filters.To, filters.OrderBy);
                     model.Data = client;
                     break;
                 case null:
