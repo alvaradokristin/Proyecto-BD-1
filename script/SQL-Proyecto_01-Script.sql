@@ -868,9 +868,9 @@ GO
 -- #------------------------------#
 -- #          FUNCIONES           #
 -- #------------------------------#
--- Funcion para obtener el numero de cotizacion de las cotizaciones dentro de un rango de fechas
--- usando año-mes (AAAA-MM)
-CREATE FUNCTION cotEnRangoFechas(@Desde varchar(10), @Hasta varchar(10))
+-- Funcion para obtener el numero de cotizacion de las cotizaciones (TODAS)
+-- dentro de un rango de fechas usando año-mes (AAAA-MM)
+CREATE FUNCTION todasCotEnRangoFechas(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
 RETURN
@@ -879,6 +879,21 @@ RETURN
 		c.numeroCotizacion
 	FROM Cotizacion AS c
 	WHERE c.fecha BETWEEN CONVERT(DATETIME, @Desde, 101) AND CONVERT(DATETIME, @Hasta, 101)
+);
+GO
+
+-- Funcion para obtener el numero de cotizacion de las cotizaciones (NO ventas)
+-- dentro de un rango de fechas usando año-mes (AAAA-MM)
+CREATE FUNCTION cotEnRangoFechas(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT
+		c.numeroCotizacion
+	FROM Cotizacion AS c
+	WHERE c.nombre_etapa != 'Facturada'
+	AND c.fecha BETWEEN CONVERT(DATETIME, @Desde, 101) AND CONVERT(DATETIME, @Hasta, 101)
 );
 GO
 
@@ -1024,6 +1039,96 @@ RETURN
 );
 GO
 
+-- Funcion para seleccionar los productos mas vendidos ordenados DESC por rango de fecha
+CREATE FUNCTION masVendidosProductosDESC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT TOP 10
+		p.codigo,
+		p.nombre,
+		p.activo,
+		p.descripcion,
+		p.precioEstandar,
+		p.codigo_familia,
+		SUM(p.precioEstandar) AS ventas
+	FROM Producto AS p
+	JOIN ProductoXCotizacion AS pxc ON pxc.codigo_producto = p.codigo
+	JOIN ventEnRangoFechas(@Desde, @Hasta) AS verf ON verf.numeroCotizacion = pxc.numero_cotizacion
+	GROUP BY p.codigo, p.nombre, p.activo, p.descripcion, p.precioEstandar, p.codigo_familia
+	ORDER BY ventas DESC
+);
+GO
+
+-- Funcion para seleccionar los productos mas vendidos ordenados ASC por rango de fecha
+CREATE FUNCTION masVendidosProductosASC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT TOP 10
+		p.codigo,
+		p.nombre,
+		p.activo,
+		p.descripcion,
+		p.precioEstandar,
+		p.codigo_familia,
+		SUM(p.precioEstandar) AS ventas
+	FROM Producto AS p
+	JOIN ProductoXCotizacion AS pxc ON pxc.codigo_producto = p.codigo
+	JOIN ventEnRangoFechas(@Desde, @Hasta) AS verf ON verf.numeroCotizacion = pxc.numero_cotizacion
+	GROUP BY p.codigo, p.nombre, p.activo, p.descripcion, p.precioEstandar, p.codigo_familia
+	ORDER BY ventas ASC
+);
+GO
+
+-- Funcion para seleccionar los productos mas vendidos cotizados DESC por rango de fecha
+CREATE FUNCTION masCotProductosDESC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT TOP 10
+		p.codigo,
+		p.nombre,
+		p.activo,
+		p.descripcion,
+		p.precioEstandar,
+		p.codigo_familia,
+		COUNT(pxc.numero_cotizacion) AS cotizaciones
+	FROM Producto AS p
+	JOIN ProductoXCotizacion AS pxc ON pxc.codigo_producto = p.codigo
+	JOIN cotEnRangoFechas(@Desde, @Hasta) AS cerf ON cerf.numeroCotizacion = pxc.numero_cotizacion
+	JOIN Cotizacion AS c ON c.numeroCotizacion = cerf.numeroCotizacion
+	GROUP BY p.codigo, p.nombre, p.activo, p.descripcion, p.precioEstandar, p.codigo_familia
+	ORDER BY cotizaciones DESC
+);
+GO
+
+-- Funcion para seleccionar los productos mas vendidos cotizados ASC por rango de fecha
+CREATE FUNCTION masCotProductosASC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT TOP 10
+		p.codigo,
+		p.nombre,
+		p.activo,
+		p.descripcion,
+		p.precioEstandar,
+		p.codigo_familia,
+		COUNT(pxc.numero_cotizacion) AS cotizaciones
+	FROM Producto AS p
+	JOIN ProductoXCotizacion AS pxc ON pxc.codigo_producto = p.codigo
+	JOIN cotEnRangoFechas(@Desde, @Hasta) AS cerf ON cerf.numeroCotizacion = pxc.numero_cotizacion
+	JOIN Cotizacion AS c ON c.numeroCotizacion = cerf.numeroCotizacion
+	GROUP BY p.codigo, p.nombre, p.activo, p.descripcion, p.precioEstandar, p.codigo_familia
+	ORDER BY cotizaciones ASC
+);
+GO
+
 -- Funcion para seleccionar los 10 clientes con mas ventas
 CREATE FUNCTION masVentasClientes()
 RETURNS TABLE
@@ -1054,7 +1159,7 @@ RETURN
 GO
 
 -- Funcion para seleccionar las cotizaciones y ventas por departamento
-CREATE FUNCTION cotVentaXDepartamento()
+CREATE FUNCTION cotVentaXDepartamento(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
 RETURN
@@ -1067,6 +1172,7 @@ RETURN
 	FROM Departamento AS d
 	JOIN Usuario AS u ON u.codigo_departamento = d.codigo
 	JOIN Cotizacion AS c ON c.login_usuario = u.userLogin
+	JOIN todasCotEnRangoFechas(@Desde, @Hasta) AS tcerf ON tcerf.numeroCotizacion = c.numeroCotizacion
 	GROUP BY d.codigo, d.nombre
 );
 GO

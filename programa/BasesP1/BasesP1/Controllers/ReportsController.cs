@@ -120,7 +120,7 @@ namespace BasesP1.Controllers
             switch (filters.ReportType)
             {
                 case "cvpd":
-                    dataModel = reportData.getBQuotesSellsByDept();
+                    dataModel = reportData.getBQuotesSellsByDept(filters.From, filters.To);
                     break;
                 case "vcpma":
                     dataModel = reportData.getBQuotesSellsByMonthYear();
@@ -294,8 +294,8 @@ namespace BasesP1.Controllers
                     tableHeaders.Add("Nombre");
                     tableHeaders.Add("Activo");
                     tableHeaders.Add("Descripcion");
-                    tableHeaders.Add("Precio");
                     tableHeaders.Add("Codigo Familia");
+                    tableHeaders.Add("Precio");
                     tableHeaders.Add("Ventas");
                     break;
                 case "ttpmc":
@@ -303,8 +303,8 @@ namespace BasesP1.Controllers
                     tableHeaders.Add("Nombre");
                     tableHeaders.Add("Activo");
                     tableHeaders.Add("Descripcion");
-                    tableHeaders.Add("Precio");
                     tableHeaders.Add("Codigo Familia");
+                    tableHeaders.Add("Precio");
                     tableHeaders.Add("Cotizaciones");
                     break;
                 case "ttccmv":
@@ -329,7 +329,7 @@ namespace BasesP1.Controllers
             return tableHeaders;
         }
 
-        public IActionResult TableReport(string ReportType)
+        public IActionResult TableReport(GraphFilters filters)
         {
             //Create a model that wll store several models to be use in View
             dynamic model = new ExpandoObject();
@@ -346,44 +346,29 @@ namespace BasesP1.Controllers
 
             List<String> yearMonth = queryReport.getDates();
 
-            switch (ReportType)
+            // Get the table headers
+            tableHeaders = getTableHeaders(filters.ReportType);
+
+            //Add the data to the general model that cointains dirrefent models inside
+            model.Headers = tableHeaders;
+
+            switch (filters.ReportType)
             {
                 case "ttpmv":
-                    // Get the table headers
-                    tableHeaders = getTableHeaders(ReportType);
-
                     //Get the data from the query
-                    product = queryProd.getReport(1);
-
-                    //Add the data to the general model that cointains dirrefent models inside
-                    model.Headers = tableHeaders;
+                    product = queryReport.getTTopSellerProd(filters.From, filters.To, filters.OrderBy);
                     model.Data = product;
-                    model.Type = ReportType;
 
                     break;
                 case "ttpmc":
-                    // Get the table headers
-                    tableHeaders = getTableHeaders(ReportType);
-
                     //Get the data from the query
-                    product = queryProd.getReport(3);
-
-                    //Add the data to the general model that cointains dirrefent models inside
-                    model.Headers = tableHeaders;
+                    product = queryReport.getTTopQuoterProd(filters.From, filters.To, filters.OrderBy);
                     model.Data = product;
-                    model.Type = ReportType;
                     break;
                 case "ttccmv":
-                    // Get the table headers
-                    tableHeaders = getTableHeaders(ReportType);
-
                     //Get the data from the query
                     client = queryReport.getTClientMostSells();
-
-                    //Add the data to the general model that cointains dirrefent models inside
-                    model.Headers = tableHeaders;
                     model.Data = client;
-                    model.Type = ReportType;
                     break;
                 case null:
                     // Default
@@ -391,6 +376,7 @@ namespace BasesP1.Controllers
             }
 
             model.Dates = yearMonth;
+            model.Type = filters.ReportType;
 
             return View(model);
         }

@@ -80,7 +80,7 @@ namespace BasesP1.Data
         }
 
         //Method to get the data for the quotes and sells by department
-        public List<StackedViewModel> getBQuotesSellsByDept()
+        public List<StackedViewModel> getBQuotesSellsByDept(string from, string to)
         {
             //Structure where the data fro the report will be save
             List<StackedViewModel> data = new List<StackedViewModel>();
@@ -90,7 +90,7 @@ namespace BasesP1.Data
             {
                 connection.Open();
 
-                string sql = $"SELECT * FROM cotVentaXDepartamento()";
+                string sql = $"SELECT * FROM cotVentaXDepartamento('{from}', '{to}')";
                 using (var command = new SqlCommand(sql, connection))
                 {
                     using (var dataReader = command.ExecuteReader())
@@ -302,6 +302,104 @@ namespace BasesP1.Data
             }
             return data;
         }
+
+        //Method to get the information from a product report, from the DB
+        public List<Product> getTTopSellerProd(string from, string to, string order)
+        {
+            //Since the product model has the same attributes as products families + some extra ones
+            //we'll be using products to store the products families and the products
+            List<Product> products = new List<Product>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sqlFunction = "";
+
+                if (order == "DESC")
+                {
+                    sqlFunction = $"masVendidosProductosDESC('{from}', '{to}')";
+                }
+                else
+                {
+                    sqlFunction = $"masVendidosProductosASC('{from}', '{to}')";
+                }
+
+                string sql = $"SELECT * FROM {sqlFunction}";
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    using (SqlDataReader dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            products.Add(new Product
+                            {
+                                Codigo = "" + dataReader["codigo"],
+                                Nombre = "" + dataReader["nombre"],
+                                Activo = bool.Parse("" + dataReader["activo"]),
+                                Descripcion = "" + dataReader["descripcion"],
+                                PrecioEstandar = Convert.ToDecimal("" + dataReader["precioEstandar"]),
+                                CodigoFamilia = "" + dataReader["codigo_familia"],
+                                Monto = double.Parse("" + dataReader["ventas"])
+                            });
+                        }
+                        dataReader.Close();
+                    }
+                }
+                connection.Close();
+            }
+            return products;
+        }
+
+        //Method to get the information from the most quoted products, from the DB
+        public List<Product> getTTopQuoterProd(string from, string to, string order)
+        {
+            //Since the product model has the same attributes as products families + some extra ones
+            //we'll be using products to store the products families and the products
+            List<Product> products = new List<Product>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sqlFunction = "";
+
+                if (order == "DESC")
+                {
+                    sqlFunction = $"masCotProductosDESC('{from}', '{to}')";
+                }
+                else
+                {
+                    sqlFunction = $"masCotProductosASC('{from}', '{to}')";
+                }
+
+                string sql = $"SELECT * FROM {sqlFunction}";
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    using (SqlDataReader dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            products.Add(new Product
+                            {
+                                Codigo = "" + dataReader["codigo"],
+                                Nombre = "" + dataReader["nombre"],
+                                Activo = bool.Parse("" + dataReader["activo"]),
+                                Descripcion = "" + dataReader["descripcion"],
+                                PrecioEstandar = Convert.ToDecimal("" + dataReader["precioEstandar"]),
+                                CodigoFamilia = "" + dataReader["codigo_familia"],
+                                CotizacionesVentas = int.Parse("" + dataReader["cotizaciones"])
+                            });
+                        }
+                        dataReader.Close();
+                    }
+                }
+                connection.Close();
+            }
+            return products;
+        }
         public List<SimpleReportViewModel> getCasesByType(string from, string to)
         {
             //Structure where the data from the report will be save
@@ -400,4 +498,3 @@ namespace BasesP1.Data
         }
     }
 }
-
