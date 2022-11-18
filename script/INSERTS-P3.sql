@@ -177,7 +177,7 @@ END;
 
 -- Cotizacion
 SET @maxElement = 100;
-WHILE @maxElement < 551
+WHILE @maxElement < 751
 BEGIN
 	BEGIN TRY
 

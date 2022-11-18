@@ -15,43 +15,49 @@
 </head>
 <body>
     @*FORM TO SELECT THE TYPE OF REPORT YPU WANT TO VIEW*@
-    <div class="mb-3">
-        <label for="report-type" class="form-label">Selecione el reporte a visualizar:</label>
-        <div class="input-group w-50">
-            <select class="form-select auto-wdth" id="ReportType" name="ReportType">
-                <option value="fpv">Familias de productos vendidos</option>
-                <option value="vps">Ventas por sector</option>
-                <option value="vpz">Ventas por zona</option>
-                <option value="cpe">Casos por estado</option>
-                <option value="ccpt">Cantidad de cotizaciones por tipo</option>
-            </select>
-            @*<button type="submit" class="btn btn-outline-info" onclick="location.href='@Url.Action("CircularGraphReport", "Reports")?ReportType=' + document.getElementById('ReportType').value">Buscar</button>*@
-        </div>
-    </div>
-
-    @*FORM TO SELECT THE DATE RANGE*@
-    <div class="mb-3">
-        <label for="date-filter" class="form-label">Rango de fechas a filtrar:</label>
-        <div class="w-50">
-            <div class="input-group mb-3">
-                <label for="date-filter-from" class="form-label mr-2">Desde:</label>
-                <select class="form-select auto-wdth mr-4" id="From" name="From">
-                    @foreach (var item in Model.Dates)
-                    {
-                    <option value="@item">@item</option>
-                    }
+    <form asp-action="CircularGraphReport" asp-controller="Reports" method="post">
+        <div class="mb-3">
+            <label for="report-type" class="form-label">Selecione el reporte a visualizar:</label>
+            <div class="input-group w-50">
+                <select class="form-select auto-wdth" id="ReportType" name="ReportType">
+                    <option value="fpv">Familias de productos vendidos</option>
+                    <option value="vps">Ventas por sector</option>
+                    <option value="vpz">Ventas por zona</option>
+                    <option value="cpe">Casos por estado</option>
+                    <option value="ccpt">Cantidad de cotizaciones por tipo</option>
                 </select>
-                <label for="date-filter-to" class="form-label mr-2">Hasta:</label>
-                <select class="form-select auto-wdth" id="To" name="To">
-                    @foreach (var item in Model.Dates)
-                    {
-                    <option value="@item">@item</option>
-                    }
-                </select>
+                @*<button type="submit" class="btn btn-outline-info" onclick="location.href='@Url.Action("CircularGraphReport", "Reports")?ReportType=' + document.getElementById('ReportType').value">Buscar</button>*@
             </div>
-            <button type="submit" class="btn btn-outline-info" onclick="location.href='@Url.Action("CircularGraphReport", "Reports")?ReportType=' + document.getElementById('ReportType').value">Buscar</button>
         </div>
-    </div>
+
+        @*FORM TO SELECT THE DATE RANGE*@
+        <div class="mb-3">
+            <label for="date-filter" class="form-label">Rango de fechas a filtrar:</label>
+            <div class="w-50">
+                <div class="input-group mb-3">
+                    <label for="date-filter-from" class="form-label mr-2">Desde:</label>
+                    <select class="form-select auto-wdth mr-4" id="From" name="From">
+                        @foreach (var item in Model.Dates)
+                        {
+                        <option value="@item">@item</option>
+                        }
+                    </select>
+                    <label for="date-filter-to" class="form-label mr-2">Hasta:</label>
+                    <select class="form-select auto-wdth" id="To" name="To">
+                        @foreach (var item in Model.Dates)
+                        {
+                        <option value="@item">@item</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-outline-info">Buscar</button>
+
+    </form>
+
+    <br />
 
     @*THE CHART FOR THE REPORTS*@
     @if (Model.Show)

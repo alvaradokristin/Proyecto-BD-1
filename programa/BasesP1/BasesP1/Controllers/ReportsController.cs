@@ -70,7 +70,7 @@ namespace BasesP1.Controllers
             ReportsData reportData = new ReportsData(this.Configuration);
             List<StackedViewModel> dataModel = new List<StackedViewModel>();
 
-            List<String> yearMonth = reportData.getYearMonth();
+            List<String> yearMonth = reportData.getDates();
 
             Random rnd = new Random();
 
@@ -107,7 +107,7 @@ namespace BasesP1.Controllers
             return View("BarsGraphReport", model);
         }
 
-        public IActionResult BarsGraphReport(string ReportType)
+        public IActionResult BarsGraphReport(GraphFilters filters)
         {
             //Create a model that wll store several models to be use in View
             dynamic model = new ExpandoObject();
@@ -115,9 +115,9 @@ namespace BasesP1.Controllers
             ReportsData reportData = new ReportsData(this.Configuration);
             List<StackedViewModel> dataModel = new List<StackedViewModel>();
 
-            List<String> yearMonth = reportData.getYearMonth();
+            List<String> yearMonth = reportData.getDates();
 
-            switch (ReportType)
+            switch (filters.ReportType)
             {
                 case "cvpd":
                     dataModel = reportData.getBQuotesSellsByDept();
@@ -155,7 +155,7 @@ namespace BasesP1.Controllers
             ReportsData reportData = new ReportsData(this.Configuration);
             List<SimpleReportViewModel> dataModel = new List<SimpleReportViewModel>();
 
-            List<String> yearMonth = reportData.getYearMonth();
+            List<String> yearMonth = reportData.getDates();
 
             model.XLabels = getAllDimOne(dataModel);
             model.YValues = getAllQuantities(dataModel);
@@ -173,7 +173,7 @@ namespace BasesP1.Controllers
             ReportsData reportData = new ReportsData(this.Configuration);
             List<SimpleReportViewModel> dataModel = new List<SimpleReportViewModel>();
 
-            List<String> yearMonth = reportData.getYearMonth();
+            List<String> yearMonth = reportData.getDates();
 
             model.XLabels = getAllDimOne(dataModel);
             model.YValues = getAllQuantitiesPer(dataModel);
@@ -183,7 +183,9 @@ namespace BasesP1.Controllers
             return View("CircularPercentageGraphReport", model);
         }
 
-        public IActionResult CircularGraphReport(string ReportType)
+        [HttpPost]
+        public IActionResult CircularGraphReport(GraphFilters filters)
+            //string ReportType, string From, string To
         {
             //Create a model that wll store several models to be use in View
             dynamic model = new ExpandoObject();
@@ -191,21 +193,25 @@ namespace BasesP1.Controllers
             ReportsData reportData = new ReportsData(this.Configuration);
             List<SimpleReportViewModel> dataModel = new List<SimpleReportViewModel>();
 
-            List<String> yearMonth = reportData.getYearMonth();
+            List<String> yearMonth = reportData.getDates();
 
-            switch (ReportType)
+            switch (filters.ReportType)
             {
                 case "fpv":
-                    dataModel = reportData.getCFamilySales();
+                    dataModel = reportData.getCFamilySales(filters.From, filters.To);
+                    model.YValues = getAllQuantitiesPer(dataModel);
                     break;
                 case "vps":
                     dataModel = reportData.getSellsBySector();
+                    model.YValues = getAllQuantities(dataModel);
                     break;
                 case "vpz":
                     dataModel = reportData.getSellsByZone();
+                    model.YValues = getAllQuantities(dataModel);
                     break;
                 case "vpd":
                     dataModel = reportData.getSellsByDepartment();
+                    model.YValues = getAllQuantities(dataModel);
                     break;
                 case null:
                     // Code for "any-other-than" cases :)
@@ -213,14 +219,13 @@ namespace BasesP1.Controllers
             }
 
             model.XLabels = getAllDimOne(dataModel);
-            model.YValues = getAllQuantities(dataModel);
             model.Dates = yearMonth;
             model.Show = true;
 
             return View(model);
         }
 
-        public IActionResult CircularPercentageGraphReport(string ReportType)
+        public IActionResult CircularPercentageGraphReport(GraphFilters filters)
         {
             //Create a model that wll store several models to be use in View
             dynamic model = new ExpandoObject();
@@ -228,9 +233,9 @@ namespace BasesP1.Controllers
             ReportsData reportData = new ReportsData(this.Configuration);
             List<SimpleReportViewModel> dataModel = new List<SimpleReportViewModel>();
 
-            List<String> yearMonth = reportData.getYearMonth();
+            List<String> yearMonth = reportData.getDates();
 
-            switch (ReportType)
+            switch (filters.ReportType)
             {
                 case "vpd":
                     dataModel = reportData.getSellsByDepartment();
@@ -254,7 +259,7 @@ namespace BasesP1.Controllers
             dynamic model = new ExpandoObject();
 
             ReportsData reportData = new ReportsData(this.Configuration);
-            List<String> yearMonth = reportData.getYearMonth();
+            List<String> yearMonth = reportData.getDates();
 
             model.Data = null;
             model.Dates = yearMonth;
@@ -324,7 +329,7 @@ namespace BasesP1.Controllers
             ProductData queryProd = new ProductData(this.Configuration);
             ReportsData queryReport = new ReportsData(this.Configuration);
 
-            List<String> yearMonth = queryReport.getYearMonth();
+            List<String> yearMonth = queryReport.getDates();
 
             switch (ReportType)
             {

@@ -837,9 +837,66 @@ GO
 EXEC insertarContactoCliente 'C01', 'Acercamiento', 'Aivy', 'asd@asd.com', '88888888', 'Sabana, San Jose', 'Primer acercamiento', 'Tres Rios', 'Inicio', 'San Jose', 'Tipo1', 'amr';
 GO
 
+-- #-----------------------------#
+-- #           VISTAS            #
+-- #-----------------------------#
+-- Vista para tomar las cotizaciones con compras
+CREATE VIEW cotizacionesCompra AS (
+	SELECT DISTINCT
+		pxc.codigo_producto
+	FROM ProductoXCotizacion AS pxc
+	JOIN Cotizacion AS c ON c.numeroCotizacion = pxc.numero_cotizacion
+	WHERE c.nombre_etapa = 'Facturada' -- si se efectuo la venta
+);
+GO
+
+-- Vista para obtener el anno y mes por fecha de cotizacion
+CREATE VIEW CotAnnoMes 
+AS SELECT DISTINCT
+	c.fecha,
+	CAST(DATEPART(YEAR, c.fecha) AS varchar(4)) + '-' + CAST(DATEPART(MONTH, c.fecha) AS varchar(4)) AS annoMes
+FROM Cotizacion AS c;
+GO
+
+-- Vista para obtener las distintas fechas en cotizacion
+CREATE VIEW CotFechas 
+AS SELECT DISTINCT
+	CONVERT(VARCHAR(10), c.fecha, 20) AS fecha
+FROM Cotizacion AS c;
+GO
+
 -- #------------------------------#
 -- #          FUNCIONES           #
 -- #------------------------------#
+-- Funcion para obtener el numero de cotizacion de las cotizaciones dentro de un rango de fechas
+-- usando año-mes (AAAA-MM)
+CREATE FUNCTION cotEnRangoFechas(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT
+		c.numeroCotizacion
+	FROM Cotizacion AS c
+	WHERE c.fecha BETWEEN CONVERT(DATETIME, @Desde, 101) AND CONVERT(DATETIME, @Hasta, 101)
+);
+GO
+
+-- Funcion para obtener el numero de cotizacion (Facturada/Venta) de las cotizaciones dentro
+-- de un rango de fechas usando año-mes (AAAA-MM) 
+CREATE FUNCTION ventEnRangoFechas(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT
+		c.numeroCotizacion
+	FROM Cotizacion AS c
+	WHERE c.nombre_etapa = 'Facturada'
+	AND c.fecha BETWEEN CONVERT(DATETIME, @Desde, 101) AND CONVERT(DATETIME, @Hasta, 101)
+);
+GO
+
 -- Funcion para seleccionar todos los productos
 CREATE FUNCTION obtenerFamProd()
 RETURNS TABLE
@@ -930,16 +987,6 @@ RETURN
 	FROM Actividad AS a
 	JOIN ActividadXContactoCliente AS axc ON a.codigo = axc.codigo_actividad
 	WHERE cliente_contacto = @Contacto
-);
-GO
-
--- Vista para tomar las cotizaciones con compras
-CREATE VIEW cotizacionesCompra AS (
-	SELECT DISTINCT
-		pxc.codigo_producto
-	FROM ProductoXCotizacion AS pxc
-	JOIN Cotizacion AS c ON c.numeroCotizacion = pxc.numero_cotizacion
-	WHERE c.nombre_etapa = 'Facturada' -- si se efectuo la venta
 );
 GO
 
@@ -1034,19 +1081,19 @@ RETURN
 GO
 
 -- Funcion para seleccionar las familias de productos vendidos
-CREATE FUNCTION ventasFamProductos()
+CREATE FUNCTION ventasFamProductos(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
 RETURN
 (
-	SELECT DISTINCT
-	fp.codigo,
-	fp.nombre,
-	COUNT(DISTINCT pxc.numero_cotizacion) AS ventas
+	SELECT
+		fp.codigo,
+		fp.nombre,
+		SUM(p.precioEstandar) AS ventas
 	FROM FamiliaProducto AS fp
 	JOIN Producto AS p ON p.codigo_familia = fp.codigo
 	JOIN ProductoXCotizacion AS pxc ON pxc.codigo_producto = p.codigo
-	JOIN CotizacionesCompra AS cc ON cc.codigo_producto = pxc.codigo_producto
+	JOIN ventEnRangoFechas(@Desde, @Hasta) AS verf ON verf.numeroCotizacion = pxc.numero_cotizacion
 	GROUP BY fp.codigo, fp.nombre
 );
 GO
@@ -1145,14 +1192,6 @@ RETURN
 	FROM Tipo
 	WHERE categoria = @Categoria
 );
-GO
-
--- Vista para obtener el anno y mes por fecha de cotizacion
-CREATE VIEW CotAnnoMes 
-AS SELECT DISTINCT
-	c.fecha,
-	CAST(DATEPART(YEAR, c.fecha) AS varchar(4)) + '-' + CAST(DATEPART(MONTH, c.fecha) AS varchar(4)) AS annoMes
-FROM Cotizacion AS c;
 GO
 
 -- Funcion para seleccionar los distintos año-mes

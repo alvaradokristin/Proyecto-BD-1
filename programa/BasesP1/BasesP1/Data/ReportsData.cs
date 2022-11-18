@@ -1,5 +1,6 @@
 ﻿using BasesP1.Models;
 using System.Data.SqlClient;
+using System.Diagnostics;
 
 namespace BasesP1.Data
 {
@@ -13,7 +14,7 @@ namespace BasesP1.Data
         }
 
         //Method to get all the year-monmths from quote dates
-        public List<String> getYearMonth()
+        public List<String> getDates()
         {
             //Structure where the data fro the report will be save
             List<String> data = new List<String>();
@@ -24,15 +25,17 @@ namespace BasesP1.Data
                 connection.Open();
 
                 //Query to be use
-                string sql = $"SELECT * FROM cotDisMesAnno()";
+                string sql = $"SELECT * FROM CotFechas";
 
                 using (var command = new SqlCommand(sql, connection))
                 {
                     using (var dataReader = command.ExecuteReader())
                     {
+
                         while (dataReader.Read())
                         {
-                            data.Add("" + dataReader["annoMes"]);
+                            data.Add("" + dataReader["fecha"]);
+
                         }
 
                     }
@@ -43,7 +46,7 @@ namespace BasesP1.Data
         }
 
         //Method to get the data for the family products sales (circular) report
-        public List<SimpleReportViewModel> getCFamilySales()
+        public List<SimpleReportViewModel> getCFamilySales(string from, string to)
         {
             //Structure where the data fro the report will be save
             List<SimpleReportViewModel> data = new List<SimpleReportViewModel>();
@@ -53,11 +56,9 @@ namespace BasesP1.Data
             {
                 connection.Open();
                 
-                //Show ALL family products and how many sells
-                string sql = $"SELECT * FROM ventasFamProductos() ORDER BY ventas DESC";
+                //Show ALL family products and how many sells they have
+                string sql = $"SELECT * FROM ventasFamProductos('{from}', '{to}') ORDER BY ventas DESC";
 
-                //Show the top 10 most sell family products
-                //string sql = $"SELECT * FROM masVendidosFamProductos()";
                 using (var command = new SqlCommand(sql, connection))
                 {
                     using (var dataReader = command.ExecuteReader())
@@ -67,7 +68,7 @@ namespace BasesP1.Data
                             data.Add(new SimpleReportViewModel
                             {
                                 DimensionOne = "" + dataReader["nombre"],
-                                Quantity = int.Parse("" + dataReader["ventas"])
+                                Percentage = double.Parse("" + dataReader["ventas"])
                             });
                         }
 
