@@ -1,3 +1,6 @@
+USE sistemacrm;
+GO
+
 DECLARE @maxElement AS int,
 @randomNombre AS int,
 @randomApellido1 AS int,
