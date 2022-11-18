@@ -897,6 +897,18 @@ RETURN
 );
 GO
 
+CREATE FUNCTION cotizacionEnRangoFechas(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT
+		c.numeroCotizacion
+	FROM Cotizacion AS c
+	WHERE c.fecha BETWEEN CONVERT(DATETIME, @Desde, 101) AND CONVERT(DATETIME, @Hasta, 101)
+);
+GO
+
 -- Funcion para seleccionar todos los productos
 CREATE FUNCTION obtenerFamProd()
 RETURNS TABLE
@@ -1220,7 +1232,7 @@ RETURN
 );
 GO
 
-CREATE FUNCTION ventasxsector()
+CREATE FUNCTION ventasxsector(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
 RETURN
@@ -1229,12 +1241,13 @@ RETURN
 	FROM Cotizacion c
 	JOIN ProductoXCotizacion pxc ON c.numeroCotizacion = pxc.numero_cotizacion
 		JOIN Producto p ON pxc.codigo_producto = p.codigo
+			JOIN ventEnRangoFechas(@Desde, @Hasta) AS verf ON verf.numeroCotizacion = pxc.numero_cotizacion
 	WHERE nombre_etapa = 'Facturada' 
 	GROUP BY sector
 );
 GO
 
-CREATE FUNCTION ventasxzona()
+CREATE FUNCTION ventasxzona(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
 RETURN
@@ -1243,22 +1256,62 @@ RETURN
 	FROM Cotizacion c
 	JOIN ProductoXCotizacion pxc ON c.numeroCotizacion = pxc.numero_cotizacion
 		JOIN Producto p ON pxc.codigo_producto = p.codigo
+			JOIN ventEnRangoFechas(@Desde, @Hasta) AS verf ON verf.numeroCotizacion = pxc.numero_cotizacion
 	WHERE nombre_etapa = 'Facturada' 
 	GROUP BY zona
 );
 GO
 
-CREATE FUNCTION ventasxdepartamento()
+CREATE FUNCTION ventasxdepartamento(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
 RETURN
 (
-	SELECT (SELECT CONVERT(DECIMAL (5,2), (( COUNT(numeroCotizacion) * 1.0 / (SELECT COUNT(numeroCotizacion) FROM Cotizacion WHERE nombre_etapa = 'Facturada' ) ) * 100 ))) AS Porcentaje, d.nombre AS departamento
-	FROM Cotizacion c
-		JOIN Ejecucion e ON c.codigo_ejecucion = e.codigo
+	SELECT (SELECT CONVERT(DECIMAL (5,2), (( COUNT(ct.numeroCotizacion) * 1.0 / (SELECT COUNT(numeroCotizacion) FROM Cotizacion WHERE nombre_etapa = 'Facturada' ) ) * 100 ))) AS Porcentaje, d.nombre AS departamento
+	FROM Cotizacion ct
+		JOIN Ejecucion e ON ct.codigo_ejecucion = e.codigo
 			JOIN Departamento d ON e.codigo_departamento = d.codigo
+				JOIN ventEnRangoFechas(@Desde, @Hasta) AS verf ON verf.numeroCotizacion = ct.numeroCotizacion
 	WHERE nombre_etapa = 'Facturada' 
 	GROUP BY d.nombre
+);
+GO
+
+CREATE FUNCTION casosxtipo(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT CONVERT(DECIMAL (5,2), (( COUNT(ct.codigo_caso) * 1.0 / (SELECT COUNT(codigo_caso) FROM Cotizacion ct WHERE ct.fecha BETWEEN CONVERT(DATETIME, @Desde, 101) AND CONVERT(DATETIME, @Hasta, 101))) * 100 )) AS Porcentaje, c.nombre_tipo AS Tipo
+	FROM Cotizacion ct
+	JOIN Caso c ON ct.codigo_caso = c.codigo
+		JOIN cotizacionEnRangoFechas(@Desde, @Hasta) AS verf ON verf.numeroCotizacion = ct.numeroCotizacion
+	GROUP BY c.nombre_tipo
+);
+GO
+
+CREATE FUNCTION casosxestado(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT COUNT(ct.codigo_caso) AS Casos, c.nombre_estado AS Estado
+	FROM Cotizacion ct
+	JOIN Caso c ON ct.codigo_caso = c.codigo
+		JOIN cotizacionEnRangoFechas(@Desde, @Hasta) AS verf ON verf.numeroCotizacion = ct.numeroCotizacion
+	GROUP BY c.nombre_estado
+);
+GO
+
+CREATE FUNCTION cotizacionesxtipo(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT COUNT(ct.numeroCotizacion) AS Cotizaciones, ct.nombre_tipo AS Tipo
+	FROM Cotizacion ct
+		JOIN cotizacionEnRangoFechas(@Desde, @Hasta) AS verf ON verf.numeroCotizacion = ct.numeroCotizacion
+	GROUP BY ct.nombre_tipo
 );
 GO
 

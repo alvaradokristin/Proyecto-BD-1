@@ -17,11 +17,11 @@
     @*FORM TO SELECT THE TYPE OF REPORT YPU WANT TO VIEW*@
     <form asp-action="CircularPercentageGraphReport" asp-controller="Reports" method="post">
         <div class="mb-3">
-            <label for="contact-client-code" class="form-label">Selecione el reporte a visualizar:</label>
+            <label for="report-type" class="form-label">Selecione el reporte a visualizar:</label>
             <div class="input-group w-50">
                 <select class="form-select auto-wdth" id="ReportType" name="ReportType">
                     <option value="vpd">Ventas por departamento</option>
-                    <option value="cpt">Casos por tipo</option> @*PORCENTAGE*@
+                    <option value="cpt">Casos por tipo</option>
                 </select>
                 @*<button type="submit" class="btn btn-outline-info" onclick="location.href='@Url.Action("CircularPercentageGraphReport", "Reports")?ReportType=' + document.getElementById('ReportType').value">Buscar</button>*@
             </div>

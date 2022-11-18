@@ -202,21 +202,31 @@ namespace BasesP1.Controllers
                     model.YValues = getAllQuantitiesPer(dataModel);
                     break;
                 case "vps":
-                    dataModel = reportData.getSellsBySector();
+                    dataModel = reportData.getSellsBySector(filters.From, filters.To);
                     model.YValues = getAllQuantities(dataModel);
                     break;
                 case "vpz":
-                    dataModel = reportData.getSellsByZone();
+                    dataModel = reportData.getSellsByZone(filters.From, filters.To);
                     model.YValues = getAllQuantities(dataModel);
                     break;
                 case "vpd":
-                    dataModel = reportData.getSellsByDepartment();
+                    dataModel = reportData.getSellsByDepartment(filters.From, filters.To);
+                    model.YValues = getAllQuantities(dataModel);
+                    break;
+                case "cpe":
+                    dataModel = reportData.getCasesByState(filters.From, filters.To);
+                    model.YValues = getAllQuantities(dataModel);
+                    break;
+                case "ccpt":
+                    dataModel = reportData.getQuotationByType(filters.From, filters.To);
                     model.YValues = getAllQuantities(dataModel);
                     break;
                 case null:
                     // Code for "any-other-than" cases :)
                     break;
             }
+
+
 
             model.XLabels = getAllDimOne(dataModel);
             model.Dates = yearMonth;
@@ -238,7 +248,12 @@ namespace BasesP1.Controllers
             switch (filters.ReportType)
             {
                 case "vpd":
-                    dataModel = reportData.getSellsByDepartment();
+                    dataModel = reportData.getSellsByDepartment(filters.From, filters.To);
+                    model.YValues = getAllQuantities(dataModel);
+                    break;
+                case "cpt":
+                    dataModel = reportData.getCasesByType(filters.From, filters.To);
+                    model.YValues = getAllQuantities(dataModel);
                     break;
                 case null:
                     // Code for "any-other-than" cases :)

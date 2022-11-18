@@ -206,7 +206,7 @@ namespace BasesP1.Data
             }
             return data;
         }
-        public List<SimpleReportViewModel> getSellsBySector()
+        public List<SimpleReportViewModel> getSellsBySector(string from, string to)
         {
             //Structure where the data from the report will be save
             List<SimpleReportViewModel> data = new List<SimpleReportViewModel>();
@@ -217,7 +217,7 @@ namespace BasesP1.Data
                 connection.Open();
 
                 //Show the sells by sectors
-                string sql = $"SELECT * FROM ventasxsector()";
+                string sql = $"SELECT * FROM ventasxsector('{from}', '{to}')";
 
                 using (var command = new SqlCommand(sql, connection))
                 {
@@ -238,7 +238,7 @@ namespace BasesP1.Data
             }
             return data;
         }
-        public List<SimpleReportViewModel> getSellsByZone()
+        public List<SimpleReportViewModel> getSellsByZone(string from, string to)
         {
             //Structure where the data from the report will be save
             List<SimpleReportViewModel> data = new List<SimpleReportViewModel>();
@@ -249,7 +249,7 @@ namespace BasesP1.Data
                 connection.Open();
 
                 //Show the sells by zones
-                string sql = $"SELECT * FROM ventasxzona()";
+                string sql = $"SELECT * FROM ventasxzona('{from}', '{to}')";
 
                 using (var command = new SqlCommand(sql, connection))
                 {
@@ -270,7 +270,7 @@ namespace BasesP1.Data
             }
             return data;
         }
-        public List<SimpleReportViewModel> getSellsByDepartment()
+        public List<SimpleReportViewModel> getSellsByDepartment(string from, string to)
         {
             //Structure where the data from the report will be save
             List<SimpleReportViewModel> data = new List<SimpleReportViewModel>();
@@ -280,8 +280,8 @@ namespace BasesP1.Data
             {
                 connection.Open();
 
-                //Show the sells by zones
-                string sql = $"SELECT * FROM ventasxdepartamento()";
+                //Show the sells by departments
+                string sql = $"SELECT * FROM ventasxdepartamento('{from}', '{to}')";
 
                 using (var command = new SqlCommand(sql, connection))
                 {
@@ -293,6 +293,102 @@ namespace BasesP1.Data
                             {
                                 DimensionOne = "" + dataReader["departamento"],
                                 Percentage = double.Parse("" + dataReader["Porcentaje"])
+                            });
+                        }
+
+                    }
+                }
+                connection.Close();
+            }
+            return data;
+        }
+        public List<SimpleReportViewModel> getCasesByType(string from, string to)
+        {
+            //Structure where the data from the report will be save
+            List<SimpleReportViewModel> data = new List<SimpleReportViewModel>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                //Show the cases by type
+                string sql = $"SELECT * FROM casosxtipo('{from}', '{to}')";
+
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            data.Add(new SimpleReportViewModel
+                            {
+                                DimensionOne = "" + dataReader["Tipo"],
+                                Percentage = double.Parse("" + dataReader["Porcentaje"])
+                            });
+                        }
+
+                    }
+                }
+                connection.Close();
+            }
+            return data;
+        }
+        public List<SimpleReportViewModel> getCasesByState(string from, string to)
+        {
+            //Structure where the data from the report will be save
+            List<SimpleReportViewModel> data = new List<SimpleReportViewModel>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                //Show the cases by state
+                string sql = $"SELECT * FROM casosxestado('{from}', '{to}')";
+
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            data.Add(new SimpleReportViewModel
+                            {
+                                DimensionOne = "" + dataReader["Estado"],
+                                Quantity = int.Parse("" + dataReader["Casos"])
+                            });
+                        }
+
+                    }
+                }
+                connection.Close();
+            }
+            return data;
+        }
+        public List<SimpleReportViewModel> getQuotationByType(string from, string to)
+        {
+            //Structure where the data from the report will be save
+            List<SimpleReportViewModel> data = new List<SimpleReportViewModel>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                //Show the quotation by type
+                string sql = $"SELECT * FROM cotizacionesxtipo('{from}', '{to}')";
+
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            data.Add(new SimpleReportViewModel
+                            {
+                                DimensionOne = "" + dataReader["Tipo"],
+                                Quantity = int.Parse("" + dataReader["Cotizaciones"])
                             });
                         }
 
