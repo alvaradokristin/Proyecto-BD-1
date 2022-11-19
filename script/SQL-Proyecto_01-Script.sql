@@ -1182,7 +1182,7 @@ RETURN
 	FROM Cliente AS cl
 	JOIN Cotizacion AS c ON c.contacto_clienteCodigo = cl.codigo
 	JOIN CotMontos AS cm ON cm.numero_cotizacion = c.numeroCotizacion
-	JOIN todasCotEnRangoFechas(@Desde, @Hasta) AS tcerf ON tcerf.numeroCotizacion = cm.numero_cotizacion
+	JOIN ventEnRangoFechas(@Desde, @Hasta) AS tcerf ON tcerf.numeroCotizacion = cm.numero_cotizacion
 	GROUP BY cl.abreviatura_moneda, cl.celular, cl.codigo, cl.correo, cl.informacionAdicional, cl.login_usuario,
 		cl.nombre_moneda, cl.nombreCuenta, cl.sector, cl.sitioWeb, cl.telefono, cl.zona
 	--ORDER BY ventas DESC
@@ -1216,7 +1216,7 @@ RETURN
 	FROM Cliente AS cl
 	JOIN Cotizacion AS c ON c.contacto_clienteCodigo = cl.codigo
 	JOIN CotMontos AS cm ON cm.numero_cotizacion = c.numeroCotizacion
-	JOIN todasCotEnRangoFechas(@Desde, @Hasta) AS tcerf ON tcerf.numeroCotizacion = cm.numero_cotizacion
+	JOIN ventEnRangoFechas(@Desde, @Hasta) AS tcerf ON tcerf.numeroCotizacion = cm.numero_cotizacion
 	GROUP BY cl.abreviatura_moneda, cl.celular, cl.codigo, cl.correo, cl.informacionAdicional, cl.login_usuario,
 		cl.nombre_moneda, cl.nombreCuenta, cl.sector, cl.sitioWeb, cl.telefono, cl.zona
 	--ORDER BY ventas DESC

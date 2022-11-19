@@ -113,7 +113,7 @@ END;
 
 -- ContactoCliente
 SET @maxElement = 100;
-WHILE @maxElement < 601
+WHILE @maxElement < 301
 BEGIN
 	BEGIN TRY
 
