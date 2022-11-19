@@ -292,6 +292,9 @@ CREATE TABLE Cotizacion (
 	anno_inflacion varchar(4) NOT NULL,
 	codigo_caso varchar(10) NOT NULL,
 	login_usuario varchar(10) NOT NULL,
+	contacto_clienteCodigo varchar(10) NOT NULL,
+	contacto_motivo varchar(15) NOT NULL,
+	FOREIGN KEY (contacto_clienteCodigo, contacto_motivo) REFERENCES ContactoCliente(codigoCliente, motivo),
 	FOREIGN KEY (login_usuario) REFERENCES Usuario(userLogin),
 	FOREIGN KEY (ordenCompra) REFERENCES Compra(ordenCompra),
 	FOREIGN KEY (numero_factura) REFERENCES Factura(numeroFactura),
@@ -530,7 +533,6 @@ VALUES	('P001'),
 		('P003'),
 		('P004');
 
-
 INSERT INTO Ejecucion (codigo, nombre, fecha, codigo_proyecto, codigo_departamento)
 VALUES	('E001', 'Ejecucion1', '2022-10-10', 'P003', 'DP02'),
 		('E002', 'Ejecucion2', '2021-11-11', 'P002', 'DP03');
@@ -552,17 +554,30 @@ VALUES	('Compet1'),
 		('Compet3');
 GO
 
+INSERT INTO ContactoCliente (codigoCliente, motivo, nombreContacto, correo, telefono, direccion, descripcion,
+sector, categoria_estado, nombre_estado, zona, categoria_tipo, nombre_tipo, asesor)
+VALUES
+('C01', 'Primer Cont', 'Persona 1', 'c01@ejemplo.com', '22222201', 'Direccion 01', 'Contacto a C01', 
+'Hoteleria', 'CC', 'Inicio', 'Cartago', 'CC', 'Tipo 1', 'amr'),
+('C02', 'Primer Cont', 'Persona 2', 'c02@ejemplo.com', '22222202', 'Direccion 02', 'Contacto a C02', 
+'Turismo', 'CC', 'Inicio', 'Heredia', 'CC', 'Tipo 1', 'jsm'),
+('C02', 'Seguimiento', 'Persona 2', 'c02@ejemplo.com', '22222202', 'Direccion 02', 'Contacto a C02', 
+'Turismo', 'CC', 'Inicio', 'Heredia', 'CC', 'Tipo 1', 'jsm'),
+('C01', 'Seguimiento', 'Persona 1', 'c01@ejemplo.com', '22222201', 'Direccion 01', 'Contacto a C01', 
+'Hoteleria', 'CC', 'Inicio', 'Cartago', 'CC', 'Tipo 2', 'amr');
+
 INSERT INTO Cotizacion (numeroCotizacion, nombreOportunidad, fecha, mesAnnoCierre, fechaCierre, 
 probabilidad, descripcion, seNego, nombre_competencia, ordenCompra, numero_factura, nombre_etapa, 
-categoria_tipo, nombre_tipo, codigo_ejecucion, zona, sector, anno_inflacion, codigo_caso, login_usuario)
+categoria_tipo, nombre_tipo, codigo_ejecucion, zona, sector, anno_inflacion, codigo_caso, login_usuario, 
+contacto_clienteCodigo, contacto_motivo)
 VALUES	(01, 'oport01', '2019-8-8', '09-2022', '2023-8-8', 20.3, 'descrip1', 'si', 'Compet1', 01, 001, 'Negociacion', 'Cotizacion', 'Tipo 1', 'E001',
-		'Cartago', 'Turismo', '2019', 'C001', 'amr'),
+		'Cartago', 'Turismo', '2019', 'C001', 'amr', 'C01', 'Primer Cont'),
 		(02, 'oport02', '2020-9-9', '08-2022', '2024-9-9', 30.3, 'descrip2', 'si', 'Compet2', 02, 002, 'Cotizacion', 'Cotizacion', 'Tipo 2', 'E002',
-		'Heredia', 'Gobierno', '2020', 'C002', 'amr'),
+		'Heredia', 'Gobierno', '2020', 'C002', 'amr', 'C01', 'Seguimiento'),
 		(03, 'oport03', '2021-10-10', '10-2022', '2025-10-10', 40.3, 'descrip3', 'no', 'Compet3', 04, 001, 'Facturada', 'Cotizacion', 'Tipo 3', 'E001',
-		'San Jose', 'Residencial', '2021', 'C001', 'jsm'),
+		'San Jose', 'Residencial', '2021', 'C001', 'jsm', 'C02', 'Primer Cont'),
 		(04, 'oport04', '2018-11-11', '11-2022', '2016-11-11', 60.3, 'descrip4', 'no', 'Compet2', 03, 002 , 'Pausa', 'Cotizacion', 'Tipo 1', 'E002',
-		'Heredia', 'Hoteleria', '2022', 'C002', 'jsm');
+		'Heredia', 'Hoteleria', '2022', 'C002', 'jsm', 'C02', 'Seguimiento');
 GO
 
 -- #-----------------------------------#
@@ -729,7 +744,9 @@ CREATE PROCEDURE insertarCotizacionFactura
 	@CotSector varchar(12),
 	@CotAnnoInflacion varchar(4),
 	@CotCaso varchar(10),
-	@CotUsuario varchar(10) -- asesor
+	@CotUsuario varchar(10), -- asesor
+	@CotContCliente varchar(10),
+	@CotContMotico varchar(15)
 AS
 DECLARE @Return int
 BEGIN
@@ -739,7 +756,7 @@ BEGIN
 		(@CotNumero, @CotNombreOportunidad, @CotFecha, @CotMesAnnoCierre, @CotFechaCierre, 
 		@CotProbabilidad, @CotDescripcion, @CotSeNego, @CotNombreCompetencia, -1, @CotNumeroFactura, 
 		@CotEtapa, 'Cotizacion', @CotTipo, @CotCodigoEjecucion, @CotZona, @CotSector,
-		@CotAnnoInflacion, @CotCaso, @CotUsuario)
+		@CotAnnoInflacion, @CotCaso, @CotUsuario, @CotContCliente, @CotContMotico)
 		SET @Return = 1
 	END TRY
 
@@ -1153,21 +1170,23 @@ RETURN
 		cl.informacionAdicional,
 		cl.login_usuario AS asesor,
 		cl.abreviatura_moneda,
-		cl.nombre_moneda,
 		cl.sector,
 		cl.sitioWeb,
 		cl.telefono,
 		cl.zona,
+		SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN cm.monto ELSE 0 END) AS montoCRC,
 		SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN 1 ELSE 0 END) AS ventas,
-		SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN cm.monto ELSE 0 END) AS monto
+		SUM(CASE WHEN c.nombre_etapa = 'Facturada' AND cl.abreviatura_moneda = 'CRC' THEN cm.monto
+				 WHEN c.nombre_etapa = 'Facturada' AND cl.abreviatura_moneda = 'USD' THEN cm.monto/600
+				 ELSE 0 END) AS monto
 	FROM Cliente AS cl
-	JOIN Usuario AS u ON u.userLogin = cl.login_usuario
-	JOIN Cotizacion AS c ON c.login_usuario = u.userLogin
+	JOIN Cotizacion AS c ON c.contacto_clienteCodigo = cl.codigo
 	JOIN CotMontos AS cm ON cm.numero_cotizacion = c.numeroCotizacion
 	JOIN todasCotEnRangoFechas(@Desde, @Hasta) AS tcerf ON tcerf.numeroCotizacion = cm.numero_cotizacion
 	GROUP BY cl.abreviatura_moneda, cl.celular, cl.codigo, cl.correo, cl.informacionAdicional, cl.login_usuario,
 		cl.nombre_moneda, cl.nombreCuenta, cl.sector, cl.sitioWeb, cl.telefono, cl.zona
-	ORDER BY monto DESC
+	--ORDER BY ventas DESC
+	ORDER BY montoCRC DESC
 );
 GO
 
@@ -1185,21 +1204,23 @@ RETURN
 		cl.informacionAdicional,
 		cl.login_usuario AS asesor,
 		cl.abreviatura_moneda,
-		cl.nombre_moneda,
 		cl.sector,
 		cl.sitioWeb,
 		cl.telefono,
 		cl.zona,
+		SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN cm.monto ELSE 0 END) AS montoCRC,
 		SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN 1 ELSE 0 END) AS ventas,
-		SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN cm.monto ELSE 0 END) AS monto
+		SUM(CASE WHEN c.nombre_etapa = 'Facturada' AND cl.abreviatura_moneda = 'CRC' THEN cm.monto
+				 WHEN c.nombre_etapa = 'Facturada' AND cl.abreviatura_moneda = 'USD' THEN cm.monto/600
+				 ELSE 0 END) AS monto
 	FROM Cliente AS cl
-	JOIN Usuario AS u ON u.userLogin = cl.login_usuario
-	JOIN Cotizacion AS c ON c.login_usuario = u.userLogin
+	JOIN Cotizacion AS c ON c.contacto_clienteCodigo = cl.codigo
 	JOIN CotMontos AS cm ON cm.numero_cotizacion = c.numeroCotizacion
 	JOIN todasCotEnRangoFechas(@Desde, @Hasta) AS tcerf ON tcerf.numeroCotizacion = cm.numero_cotizacion
 	GROUP BY cl.abreviatura_moneda, cl.celular, cl.codigo, cl.correo, cl.informacionAdicional, cl.login_usuario,
 		cl.nombre_moneda, cl.nombreCuenta, cl.sector, cl.sitioWeb, cl.telefono, cl.zona
-	ORDER BY monto DESC
+	--ORDER BY ventas DESC
+	ORDER BY montoCRC DESC
 );
 GO
 

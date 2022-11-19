@@ -10,7 +10,8 @@ DECLARE @maxElement AS int,
 @apellido2 AS varchar(12),
 @fecha1 AS date,
 @fecha2 AS date,
-@cliente AS varchar(10);
+@cliente AS varchar(10),
+@codCliente AS varchar(10);
 
 -- FamiliaProducto
 SET @maxElement = 100;
@@ -79,6 +80,66 @@ BEGIN
 	BEGIN CATCH
 	END CATCH
 	
+	SET @maxElement = @maxElement + 1;
+END;
+
+-- Cliente
+SET @maxElement = 100;
+WHILE @maxElement < 401
+BEGIN
+	BEGIN TRY
+
+		INSERT INTO Cliente VALUES (
+		'CLICOD' + CAST(@maxElement AS varchar(3)),
+		'Cuenta ' + CAST(@maxElement AS varchar(3)),
+		'cli' + CAST(@maxElement AS varchar(3)) + '@ejemplo.com',
+		'22222' + CAST(@maxElement AS varchar(3)),
+		'88888' + CAST(@maxElement AS varchar(3)),
+		'cliente-' + CAST(@maxElement AS varchar(3)) + '.com',
+		'Informacion de: CLICOD' + CAST(@maxElement AS varchar(3)),
+		(SELECT TOP 1 nombre FROM Zona ORDER BY NEWID()),
+		(SELECT TOP 1 nombre FROM Sector ORDER BY NEWID()),
+		(SELECT TOP 1 abreviatura FROM Moneda ORDER BY NEWID()),
+		(SELECT TOP 1 nombre FROM Moneda ORDER BY NEWID()),
+		(SELECT TOP 1 userLogin FROM Usuario ORDER BY NEWID())
+		)
+
+	END TRY
+	BEGIN CATCH
+	END CATCH
+
+	SET @maxElement = @maxElement + 1;
+END;
+
+-- ContactoCliente
+SET @maxElement = 100;
+WHILE @maxElement < 601
+BEGIN
+	BEGIN TRY
+
+	SET @cliente = (SELECT TOP 1 codigo FROM Cliente ORDER BY NEWID());
+
+		INSERT INTO ContactoCliente VALUES (
+		@cliente,
+		'Motivo ' + CAST(@maxElement AS varchar(3)),
+		'Persona ' + CAST(@maxElement AS varchar(3)),
+		(SELECT correo FROM Cliente WHERE codigo = @cliente),
+		(SELECT telefono FROM Cliente WHERE codigo = @cliente),
+		'Direccion: ' + CAST(@maxElement AS varchar(3)),
+		'Descripcion: ' + CAST(@maxElement AS varchar(3)),
+		(SELECT sector FROM Cliente WHERE codigo = @cliente),
+		'CC',
+		(SELECT TOP 1 nombre FROM Estado WHERE categoria = 'CC' ORDER BY NEWID()),
+		(SELECT zona FROM Cliente WHERE codigo = @cliente),
+		'CC',
+		(SELECT TOP 1 nombre FROM Tipo WHERE categoria = 'CC' ORDER BY NEWID()),
+		(SELECT TOP 1 userLogin FROM Usuario ORDER BY NEWID())
+		)
+
+	END TRY
+	BEGIN CATCH
+	END CATCH
+
 	SET @maxElement = @maxElement + 1;
 END;
 
@@ -177,12 +238,14 @@ END;
 
 -- Cotizacion
 SET @maxElement = 100;
-WHILE @maxElement < 751
+WHILE @maxElement < 1000
 BEGIN
 	BEGIN TRY
 
 		SET @fecha1 = DATEADD(DAY, ABS(CHECKSUM(NEWID()) % 30)*-1, GETDATE());
 		SET @fecha2 = DATEADD(DAY, 20, @fecha1);
+
+		SET @codCliente = (SELECT TOP 1 codigoCliente FROM ContactoCliente ORDER BY NEWID());
 
 		INSERT INTO Cotizacion VALUES (
 		@maxElement,
@@ -200,11 +263,13 @@ BEGIN
 		'Cotizacion',
 		(SELECT TOP 1 nombre FROM Tipo WHERE categoria = 'Cotizacion' ORDER BY NEWID()), -- Tipo
 		(SELECT TOP 1 codigo FROM Ejecucion ORDER BY NEWID()),
-		(SELECT TOP 1 nombre FROM Zona ORDER BY NEWID()),
-		(SELECT TOP 1 nombre FROM Sector ORDER BY NEWID()),
+		(SELECT zona FROM Cliente WHERE codigo = @codCliente),
+		(SELECT sector FROM Cliente WHERE codigo = @codCliente),
 		(SELECT TOP 1 anno FROM Inflacion ORDER BY NEWID()),
 		(SELECT TOP 1 codigo FROM Caso ORDER BY NEWID()),
-		(SELECT TOP 1 userLogin FROM Usuario ORDER BY NEWID())
+		(SELECT TOP 1 userLogin FROM Usuario ORDER BY NEWID()),
+		(@codCliente),
+		(SELECT TOP 1 motivo FROM ContactoCliente WHERE codigoCliente = @codCliente ORDER BY NEWID())
 		)
 
 	END TRY
@@ -223,66 +288,6 @@ BEGIN
 		INSERT INTO ProductoXCotizacion VALUES (
 		(SELECT TOP 1 codigo FROM Producto ORDER BY NEWID()),
 		(SELECT TOP 1 numeroCotizacion FROM Cotizacion ORDER BY NEWID())
-		)
-
-	END TRY
-	BEGIN CATCH
-	END CATCH
-
-	SET @maxElement = @maxElement + 1;
-END;
-
--- Cliente
-SET @maxElement = 100;
-WHILE @maxElement < 401
-BEGIN
-	BEGIN TRY
-
-		INSERT INTO Cliente VALUES (
-		'CLICOD' + CAST(@maxElement AS varchar(3)),
-		'Cuenta ' + CAST(@maxElement AS varchar(3)),
-		'cli' + CAST(@maxElement AS varchar(3)) + '@ejemplo.com',
-		'22222' + CAST(@maxElement AS varchar(3)),
-		'88888' + CAST(@maxElement AS varchar(3)),
-		'cliente-' + CAST(@maxElement AS varchar(3)) + '.com',
-		'Informacion de: CLICOD' + CAST(@maxElement AS varchar(3)),
-		(SELECT TOP 1 nombre FROM Zona ORDER BY NEWID()),
-		(SELECT TOP 1 nombre FROM Sector ORDER BY NEWID()),
-		(SELECT TOP 1 abreviatura FROM Moneda ORDER BY NEWID()),
-		(SELECT TOP 1 nombre FROM Moneda ORDER BY NEWID()),
-		(SELECT TOP 1 userLogin FROM Usuario ORDER BY NEWID())
-		)
-
-	END TRY
-	BEGIN CATCH
-	END CATCH
-
-	SET @maxElement = @maxElement + 1;
-END;
-
--- ContactoCliente
-SET @maxElement = 100;
-WHILE @maxElement < 601
-BEGIN
-	BEGIN TRY
-
-	SET @cliente = (SELECT TOP 1 codigo FROM Cliente ORDER BY NEWID());
-
-		INSERT INTO ContactoCliente VALUES (
-		@cliente,
-		'Motivo ' + CAST(@maxElement AS varchar(3)),
-		'Persona ' + CAST(@maxElement AS varchar(3)),
-		(SELECT correo FROM Cliente WHERE codigo = @cliente),
-		(SELECT telefono FROM Cliente WHERE codigo = @cliente),
-		'Direccion: ' + CAST(@maxElement AS varchar(3)),
-		'Descripcion: ' + CAST(@maxElement AS varchar(3)),
-		(SELECT sector FROM Cliente WHERE codigo = @cliente),
-		'CC',
-		(SELECT TOP 1 nombre FROM Estado WHERE categoria = 'CC' ORDER BY NEWID()),
-		(SELECT zona FROM Cliente WHERE codigo = @cliente),
-		'CC',
-		(SELECT TOP 1 nombre FROM Tipo WHERE categoria = 'CC' ORDER BY NEWID()),
-		(SELECT TOP 1 userLogin FROM Usuario ORDER BY NEWID())
 		)
 
 	END TRY
