@@ -7,6 +7,7 @@
                 <option value="ttpmv">Top 10 de productos más vendidos</option>
                 <option value="ttpmc">Top 10 de productos más cotizados</option>
                 <option value="ttccmv">Top 10 de clientes con mayores ventas</option>
+                <option value="cccu">Cantidad de contactos de cliente por usuario</option>
                 <option value="ttvcmv">Top 10 de vendedores con mayores ventas</option>
                 <option value="ttcdccma">Top 10 de cotizaciones con diferencia entre creación y cierre más altos</option>
                 <option value="tftscma">Top 15 de tareas sin cerrar más antiguas</option>
@@ -96,7 +97,7 @@
                     }
                 }
 
-                @*TOP 10 CLIENTS ... *@
+                @*TOP 10 CLIENTS WITH THE MOST SELLS*@
                 @if (Model.Type == "ttccmv")
                 {
                     foreach (var item in Model.Data)
@@ -115,6 +116,71 @@
                             <td>@item.zona</td>
                             <td>@item.numeroCotizacion</td>
                             <td>@item.monto</td>
+                        </tr>
+                    }
+                }
+
+                @*TOP 10 USERS WITH THE MOST SELLS*@
+                @if (Model.Type == "ttvcmv")
+                {
+                    foreach (var item in Model.Data)
+                    {
+                        <tr>
+                            <td>@item.userLogin</td>
+                            <td>@item.nombreCompleto</td>
+                            <td>@item.monto</td>
+                        </tr>
+                    }
+                }
+
+                @*CONTACTS BY USERS*@
+                @if (Model.Type == "cccu")
+                {
+                    foreach (var item in Model.Data)
+                    {
+                        <tr>
+                            <td>@item.userLogin</td>
+                            <td>@item.nombreCompleto</td>
+                            <td>@item.cantidad</td>
+                        </tr>
+                    }
+                }
+
+                @*TOP 15 OLDEST OPEN TASKS*@
+                @if (Model.Type == "tftscma")
+                {
+                    foreach (var item in Model.Data)
+                    {
+                        <tr>
+                            <td>@item.Codigo</td>
+                            <td>@item.Nombre</td>
+                            <td>@item.FechaFinalizacion</td> @*Use for type in this case*@
+                            <td>@item.Descripcion</td>
+                            <td>@item.Estado</td>
+                            <td>@item.Asesor</td>
+                            <td>@item.FechaInicio</td>
+                            <td>@item.Cantidad</td>
+                        </tr>
+                    }
+                }
+
+                @*TOP 10 QUOTES WITH THE MOST DAYS BETWEEN START AND END DATE*@
+                @if (Model.Type == "ttcdccma")
+                {
+                    foreach (var item in Model.Data)
+                    {
+                        <tr>
+                            <td>@item.numeroCotizacion</td>
+                            <td>@item.codigoCleinte</td>
+                            <td>@item.nombreCuenta</td>
+                            <td>@item.nombre_etapa</td>
+                            <td>@item.nombre_tipo</td>
+                            <td>@item.sector</td> @*Use for type in this case*@
+                            <td>@item.zona</td>
+                            <td>@item.login_usuario</td>
+                            <td>@item.fecha</td>
+                            <td>@item.fechaCierre</td>
+                            <td>@item.cantidad</td>
                         </tr>
                     }
                 }

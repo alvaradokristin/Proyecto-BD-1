@@ -14,7 +14,7 @@ namespace BasesP1.Models
         public string? nombreOportunidad { get; set; }
 
         [Required]
-        public DateTime? fecha { get; set; }
+        public string? fecha { get; set; }
 
         [Required]
         [StringLength(7)]
@@ -22,7 +22,7 @@ namespace BasesP1.Models
 
         [Required]
         [StringLength(7)]
-        public DateTime? fechaCierre { get; set; }
+        public string? fechaCierre { get; set; }
 
         [Required]
         public Decimal? probabilidad { get; set; }
@@ -80,5 +80,9 @@ namespace BasesP1.Models
         [Required]
         [StringLength(10)]
         public string? login_usuario { get; set; }
+        public int? cantidad { get; set; }
+        public double? monto { get; set; }
+        public string? codigoCleinte { get; set; }
+        public string? nombreCuenta { get; set; }
     }
 }

@@ -36,5 +36,7 @@ namespace BasesP1.Models
         public string? TipoQuery { get; set; }
         public string? FKCont { get; set; }
         public string? FKMot { get; set; }
+        public double? Monto { get; set; }
+        public int? Cantidad { get; set; }
     }
 }
