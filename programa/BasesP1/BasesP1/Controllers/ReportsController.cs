@@ -2,6 +2,7 @@
 using BasesP1.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Dynamic;
+using Task = BasesP1.Models.Task;
 
 namespace BasesP1.Controllers
 {
@@ -339,6 +340,39 @@ namespace BasesP1.Controllers
                     tableHeaders.Add("Ventas");
                     tableHeaders.Add("Monto");
                     break;
+                case "ttvcmv":
+                    tableHeaders.Add("Login");
+                    tableHeaders.Add("Nombre");
+                    tableHeaders.Add("Ventas");
+                    break;
+                case "cccu":
+                    tableHeaders.Add("Login");
+                    tableHeaders.Add("Nombre");
+                    tableHeaders.Add("Contactos");
+                    break;
+                case "tftscma":
+                    tableHeaders.Add("Codigo");
+                    tableHeaders.Add("Nombre");
+                    tableHeaders.Add("Tipo");
+                    tableHeaders.Add("Descripcion");
+                    tableHeaders.Add("Estado");
+                    tableHeaders.Add("Asesor");
+                    tableHeaders.Add("FechaInicio");
+                    tableHeaders.Add("Dias");
+                    break;
+                case "ttcdccma":
+                    tableHeaders.Add("Numero Cotización");
+                    tableHeaders.Add("Cod Cliente");
+                    tableHeaders.Add("Cuenta");
+                    tableHeaders.Add("Etapa");
+                    tableHeaders.Add("Tipo");
+                    tableHeaders.Add("Sector");
+                    tableHeaders.Add("Zona");
+                    tableHeaders.Add("Asesor");
+                    tableHeaders.Add("Fecha Inicio");
+                    tableHeaders.Add("Fecha Cierre");
+                    tableHeaders.Add("Dias");
+                    break;
                 case null:
                     // Code for "any-other-than" cases :)
                     break;
@@ -358,6 +392,9 @@ namespace BasesP1.Controllers
             //List of products with the values from the query
             List<Product> product = new List<Product>();
             List<Client> client = new List<Client>();
+            List<User> user = new List<User>();
+            List<Task> task = new List<Task>();
+            List<Quotation> quote = new List<Quotation>();
 
             ProductData queryProd = new ProductData(this.Configuration);
             ReportsData queryReport = new ReportsData(this.Configuration);
@@ -387,6 +424,26 @@ namespace BasesP1.Controllers
                     //Get the data from the query
                     client = queryReport.getTClientMostSells(filters.From, filters.To, filters.OrderBy);
                     model.Data = client;
+                    break;
+                case "ttvcmv":
+                    //Get the data from the query
+                    user = queryReport.getTSellersMostSells(filters.From, filters.To, filters.OrderBy);
+                    model.Data = user;
+                    break;
+                case "cccu":
+                    //Get the data from the query
+                    user = queryReport.getTContactsByUsers(filters.From, filters.To, filters.OrderBy);
+                    model.Data = user;
+                    break;
+                case "tftscma":
+                    //Get the data from the query
+                    task = queryReport.getTOldestsOpenTasks(filters.From, filters.To, filters.OrderBy);
+                    model.Data = task;
+                    break;
+                case "ttcdccma":
+                    //Get the data from the query
+                    quote = queryReport.getTQuotesDaysBDates(filters.From, filters.To, filters.OrderBy);
+                    model.Data = quote;
                     break;
                 case null:
                     // Default

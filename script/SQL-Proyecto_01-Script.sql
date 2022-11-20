@@ -1738,7 +1738,8 @@ RETURN
 		c.zona,
 		c.sector,
 		c.login_usuario,
-		fecha, fechaCierre,
+		fecha, 
+		fechaCierre,
 		DATEDIFF(DAY, fecha, fechaCierre) AS dias
 	FROM Cotizacion AS c
 	JOIN Cliente AS cl ON cl.codigo = c.contacto_clienteCodigo
@@ -1762,7 +1763,8 @@ RETURN
 		c.zona,
 		c.sector,
 		c.login_usuario,
-		fecha, fechaCierre,
+		fecha, 
+		fechaCierre,
 		DATEDIFF(DAY, fecha, fechaCierre) AS dias
 	FROM Cotizacion AS c
 	JOIN Cliente AS cl ON cl.codigo = c.contacto_clienteCodigo

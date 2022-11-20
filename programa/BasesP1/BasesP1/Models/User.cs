@@ -43,6 +43,9 @@ namespace BasesP1.Models
             {
                 return nombre + " " + primerApellido + " " + segundoApellido;
             }
-}
+        }
+
+        public double? monto { get; set; }
+        public int? cantidad { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
+using Task = BasesP1.Models.Task;
 
 namespace BasesP1.Data
 {
@@ -17,7 +18,7 @@ namespace BasesP1.Data
         //Method to get all the year-monmths from quote dates
         public List<String> getDates()
         {
-            //Structure where the data fro the report will be save
+            //Structure where the data for the report will be save
             List<String> data = new List<String>();
 
             string connectionString = Configuration["ConnectionStrings:RealConnection"];
@@ -49,7 +50,7 @@ namespace BasesP1.Data
         //Method to get the data for the family products sales (circular) report
         public List<SimpleReportViewModel> getCFamilySales(string from, string to)
         {
-            //Structure where the data fro the report will be save
+            //Structure where the data for the report will be save
             List<SimpleReportViewModel> data = new List<SimpleReportViewModel>();
 
             string connectionString = Configuration["ConnectionStrings:RealConnection"];
@@ -83,7 +84,7 @@ namespace BasesP1.Data
         //Method to get the data for the quotes and sells by department
         public List<StackedViewModel> getBQuotesSellsByDept(string from, string to)
         {
-            //Structure where the data fro the report will be save
+            //Structure where the data for the report will be save
             List<StackedViewModel> data = new List<StackedViewModel>();
 
             string connectionString = Configuration["ConnectionStrings:RealConnection"];
@@ -127,7 +128,7 @@ namespace BasesP1.Data
         //Method to get the data for the quotes and sells by month and year (Quantity)
         public List<StackedViewModel> getBQuotesSellsByMonthYearQuantity(string from, string to)
         {
-            //Structure where the data fro the report will be save
+            //Structure where the data for the report will be save
             List<StackedViewModel> data = new List<StackedViewModel>();
 
             string connectionString = Configuration["ConnectionStrings:RealConnection"];
@@ -172,7 +173,7 @@ namespace BasesP1.Data
         //Method to get the data for the quotes and sells by month and year (Amount of money)
         public List<StackedViewModel> getBQuotesSellsByMonthYearAmount(string from, string to)
         {
-            //Structure where the data fro the report will be save
+            //Structure where the data for the report will be save
             List<StackedViewModel> data = new List<StackedViewModel>();
 
             string connectionString = Configuration["ConnectionStrings:RealConnection"];
@@ -217,7 +218,7 @@ namespace BasesP1.Data
         //Method to get the data for the 10 clients with the most sells
         public List<Client> getTClientMostSells(string from, string to, string order)
         {
-            //Structure where the data fro the report will be save
+            //Structure where the data for the report will be save
             List<Client> data = new List<Client>();
 
             string connectionString = Configuration["ConnectionStrings:RealConnection"];
@@ -265,6 +266,195 @@ namespace BasesP1.Data
             }
             return data;
         }
+        
+        //Method to get the data for the 10 sellers with the most sells
+        public List<User> getTSellersMostSells(string from, string to, string order)
+        {
+            //Structure where the data for the report will be save
+            List<User> data = new List<User>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sqlFunction = "";
+
+                if (order == "DESC")
+                {
+                    sqlFunction = $"usuariosMasVentasDESC('{from}', '{to}')";
+                }
+                else
+                {
+                    sqlFunction = $"usuariosMasVentasASC('{from}', '{to}')";
+                }
+
+                string sql = $"SELECT * FROM {sqlFunction}";
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            data.Add(new User
+                            {
+                                userLogin = "" + dataReader["userLogin"],
+                                nombre = "" + dataReader["nombre"],
+                                primerApellido = "" + dataReader["primerApellido"],
+                                segundoApellido = "" + dataReader["segundoApellido"],
+                                monto = double.Parse("" + dataReader["monto"])
+                            });
+                        }
+                    }
+                }
+            }
+            return data;
+        }
+
+        //Method to get the data for the contacts by seller
+        public List<User> getTContactsByUsers(string from, string to, string order)
+        {
+            //Structure where the data for the report will be save
+            List<User> data = new List<User>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sqlFunction = "";
+
+                if (order == "DESC")
+                {
+                    sqlFunction = $"contactosXUsuarioDESC('{from}', '{to}')";
+                }
+                else
+                {
+                    sqlFunction = $"contactosXUsuarioASC('{from}', '{to}')";
+                }
+
+                string sql = $"SELECT * FROM {sqlFunction}";
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            data.Add(new User
+                            {
+                                userLogin = "" + dataReader["userLogin"],
+                                nombre = "" + dataReader["nombre"],
+                                primerApellido = "" + dataReader["primerApellido"],
+                                segundoApellido = "" + dataReader["segundoApellido"],
+                                cantidad = int.Parse("" + dataReader["contactos"])
+                            });
+                        }
+                    }
+                }
+            }
+            return data;
+        }
+
+        //Method to get the oldest open tasks
+        public List<Task> getTOldestsOpenTasks(string from, string to, string order)
+        {
+            //Structure where the data for the report will be save
+            List<Task> data = new List<Task>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sqlFunction = "";
+
+                if (order == "DESC")
+                {
+                    sqlFunction = $"tareasAntiguasDESC('{from}', '{to}')";
+                }
+                else
+                {
+                    sqlFunction = $"tareasAntiguasASC('{from}', '{to}')";
+                }
+
+                string sql = $"SELECT * FROM {sqlFunction}";
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            data.Add(new Task
+                            {
+                                Codigo = "" + dataReader["codigo"],
+                                Nombre = "" + dataReader["nombre"],
+                                FechaFinalizacion = "" + dataReader["tipo"],
+                                Descripcion = "" + dataReader["descripcion"],
+                                Estado = "" + dataReader["nombre_estado"],
+                                Asesor = "" + dataReader["usuario_asignado"],
+                                FechaInicio = "" + dataReader["fechaInicio"],
+                                Cantidad = int.Parse("" + dataReader["dias"])
+                            });
+                        }
+                    }
+                }
+            }
+            return data;
+        }
+
+        //Method to get the top 10 quotes with the most days between start and end date
+        public List<Quotation> getTQuotesDaysBDates(string from, string to, string order)
+        {
+            //Structure where the data for the report will be save
+            List<Quotation> data = new List<Quotation>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sqlFunction = "";
+
+                if (order == "DESC")
+                {
+                    sqlFunction = $"cotDifDiasDESC('{from}', '{to}')";
+                }
+                else
+                {
+                    sqlFunction = $"cotDifDiasASC('{from}', '{to}')";
+                }
+
+                string sql = $"SELECT * FROM {sqlFunction}";
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            data.Add(new Quotation
+                            {
+                                numeroCotizacion = short.Parse("" + dataReader["numeroCotizacion"]),
+                                codigoCleinte = "" + dataReader["codigo"],
+                                nombreCuenta = "" + dataReader["nombreCuenta"],
+                                nombre_etapa = "" + dataReader["nombre_etapa"],
+                                nombre_tipo = "" + dataReader["nombre_tipo"],
+                                sector = "" + dataReader["sector"],
+                                zona = "" + dataReader["zona"],
+                                login_usuario = "" + dataReader["login_usuario"],
+
+                                fecha = DateTime.Parse("" + dataReader["fecha"]).ToShortDateString(), // Convert DateTime to String with format SmallDate
+
+                                fechaCierre = DateTime.Parse("" + dataReader["fechaCierre"]).ToShortDateString(), // Convert DateTime to String with format SmallDate
+
+                                cantidad = int.Parse("" + dataReader["dias"])
+                            });
+                        }
+                    }
+                }
+            }
+            return data;
+        }
+
         public List<SimpleReportViewModel> getSellsBySector(string from, string to)
         {
             //Structure where the data from the report will be save
