@@ -202,6 +202,7 @@ CREATE TABLE Cliente (
 CREATE TABLE ContactoCliente (
 	codigoCliente varchar(10) NOT NULL,
 	motivo varchar(15) NOT NULL,
+	fecha date NOT NULL,
 	nombreContacto varchar(12) NOT NULL,
 	correo varchar(20) NOT NULL,
 	telefono varchar(10) NOT NULL,
@@ -554,16 +555,16 @@ VALUES	('Compet1'),
 		('Compet3');
 GO
 
-INSERT INTO ContactoCliente (codigoCliente, motivo, nombreContacto, correo, telefono, direccion, descripcion,
+INSERT INTO ContactoCliente (codigoCliente, motivo, fecha, nombreContacto, correo, telefono, direccion, descripcion,
 sector, categoria_estado, nombre_estado, zona, categoria_tipo, nombre_tipo, asesor)
 VALUES
-('C01', 'Primer Cont', 'Persona 1', 'c01@ejemplo.com', '22222201', 'Direccion 01', 'Contacto a C01', 
+('C01', 'Primer Cont', '2020-01-15', 'Persona 1', 'c01@ejemplo.com', '22222201', 'Direccion 01', 'Contacto a C01', 
 'Hoteleria', 'CC', 'Inicio', 'Cartago', 'CC', 'Tipo 1', 'amr'),
-('C02', 'Primer Cont', 'Persona 2', 'c02@ejemplo.com', '22222202', 'Direccion 02', 'Contacto a C02', 
+('C02', 'Primer Cont', '2020-03-15', 'Persona 2', 'c02@ejemplo.com', '22222202', 'Direccion 02', 'Contacto a C02', 
 'Turismo', 'CC', 'Inicio', 'Heredia', 'CC', 'Tipo 1', 'jsm'),
-('C02', 'Seguimiento', 'Persona 2', 'c02@ejemplo.com', '22222202', 'Direccion 02', 'Contacto a C02', 
+('C02', 'Seguimiento', '2021-01-15', 'Persona 2', 'c02@ejemplo.com', '22222202', 'Direccion 02', 'Contacto a C02', 
 'Turismo', 'CC', 'Inicio', 'Heredia', 'CC', 'Tipo 1', 'jsm'),
-('C01', 'Seguimiento', 'Persona 1', 'c01@ejemplo.com', '22222201', 'Direccion 01', 'Contacto a C01', 
+('C01', 'Seguimiento', '2021-03-15', 'Persona 1', 'c01@ejemplo.com', '22222201', 'Direccion 01', 'Contacto a C01', 
 'Hoteleria', 'CC', 'Inicio', 'Cartago', 'CC', 'Tipo 2', 'amr');
 
 INSERT INTO Cotizacion (numeroCotizacion, nombreOportunidad, fecha, mesAnnoCierre, fechaCierre, 
@@ -572,11 +573,11 @@ categoria_tipo, nombre_tipo, codigo_ejecucion, zona, sector, anno_inflacion, cod
 contacto_clienteCodigo, contacto_motivo)
 VALUES	(01, 'oport01', '2019-8-8', '09-2022', '2023-8-8', 20.3, 'descrip1', 'si', 'Compet1', 01, 001, 'Negociacion', 'Cotizacion', 'Tipo 1', 'E001',
 		'Cartago', 'Turismo', '2019', 'C001', 'amr', 'C01', 'Primer Cont'),
-		(02, 'oport02', '2020-9-9', '08-2022', '2024-9-9', 30.3, 'descrip2', 'si', 'Compet2', 02, 002, 'Cotizacion', 'Cotizacion', 'Tipo 2', 'E002',
+		(02, 'oport02', '2020-9-9', '08-2022', '2022-9-9', 30.3, 'descrip2', 'si', 'Compet2', 02, 002, 'Cotizacion', 'Cotizacion', 'Tipo 2', 'E002',
 		'Heredia', 'Gobierno', '2020', 'C002', 'amr', 'C01', 'Seguimiento'),
-		(03, 'oport03', '2021-10-10', '10-2022', '2025-10-10', 40.3, 'descrip3', 'no', 'Compet3', 04, 001, 'Facturada', 'Cotizacion', 'Tipo 3', 'E001',
+		(03, 'oport03', '2021-10-10', '10-2022', '2022-10-10', 40.3, 'descrip3', 'no', 'Compet3', 04, 001, 'Facturada', 'Cotizacion', 'Tipo 3', 'E001',
 		'San Jose', 'Residencial', '2021', 'C001', 'jsm', 'C02', 'Primer Cont'),
-		(04, 'oport04', '2018-11-11', '11-2022', '2016-11-11', 60.3, 'descrip4', 'no', 'Compet2', 03, 002 , 'Pausa', 'Cotizacion', 'Tipo 1', 'E002',
+		(04, 'oport04', '2018-11-11', '11-2022', '2019-11-11', 60.3, 'descrip4', 'no', 'Compet2', 03, 002 , 'Pausa', 'Cotizacion', 'Tipo 1', 'E002',
 		'Heredia', 'Hoteleria', '2022', 'C002', 'jsm', 'C02', 'Seguimiento');
 GO
 
@@ -646,6 +647,7 @@ GO
 CREATE PROCEDURE insertarContactoCliente
 	@CCCodigoCliente varchar(10),
 	@CCMotivo varchar(15),
+	@CCFecha date,
 	@CCNombreContacto varchar(12),
 	@CCCorreo varchar(20),
 	@CCTelefono varchar(10),
@@ -661,7 +663,7 @@ DECLARE @Return int
 BEGIN
 	BEGIN TRY
 		INSERT INTO ContactoCliente VALUES 
-		(@CCCodigoCliente, @CCMotivo, @CCNombreContacto, @CCCorreo, @CCTelefono, 
+		(@CCCodigoCliente, @CCMotivo, @CCFecha, @CCNombreContacto, @CCCorreo, @CCTelefono, 
 		@CCDireccion, @CCDescripcion, @CCSector, 'CC', @CCNombreEstado, 
 		@CCZona, 'CC', @CCNombreTipo, @CCAsesor)
 		SET @Return = 1
@@ -851,7 +853,68 @@ VALUES
 ('PROD001', 4);
 GO
 
-EXEC insertarContactoCliente 'C01', 'Acercamiento', 'Aivy', 'asd@asd.com', '88888888', 'Sabana, San Jose', 'Primer acercamiento', 'Tres Rios', 'Inicio', 'San Jose', 'Tipo1', 'amr';
+EXEC insertarContactoCliente 'C01', 'Acercamiento', '2019-03-05', 'Aivy', 'asd@asd.com', '88888888', 'Sabana, San Jose', 'Primer acercamiento', 'Tres Rios', 'Inicio', 'San Jose', 'Tipo1', 'amr';
+GO
+
+CREATE PROCEDURE sp_addClient 
+	@codigo VARCHAR(10), 
+	@nombreCuenta VARCHAR(12), 
+	@correo VARCHAR(20), 
+	@telefono VARCHAR(10), 
+	@celular VARCHAR(10), 
+	@sitioWeb VARCHAR(22), 
+	@informacionAdicional VARCHAR(30), 
+	@zona VARCHAR(12), 
+	@sector VARCHAR(12), 
+	@abreviatura_moneda VARCHAR(4), 
+	@nombre_moneda VARCHAR(12), 
+	@login_usuario VARCHAR(10)
+AS
+DECLARE @Return INT
+BEGIN
+	BEGIN TRY
+    INSERT INTO Cliente(
+			codigo, nombreCuenta, correo, telefono, celular, sitioWeb, informacionAdicional, zona, sector, 
+			abreviatura_moneda, nombre_moneda, login_usuario)
+        VALUES(@codigo, @nombreCuenta, @correo, @telefono, @celular, @sitioWeb, @informacionAdicional, 
+			@zona, @sector, @abreviatura_moneda, @nombre_moneda, @login_usuario)
+		SET @Return = 1
+	END TRY
+
+	BEGIN CATCH
+		PRINT @@error
+		SET @Return = -1
+	END CATCH
+END;
+GO
+
+CREATE PROCEDURE sp_getClientsBySector @param_sector VARCHAR(12)
+AS 
+BEGIN
+	SELECT * FROM Cliente
+	WHERE sector = @param_sector
+END;
+GO
+
+CREATE PROCEDURE sp_getClientsByZone @param_zona VARCHAR(12)
+AS 
+BEGIN
+	SELECT * FROM Cliente
+	WHERE zona = @param_zona
+END;
+GO
+
+CREATE PROCEDURE sp_getClientsByQuotes @param_numeroCotizacion SMALLINT
+AS 
+BEGIN
+
+	SELECT c.nombreCuenta, c.correo, c.telefono, c.celular, c.sitioWeb, c.informacionAdicional,
+		c.zona, c.sector, c.nombre_moneda, c.login_usuario,
+		ct.numeroCotizacion
+	FROM Cliente c
+		JOIN Cotizacion ct ON c.login_usuario = ct.login_usuario
+	WHERE ct.numeroCotizacion = @param_numeroCotizacion
+END;
 GO
 
 -- #-----------------------------#
@@ -895,8 +958,24 @@ GO
 -- #------------------------------#
 -- #          FUNCIONES           #
 -- #------------------------------#
+-- Funcion para obtener el numero de contactos (TODOS)
+-- dentro de un rango de fechas
+CREATE FUNCTION contAsesorRangoFechas(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT
+		cc.asesor,
+		cc.codigoCliente,
+		cc.motivo
+	FROM ContactoCliente AS cc
+	WHERE cc.fecha BETWEEN CONVERT(DATETIME, @Desde, 101) AND CONVERT(DATETIME, @Hasta, 101)
+);
+GO
+
 -- Funcion para obtener el numero de cotizacion de las cotizaciones (TODAS)
--- dentro de un rango de fechas usando año-mes (AAAA-MM)
+-- dentro de un rango de fechas
 CREATE FUNCTION todasCotEnRangoFechas(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
@@ -910,7 +989,7 @@ RETURN
 GO
 
 -- Funcion para obtener el numero de cotizacion de las cotizaciones (NO ventas)
--- dentro de un rango de fechas usando año-mes (AAAA-MM)
+-- dentro de un rango de fechas
 CREATE FUNCTION cotEnRangoFechas(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
@@ -925,7 +1004,7 @@ RETURN
 GO
 
 -- Funcion para obtener el numero de cotizacion (Facturada/Venta) de las cotizaciones dentro
--- de un rango de fechas usando año-mes (AAAA-MM) 
+-- de un rango de fechas
 CREATE FUNCTION ventEnRangoFechas(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
@@ -1220,7 +1299,7 @@ RETURN
 	GROUP BY cl.abreviatura_moneda, cl.celular, cl.codigo, cl.correo, cl.informacionAdicional, cl.login_usuario,
 		cl.nombre_moneda, cl.nombreCuenta, cl.sector, cl.sitioWeb, cl.telefono, cl.zona
 	--ORDER BY ventas DESC
-	ORDER BY montoCRC DESC
+	ORDER BY montoCRC ASC
 );
 GO
 
@@ -1506,62 +1585,188 @@ RETURN
 );
 GO
 
-CREATE PROCEDURE sp_addClient 
-	@codigo VARCHAR(10), 
-	@nombreCuenta VARCHAR(12), 
-	@correo VARCHAR(20), 
-	@telefono VARCHAR(10), 
-	@celular VARCHAR(10), 
-	@sitioWeb VARCHAR(22), 
-	@informacionAdicional VARCHAR(30), 
-	@zona VARCHAR(12), 
-	@sector VARCHAR(12), 
-	@abreviatura_moneda VARCHAR(4), 
-	@nombre_moneda VARCHAR(12), 
-	@login_usuario VARCHAR(10)
+-- Funcion para obtener la cantidad de contactos por usuario DESC
+CREATE FUNCTION contactosXUsuarioDESC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
 AS
-DECLARE @Return INT
-BEGIN
-	BEGIN TRY
-    INSERT INTO Cliente(
-			codigo, nombreCuenta, correo, telefono, celular, sitioWeb, informacionAdicional, zona, sector, 
-			abreviatura_moneda, nombre_moneda, login_usuario)
-        VALUES(@codigo, @nombreCuenta, @correo, @telefono, @celular, @sitioWeb, @informacionAdicional, 
-			@zona, @sector, @abreviatura_moneda, @nombre_moneda, @login_usuario)
-		SET @Return = 1
-	END TRY
-
-	BEGIN CATCH
-		PRINT @@error
-		SET @Return = -1
-	END CATCH
-END
-
-GO
-CREATE PROCEDURE sp_getClientsBySector @param_sector VARCHAR(12)
-AS 
-BEGIN
-	SELECT * FROM Cliente
-	WHERE sector = @param_sector
-END
-
-GO
-CREATE PROCEDURE sp_getClientsByZone @param_zona VARCHAR(12)
-AS 
-BEGIN
-	SELECT * FROM Cliente
-	WHERE zona = @param_zona
-END
+RETURN
+(
+	SELECT TOP 1000
+		u.userLogin,
+		u.nombre,
+		u.primerApellido,
+		u.segundoApellido,
+		COUNT(cc.codigoCliente) AS contactos
+	FROM Usuario AS u
+	JOIN ContactoCliente AS cc ON cc.asesor = u.userLogin
+	JOIN contAsesorRangoFechas(@Desde, @Hasta) AS carf ON carf.codigoCliente = cc.codigoCliente AND carf.motivo = cc.motivo
+	GROUP BY u.userLogin, u.nombre, u.primerApellido, u.segundoApellido
+	ORDER BY contactos DESC
+);
 GO
 
-CREATE PROCEDURE sp_getClientsByQuotes @param_numeroCotizacion SMALLINT
-AS 
-BEGIN
+-- Funcion para obtener la cantidad de contactos por usuario ASC
+CREATE FUNCTION contactosXUsuarioASC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT TOP 1000
+		u.userLogin,
+		u.nombre,
+		u.primerApellido,
+		u.segundoApellido,
+		COUNT(cc.codigoCliente) AS contactos
+	FROM Usuario AS u
+	JOIN ContactoCliente AS cc ON cc.asesor = u.userLogin
+	JOIN contAsesorRangoFechas(@Desde, @Hasta) AS carf ON carf.codigoCliente = cc.codigoCliente AND carf.motivo = cc.motivo
+	GROUP BY u.userLogin, u.nombre, u.primerApellido, u.segundoApellido
+	ORDER BY contactos ASC
+);
+GO
 
-	SELECT c.nombreCuenta, c.correo, c.telefono, c.celular, c.sitioWeb, c.informacionAdicional,
-		c.zona, c.sector, c.nombre_moneda, c.login_usuario,
-		ct.numeroCotizacion
-	FROM Cliente c
-		JOIN Cotizacion ct ON c.login_usuario = ct.login_usuario
-	WHERE ct.numeroCotizacion = @param_numeroCotizacion
-END
+-- Funcion para obtener los usuarios con mas ventas DESC
+CREATE FUNCTION usuariosMasVentasDESC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT TOP 10
+		u.userLogin,
+		u.nombre,
+		u.primerApellido,
+		u.segundoApellido,
+	SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN cm.monto ELSE 0 END) AS monto
+	FROM Usuario AS u
+	JOIN Cotizacion AS c ON c.login_usuario = u.userLogin
+	JOIN CotMontos AS cm ON cm.numero_cotizacion = c.numeroCotizacion
+	JOIN ventEnRangoFechas(@Desde, @Hasta) AS tcerf ON tcerf.numeroCotizacion = cm.numero_cotizacion
+	GROUP BY u.userLogin, u.nombre, u.primerApellido, u.segundoApellido
+	ORDER BY monto DESC
+);
+GO
+
+-- Funcion para obtener los usuarios con menos ventas ASC
+CREATE FUNCTION usuariosMasVentasASC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT TOP 10
+		u.userLogin,
+		u.nombre,
+		u.primerApellido,
+		u.segundoApellido,
+	SUM(CASE WHEN c.nombre_etapa = 'Facturada' THEN cm.monto ELSE 0 END) AS monto
+	FROM Usuario AS u
+	JOIN Cotizacion AS c ON c.login_usuario = u.userLogin
+	JOIN CotMontos AS cm ON cm.numero_cotizacion = c.numeroCotizacion
+	JOIN ventEnRangoFechas(@Desde, @Hasta) AS tcerf ON tcerf.numeroCotizacion = cm.numero_cotizacion
+	GROUP BY u.userLogin, u.nombre, u.primerApellido, u.segundoApellido
+	ORDER BY monto ASC
+);
+GO
+
+-- Funcion para obtener las 15 tareas mas antiguas sin cerrar DESC
+CREATE FUNCTION tareasAntiguasDESC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT TOP 15
+		t.codigo,
+		t.nombre,
+		t.descripcion,
+		t.nombre_estado,
+		t.usuario_asignado,
+		fechaInicio,
+		CASE 
+			WHEN t.codigo IN (SELECT DISTINCT codigo_tarea FROM TareaXCaso) THEN 'Caso'
+			WHEN t.codigo IN (SELECT DISTINCT codigo_tarea FROM TareaXEjecucion) THEN 'Ejecucion'
+			WHEN t.codigo IN (SELECT DISTINCT codigo_tarea FROM TareaXCotizacion) THEN 'Cotizacion'
+			WHEN t.codigo IN (SELECT DISTINCT codigo_tarea FROM TareaXContactoCliente) THEN 'Contacto Cliente'
+			ELSE 'General' 
+		END AS tipo,
+		DATEDIFF(DAY, fechaInicio, GETDATE()) AS dias
+	FROM Tarea AS t
+	WHERE t.nombre_estado != 'Finalizado'
+	AND t.fechaInicio BETWEEN CONVERT(DATETIME, @Desde, 101) AND CONVERT(DATETIME, @Hasta, 101)
+	ORDER BY dias DESC
+);
+GO
+
+-- Funcion para obtener las 15 tareas menos antiguas sin cerrar ASC
+CREATE FUNCTION tareasAntiguasASC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT TOP 15
+		t.codigo,
+		t.nombre,
+		t.descripcion,
+		t.nombre_estado,
+		t.usuario_asignado,
+		fechaInicio,
+		CASE 
+			WHEN t.codigo IN (SELECT DISTINCT codigo_tarea FROM TareaXCaso) THEN 'Caso'
+			WHEN t.codigo IN (SELECT DISTINCT codigo_tarea FROM TareaXEjecucion) THEN 'Ejecucion'
+			WHEN t.codigo IN (SELECT DISTINCT codigo_tarea FROM TareaXCotizacion) THEN 'Cotizacion'
+			WHEN t.codigo IN (SELECT DISTINCT codigo_tarea FROM TareaXContactoCliente) THEN 'Contacto Cliente'
+			ELSE 'General' 
+		END AS tipo,
+		DATEDIFF(DAY, fechaInicio, GETDATE()) AS dias
+	FROM Tarea AS t
+	WHERE t.nombre_estado != 'Finalizado'
+	AND t.fechaInicio BETWEEN CONVERT(DATETIME, @Desde, 101) AND CONVERT(DATETIME, @Hasta, 101)
+	ORDER BY dias ASC
+);
+GO
+
+-- Funcion para obtener las 10 cotizaciones con diferencia entre creacion y cierre mas alta DESC
+CREATE FUNCTION cotDifDiasDESC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT TOP 10
+		c.numeroCotizacion,
+		cl.codigo,
+		cl.nombreCuenta,
+		c.nombre_etapa,
+		c.nombre_tipo,
+		c.zona,
+		c.sector,
+		c.login_usuario,
+		fecha, fechaCierre,
+		DATEDIFF(DAY, fecha, fechaCierre) AS dias
+	FROM Cotizacion AS c
+	JOIN Cliente AS cl ON cl.codigo = c.contacto_clienteCodigo
+	JOIN todasCotEnRangoFechas(@Desde, @Hasta) AS tcerf ON tcerf.numeroCotizacion = c.numeroCotizacion
+	ORDER BY dias DESC
+);
+GO
+
+-- Funcion para obtener las 10 cotizaciones con diferencia entre creacion y cierre mas pequeña ASC
+CREATE FUNCTION cotDifDiasASC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT TOP 10
+		c.numeroCotizacion,
+		cl.codigo,
+		cl.nombreCuenta,
+		c.nombre_etapa,
+		c.nombre_tipo,
+		c.zona,
+		c.sector,
+		c.login_usuario,
+		fecha, fechaCierre,
+		DATEDIFF(DAY, fecha, fechaCierre) AS dias
+	FROM Cotizacion AS c
+	JOIN Cliente AS cl ON cl.codigo = c.contacto_clienteCodigo
+	JOIN todasCotEnRangoFechas(@Desde, @Hasta) AS tcerf ON tcerf.numeroCotizacion = c.numeroCotizacion
+	ORDER BY dias ASC
+);
+GO
