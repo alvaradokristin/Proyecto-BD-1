@@ -1467,6 +1467,17 @@ RETURN
 );
 GO
 
+-- Funcion para seleccionar las zonas
+CREATE FUNCTION todas_las_zonas()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT *
+	FROM Zona
+);
+GO
+
 -- Funcion para seleccionar cantidad de ventas y cotizaciones por mes por año
 CREATE FUNCTION cotVentasMesAnnoCant(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
@@ -1502,6 +1513,7 @@ RETURN
 );
 GO
 
+-- Funcion para obtener las ventas por sector, devuelve el monto total
 CREATE FUNCTION ventasxsector(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
@@ -1517,6 +1529,7 @@ RETURN
 );
 GO
 
+-- Funcion para obtener las ventas por zona y devuelve el monto total
 CREATE FUNCTION ventasxzona(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
@@ -1532,6 +1545,7 @@ RETURN
 );
 GO
 
+-- Funcion para obtener las ventas por departamento, muestra el monto total
 CREATE FUNCTION ventasxdepartamento(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
@@ -1547,6 +1561,7 @@ RETURN
 );
 GO
 
+-- Funcion para obtener los casos por tipo y lo muestra como porcentaje
 CREATE FUNCTION casosxtipo(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
@@ -1560,6 +1575,7 @@ RETURN
 );
 GO
 
+--Funcion para obtener los casos por estado
 CREATE FUNCTION casosxestado(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
@@ -1573,6 +1589,7 @@ RETURN
 );
 GO
 
+-- Funcion para obtener las cotizaciones por tipo
 CREATE FUNCTION cotizacionesxtipo(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
@@ -1772,3 +1789,23 @@ RETURN
 	ORDER BY dias ASC
 );
 GO
+
+--Funcion para obtener la cantidad de por zona y monto ventas por zona
+CREATE FUNCTION cantidad_clientes_monto_x_zona(@Desde varchar(10), @Hasta varchar(10), @zona varchar(12))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT  ct.zona AS Zona, COUNT(ct.contacto_clienteCodigo) AS Clientes, (SELECT CAST(SUM(p.precioEstandar) AS INT) FROM Cotizacion c JOIN ProductoXCotizacion pxc ON c.numeroCotizacion = pxc.numero_cotizacion JOIN Producto p ON pxc.codigo_producto = p.codigo WHERE nombre_etapa = 'Facturada' AND c.zona = @zona) AS Monto
+	FROM Cotizacion ct
+	LEFT JOIN Cliente c ON ct.contacto_clienteCodigo = c.codigo
+		LEFT JOIN ventEnRangoFechas(@Desde, @Hasta) AS verf ON verf.numeroCotizacion = ct.numeroCotizacion
+	WHERE ct.zona = @zona
+	GROUP BY ct.zona
+);
+GO
+
+
+
+SELECT * FROM cantidad_clientes_monto_x_zona('2017-11-11','2024-11-18','Alajuela')
+

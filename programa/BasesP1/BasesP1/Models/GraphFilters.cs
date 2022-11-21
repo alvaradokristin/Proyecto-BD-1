@@ -6,5 +6,6 @@
         public string? From { get; set; }
         public string? To { get; set; }
         public string? OrderBy { get; set; }
+        public string? Zones { get; set; }
     }
 }
