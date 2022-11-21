@@ -1030,6 +1030,32 @@ RETURN
 );
 GO
 
+-- Funcion para obtener las tareas en un rango de fechas
+CREATE FUNCTION tareasEnRangoFechas(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT
+		t.codigo
+	FROM Tarea AS t
+	WHERE t.fechaInicio BETWEEN CONVERT(DATETIME, @Desde, 101) AND CONVERT(DATETIME, @Hasta, 101)
+);
+GO
+
+-- Funcion para obtener las ejecuciones en un rango de fechas
+CREATE FUNCTION ejecucionEnRangoFechas(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT
+		e.codigo
+	FROM Ejecucion AS e
+	WHERE e.fecha BETWEEN CONVERT(DATETIME, @Desde, 101) AND CONVERT(DATETIME, @Hasta, 101)
+);
+GO
+
 -- Funcion para seleccionar todos los productos
 CREATE FUNCTION obtenerFamProd()
 RETURNS TABLE
@@ -1770,5 +1796,91 @@ RETURN
 	JOIN Cliente AS cl ON cl.codigo = c.contacto_clienteCodigo
 	JOIN todasCotEnRangoFechas(@Desde, @Hasta) AS tcerf ON tcerf.numeroCotizacion = c.numeroCotizacion
 	ORDER BY dias ASC
+);
+GO
+
+-- Funcion para obtener las ventas por sector por departamaneto
+CREATE FUNCTION ventasSectorDept(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT 
+		c.sector,
+		d.nombre AS departamento,
+		SUM(cm.monto) AS ventas
+	FROM CotMontos AS cm
+	JOIN ventEnRangoFechas(@Desde, @Hasta) AS verf ON verf.numeroCotizacion = cm.numero_cotizacion
+	JOIN Cotizacion AS c ON c.numeroCotizacion = verf.numeroCotizacion
+	JOIN Usuario AS u ON u.userLogin = c.login_usuario
+	JOIN Departamento AS d ON d.codigo = u.codigo_departamento
+	GROUP BY c.sector, d.nombre
+);
+GO
+
+-- Funcion para obtener las ventas por zona por departamaneto
+CREATE FUNCTION ventasZonaDept(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT 
+		c.zona,
+		d.nombre AS departamento,
+		SUM(cm.monto) AS ventas
+	FROM CotMontos AS cm
+	JOIN ventEnRangoFechas(@Desde, @Hasta) AS verf ON verf.numeroCotizacion = cm.numero_cotizacion
+	JOIN Cotizacion AS c ON c.numeroCotizacion = verf.numeroCotizacion
+	JOIN Usuario AS u ON u.userLogin = c.login_usuario
+	JOIN Departamento AS d ON d.codigo = u.codigo_departamento
+	GROUP BY c.zona, d.nombre
+);
+GO
+
+-- Funcion para obtener las tareas por usuario DESC
+CREATE FUNCTION tareasPorUsuarioDESC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT TOP 1000
+		u.userLogin,
+		u.nombre,
+		u.primerApellido,
+		u.segundoApellido,
+		--COUNT(DISTINCT t.codigo) AS tareas
+		SUM(CASE WHEN t.nombre_estado = 'Inicio' THEN 1 ELSE 0 END) AS iniciadas,
+		SUM(CASE WHEN t.nombre_estado = 'En Progreso' THEN 1 ELSE 0 END) AS enProgreso,
+		SUM(CASE WHEN t.nombre_estado = 'Finalizado' THEN 1 ELSE 0 END) AS finalizadas,
+		COUNT(t.codigo) AS total
+	FROM Usuario AS u
+	JOIN Tarea AS t ON t.usuario_asignado = u.userLogin
+	JOIN tareasEnRangoFechas(@Desde, @Hasta) AS terf ON terf.codigo = t.codigo
+	GROUP BY u.userLogin, u.nombre, u.primerApellido, u.segundoApellido
+	ORDER BY total DESC
+);
+GO
+
+-- Funcion para obtener las tareas por usuario ASC
+CREATE FUNCTION tareasPorUsuarioASC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT TOP 1000
+		u.userLogin,
+		u.nombre,
+		u.primerApellido,
+		u.segundoApellido,
+		--COUNT(DISTINCT t.codigo) AS tareas
+		SUM(CASE WHEN t.nombre_estado = 'Inicio' THEN 1 ELSE 0 END) AS iniciadas,
+		SUM(CASE WHEN t.nombre_estado = 'En Progreso' THEN 1 ELSE 0 END) AS enProgreso,
+		SUM(CASE WHEN t.nombre_estado = 'Finalizado' THEN 1 ELSE 0 END) AS finalizadas,
+		COUNT(t.codigo) AS total
+	FROM Usuario AS u
+	JOIN Tarea AS t ON t.usuario_asignado = u.userLogin
+	JOIN tareasEnRangoFechas(@Desde, @Hasta) AS terf ON terf.codigo = t.codigo
+	GROUP BY u.userLogin, u.nombre, u.primerApellido, u.segundoApellido
+	ORDER BY total ASC
 );
 GO
