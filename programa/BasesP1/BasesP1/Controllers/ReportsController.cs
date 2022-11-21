@@ -147,11 +147,16 @@ namespace BasesP1.Controllers
                 case "vcpmavp":
                     // Code specific to PersonalPolicy
                     break;
-                case "vpspd":
-                    // Code specific to PersonalPolicy
-                    break;
                 case "vpzpd":
-                // Code specific to PersonalPolicy
+                    dataModel = reportData.getBSellsByDeptZone(filters.From, filters.To);
+                    model.XLabels = getAllxL(dataModel);
+                    model.YValues = getAllyVDouble(dataModel);
+                    break;
+                case "vpspd":
+                    dataModel = reportData.getBSellsByDeptSector(filters.From, filters.To);
+                    model.XLabels = getAllxL(dataModel);
+                    model.YValues = getAllyVDouble(dataModel);
+                    break;
                 case null:
                     // Code for "any-other-than" cases :)
                     break;
@@ -373,6 +378,14 @@ namespace BasesP1.Controllers
                     tableHeaders.Add("Fecha Cierre");
                     tableHeaders.Add("Dias");
                     break;
+                case "ctpu":
+                    tableHeaders.Add("Login");
+                    tableHeaders.Add("Nombre");
+                    tableHeaders.Add("Iniciadas");
+                    tableHeaders.Add("En Progreso");
+                    tableHeaders.Add("Finalizadas");
+                    tableHeaders.Add("Total");
+                    break;
                 case null:
                     // Code for "any-other-than" cases :)
                     break;
@@ -395,6 +408,7 @@ namespace BasesP1.Controllers
             List<User> user = new List<User>();
             List<Task> task = new List<Task>();
             List<Quotation> quote = new List<Quotation>();
+            List<TasksByUser> tbu = new List<TasksByUser>();
 
             ProductData queryProd = new ProductData(this.Configuration);
             ReportsData queryReport = new ReportsData(this.Configuration);
@@ -444,6 +458,11 @@ namespace BasesP1.Controllers
                     //Get the data from the query
                     quote = queryReport.getTQuotesDaysBDates(filters.From, filters.To, filters.OrderBy);
                     model.Data = quote;
+                    break;
+                case "ctpu":
+                    //Get the data from the query
+                    tbu = queryReport.getTTasksByUser(filters.From, filters.To, filters.OrderBy);
+                    model.Data = tbu;
                     break;
                 case null:
                     // Default

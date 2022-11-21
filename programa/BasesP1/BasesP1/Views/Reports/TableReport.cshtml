@@ -184,6 +184,22 @@
                         </tr>
                     }
                 }
+
+                @*TASKS BY USER*@
+                @if (Model.Type == "ctpu")
+                {
+                    foreach (var item in Model.Data)
+                    {
+                        <tr>
+                            <td>@item.Login</td>
+                            <td>@item.NombreCompleto</td>
+                            <td>@item.Iniciadas</td>
+                            <td>@item.EnProgreso</td>
+                            <td>@item.Finalizadas</td>
+                            <td>@item.Total</td>
+                        </tr>
+                    }
+                }
             </tbody>
         </table>
     </div>
