@@ -215,6 +215,131 @@ namespace BasesP1.Data
             return data;
         }
 
+        //Method to get the data for the sells by department sector
+        public List<StackedViewModel> getBSellsByDeptSector(string from, string to)
+        {
+            //Structure where the data for the report will be save
+            List<StackedViewModel> data = new List<StackedViewModel>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                //Get how much money the quotes and sells made
+                string sql = $"SELECT * FROM ventasSectorDept('{from}', '{to}')";
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            data.Add(new StackedViewModel
+                            {
+                                StackedDimensionOne = "" + dataReader["nombre"],
+                                LstData = new List<SimpleReportViewModel>()
+                                {
+                                    new SimpleReportViewModel()
+                                    {
+                                        DimensionOne="Gobierno",
+                                        Percentage = double.Parse("" + dataReader["gobierno"])
+                                    },
+                                    new SimpleReportViewModel()
+                                    {
+                                        DimensionOne="Hoteleria",
+                                        Percentage = double.Parse("" + dataReader["hoteleria"])
+                                    },
+                                    new SimpleReportViewModel()
+                                    {
+                                        DimensionOne="Residencial",
+                                        Percentage = double.Parse("" + dataReader["residencial"])
+                                    },
+                                    new SimpleReportViewModel()
+                                    {
+                                        DimensionOne="Turismo",
+                                        Percentage = double.Parse("" + dataReader["turismo"])
+                                    },
+                                }
+                            });
+                        }
+
+                    }
+                }
+                connection.Close();
+            }
+            return data;
+        }
+
+        //Method to get the data for the sells by department zone
+        public List<StackedViewModel> getBSellsByDeptZone(string from, string to)
+        {
+            //Structure where the data for the report will be save
+            List<StackedViewModel> data = new List<StackedViewModel>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                //Get how much money the quotes and sells made
+                string sql = $"SELECT * FROM ventasZonaDept('{from}', '{to}')";
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            data.Add(new StackedViewModel
+                            {
+                                StackedDimensionOne = "" + dataReader["nombre"],
+                                LstData = new List<SimpleReportViewModel>()
+                                {
+                                    new SimpleReportViewModel()
+                                    {
+                                        DimensionOne="Alajuela",
+                                        Percentage = double.Parse("" + dataReader["alajuela"])
+                                    },
+                                    new SimpleReportViewModel()
+                                    {
+                                        DimensionOne="Cartago",
+                                        Percentage = double.Parse("" + dataReader["cartago"])
+                                    },
+                                    new SimpleReportViewModel()
+                                    {
+                                        DimensionOne="Guanacaste",
+                                        Percentage = double.Parse("" + dataReader["guanacaste"])
+                                    },
+                                    new SimpleReportViewModel()
+                                    {
+                                        DimensionOne="Heredia",
+                                        Percentage = double.Parse("" + dataReader["heredia"])
+                                    },
+                                    new SimpleReportViewModel()
+                                    {
+                                        DimensionOne="Limon",
+                                        Percentage = double.Parse("" + dataReader["limon"])
+                                    },
+                                    new SimpleReportViewModel()
+                                    {
+                                        DimensionOne="Puntarenas",
+                                        Percentage = double.Parse("" + dataReader["puntarenas"])
+                                    },
+                                    new SimpleReportViewModel()
+                                    {
+                                        DimensionOne="San Jose",
+                                        Percentage = double.Parse("" + dataReader["sj"])
+                                    },
+                                }
+                            });
+                        }
+
+                    }
+                }
+                connection.Close();
+            }
+            return data;
+        }
+
         //Method to get the data for the 10 clients with the most sells
         public List<Client> getTClientMostSells(string from, string to, string order)
         {
@@ -649,6 +774,57 @@ namespace BasesP1.Data
             }
             return products;
         }
+
+        //Method to get the task by user
+        public List<TasksByUser> getTTasksByUser(string from, string to, string order)
+        {
+            //Since the product model has the same attributes as products families + some extra ones
+            //we'll be using products to store the products families and the products
+            List<TasksByUser> tbu = new List<TasksByUser>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sqlFunction = "";
+
+                if (order == "DESC")
+                {
+                    sqlFunction = $"tareasPorUsuarioDESC('{from}', '{to}')";
+                }
+                else
+                {
+                    sqlFunction = $"tareasPorUsuarioASC('{from}', '{to}')";
+                }
+
+                string sql = $"SELECT * FROM {sqlFunction}";
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    using (SqlDataReader dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            tbu.Add(new TasksByUser
+                            {
+                                Login = "" + dataReader["userLogin"],
+                                Nombre = "" + dataReader["nombre"],
+                                PrimerApellido = "" + dataReader["primerApellido"],
+                                SegundoApellido = "" + dataReader["segundoApellido"],
+                                Iniciadas = int.Parse("" + dataReader["iniciadas"]),
+                                EnProgreso = int.Parse("" + dataReader["enProgreso"]),
+                                Finalizadas = int.Parse("" + dataReader["finalizadas"]),
+                                Total = int.Parse("" + dataReader["total"])
+                            });
+                        }
+                        dataReader.Close();
+                    }
+                }
+                connection.Close();
+            }
+            return tbu;
+        }
+
         public List<SimpleReportViewModel> getCasesByType(string from, string to)
         {
             //Structure where the data from the report will be save

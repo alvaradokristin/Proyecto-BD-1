@@ -1806,15 +1806,17 @@ AS
 RETURN
 (
 	SELECT 
-		c.sector,
-		d.nombre AS departamento,
-		SUM(cm.monto) AS ventas
+		d.nombre,
+		SUM(CASE WHEN c.sector = 'Gobierno' THEN cm.monto ELSE 0 END) AS gobierno,
+		SUM(CASE WHEN c.sector = 'Hoteleria' THEN cm.monto ELSE 0 END) AS hoteleria,
+		SUM(CASE WHEN c.sector = 'Residencial' THEN cm.monto ELSE 0 END) AS residencial,
+		SUM(CASE WHEN c.sector = 'Turismo' THEN cm.monto ELSE 0 END) AS turismo
 	FROM CotMontos AS cm
 	JOIN ventEnRangoFechas(@Desde, @Hasta) AS verf ON verf.numeroCotizacion = cm.numero_cotizacion
 	JOIN Cotizacion AS c ON c.numeroCotizacion = verf.numeroCotizacion
 	JOIN Usuario AS u ON u.userLogin = c.login_usuario
 	JOIN Departamento AS d ON d.codigo = u.codigo_departamento
-	GROUP BY c.sector, d.nombre
+	GROUP BY d.nombre
 );
 GO
 
@@ -1825,15 +1827,20 @@ AS
 RETURN
 (
 	SELECT 
-		c.zona,
-		d.nombre AS departamento,
-		SUM(cm.monto) AS ventas
+		d.nombre,
+		SUM(CASE WHEN c.zona = 'Alajuela' THEN cm.monto ELSE 0 END) AS alajuela,
+		SUM(CASE WHEN c.zona = 'Cartago' THEN cm.monto ELSE 0 END) AS cartago,
+		SUM(CASE WHEN c.zona = 'Guanacaste' THEN cm.monto ELSE 0 END) AS guanacaste,
+		SUM(CASE WHEN c.zona = 'Heredia' THEN cm.monto ELSE 0 END) AS heredia,
+		SUM(CASE WHEN c.zona = 'Limon' THEN cm.monto ELSE 0 END) AS limon,
+		SUM(CASE WHEN c.zona = 'Puntarenas' THEN cm.monto ELSE 0 END) AS puntarenas,
+		SUM(CASE WHEN c.zona = 'San Jose' THEN cm.monto ELSE 0 END) AS sj
 	FROM CotMontos AS cm
 	JOIN ventEnRangoFechas(@Desde, @Hasta) AS verf ON verf.numeroCotizacion = cm.numero_cotizacion
 	JOIN Cotizacion AS c ON c.numeroCotizacion = verf.numeroCotizacion
 	JOIN Usuario AS u ON u.userLogin = c.login_usuario
 	JOIN Departamento AS d ON d.codigo = u.codigo_departamento
-	GROUP BY c.zona, d.nombre
+	GROUP BY d.nombre
 );
 GO
 
