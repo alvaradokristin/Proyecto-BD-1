@@ -678,27 +678,27 @@ END
 GO
 
 -- Procedimiento para poder agregar valores a la tabla de Ejecucion
-CREATE PROCEDURE insertarEjecucion
-	@EjeCodigo varchar(10),
-	@EjeNombre varchar(12),
-	@EjeFecha date,
-	@EjeCodigoProyecto varchar(10),
-	@EjeCodigoDept varchar(10)
-AS
-DECLARE @Return int
-BEGIN
-	BEGIN TRY
-		INSERT INTO Ejecucion VALUES 
-		(@EjeCodigo, @EjeNombre, @EjeFecha, @EjeCodigoProyecto, @EjeCodigoDept)
-		SET @Return = 1
-	END TRY
+--CREATE PROCEDURE insertarEjecucion
+--	@EjeCodigo varchar(10),
+--	@EjeNombre varchar(12),
+--	@EjeFecha date,
+--	@EjeCodigoProyecto varchar(10),
+--	@EjeCodigoDept varchar(10)
+--AS
+--DECLARE @Return int
+--BEGIN
+--	BEGIN TRY
+--		INSERT INTO Ejecucion VALUES 
+--		(@EjeCodigo, @EjeNombre, @EjeFecha, @EjeCodigoProyecto, @EjeCodigoDept)
+--		SET @Return = 1
+--	END TRY
 
-	BEGIN CATCH
-		PRINT @@error
-		SET @Return = -1
-	END CATCH
-END
-GO
+--	BEGIN CATCH
+--		PRINT @@error
+--		SET @Return = -1
+--	END CATCH
+--END
+--GO
 
 -- Procedimiento para poder agregar valores a la tabla de Caso
 CREATE PROCEDURE insertarCaso

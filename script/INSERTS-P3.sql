@@ -205,7 +205,7 @@ BEGIN
 	SET @maxElement = @maxElement + 1;
 END;
 
-SET fechaCierre = fecha
+UPDATE Ejecucion SET fechaCierre = fecha
 
 -- Compra
 SET @maxElement = 100;

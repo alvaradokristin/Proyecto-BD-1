@@ -8,9 +8,9 @@ Número de carnet de los estudiantes:
 - 2015096407
 - 2016253759
 
-Número de proyecto programado: Proyecto #2
-Fecha de entrega: 02/11/2022
-Estatus de la entrega (debe ser CONGRUENTE con la solución entregada): Deplorable
+Número de proyecto programado: Proyecto #3
+Fecha de entrega: 21/11/2022
+Estatus de la entrega (debe ser CONGRUENTE con la solución entregada): MuyBuena
 ---------
 
 URL del repositorio de GitHub: https://github.com/alvaradokristin/Proyecto-BD-1.git
