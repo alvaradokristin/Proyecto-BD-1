@@ -1061,6 +1061,19 @@ RETURN
 );
 GO
 
+-- Funcion para obtener el valor por el cual se debe multiplicar el monto de la cotizacion para obtener el valor actual
+CREATE FUNCTION multiploValorActual(@Desde varchar(4))
+RETURNS DECIMAL(3,2)
+AS
+BEGIN
+	DECLARE @ret DECIMAL(3,2);
+	SELECT @ret =  EXP(SUM(LOG(porcentaje)))
+	FROM Inflacion
+	WHERE CAST(anno AS INT) BETWEEN CAST(@Desde AS INT) AND DATENAME(YYYY, getdate()) - 1;
+	RETURN @ret
+END;
+GO
+
 -- Funcion para seleccionar todos los productos
 CREATE FUNCTION obtenerFamProd()
 RETURNS TABLE
@@ -2050,3 +2063,29 @@ GO
 
 --DROP TABLE #TEMP
 --SELECT * FROM #TEMP
+
+-- Funcion para obtener las ventas y cotizaciones en valor presente
+CREATE FUNCTION cotVentasMesAnnoMontoPresente(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT
+	cam.annoMes,
+	SUM(CASE 
+			WHEN dbo.multiploValorActual(anno_inflacion) IS NULL AND c.nombre_etapa = 'Facturada' THEN cm.monto * 1 
+			WHEN dbo.multiploValorActual(anno_inflacion) IS NOT NULL AND c.nombre_etapa = 'Facturada' THEN cm.monto * dbo.multiploValorActual(anno_inflacion)
+			ELSE 0
+		END) AS ventas,
+	SUM(CASE 
+			WHEN dbo.multiploValorActual(anno_inflacion) IS NULL AND c.nombre_etapa != 'Facturada' THEN cm.monto * 1 
+			WHEN dbo.multiploValorActual(anno_inflacion) IS NOT NULL AND c.nombre_etapa != 'Facturada' THEN cm.monto * dbo.multiploValorActual(anno_inflacion)
+			ELSE 0
+		END) cotizaciones
+	FROM CotAnnoMes AS cam
+	JOIN Cotizacion AS c ON c.fecha = cam.fecha
+	JOIN todasCotEnRangoFechas(@Desde, @Hasta) AS tcerf ON tcerf.numeroCotizacion = c.numeroCotizacion
+	JOIN CotMontos AS cm ON cm.numero_cotizacion = tcerf.numeroCotizacion
+	GROUP BY cam.annoMes
+);
+GO
