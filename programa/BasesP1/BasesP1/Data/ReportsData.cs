@@ -763,8 +763,7 @@ namespace BasesP1.Data
         //Method to get the information from the most quoted products, from the DB
         public List<Product> getTTopQuoterProd(string from, string to, string order)
         {
-            //Since the product model has the same attributes as products families + some extra ones
-            //we'll be using products to store the products families and the products
+            //Data to populate the table
             List<Product> products = new List<Product>();
 
             string connectionString = Configuration["ConnectionStrings:RealConnection"];
@@ -812,8 +811,7 @@ namespace BasesP1.Data
         //Method to get the task by user
         public List<TasksByUser> getTTasksByUser(string from, string to, string order)
         {
-            //Since the product model has the same attributes as products families + some extra ones
-            //we'll be using products to store the products families and the products
+            //Data to populate the table
             List<TasksByUser> tbu = new List<TasksByUser>();
 
             string connectionString = Configuration["ConnectionStrings:RealConnection"];
@@ -857,6 +855,52 @@ namespace BasesP1.Data
                 connection.Close();
             }
             return tbu;
+        }
+
+        //Method to get the execs by user
+        public List<User> getTExesByUser(string from, string to, string order)
+        {
+            //Data to populate the table
+            List<User> data = new List<User>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sqlFunction = "";
+
+                if (order == "DESC")
+                {
+                    sqlFunction = $"ejecPorUsuarioDESC('{from}', '{to}')";
+                }
+                else
+                {
+                    sqlFunction = $"ejecPorUsuarioASC('{from}', '{to}')";
+                }
+
+                string sql = $"SELECT * FROM {sqlFunction}";
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    using (SqlDataReader dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            data.Add(new User
+                            {
+                                userLogin = "" + dataReader["userLogin"],
+                                nombre = "" + dataReader["nombre"],
+                                primerApellido = "" + dataReader["primerApellido"],
+                                segundoApellido = "" + dataReader["segundoApellido"],
+                                cantidad = int.Parse("" + dataReader["ejecuciones"])
+                            });
+                        }
+                        dataReader.Close();
+                    }
+                }
+                connection.Close();
+            }
+            return data;
         }
 
         public List<SimpleReportViewModel> getCasesByType(string from, string to)

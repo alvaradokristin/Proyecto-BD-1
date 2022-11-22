@@ -23,7 +23,9 @@
                     <option value="fpv">Familias de productos vendidos</option>
                     <option value="vps">Ventas por sector</option>
                     <option value="vpz">Ventas por zona</option>
+                    <option value="vpd">Ventas por departamento</option>
                     <option value="cpe">Casos por estado</option>
+                    <option value="cpt">Casos por tipo</option>
                     <option value="ccpt">Cantidad de cotizaciones por tipo</option>
                 </select>
                 @*<button type="submit" class="btn btn-outline-info" onclick="location.href='@Url.Action("CircularGraphReport", "Reports")?ReportType=' + document.getElementById('ReportType').value">Buscar</button>*@
@@ -86,13 +88,13 @@
                     'rgba(255, 206, 86, 0.2)',
                     'rgba(75, 192, 192, 0.2)',
                     'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)',
-                    'rgba(255, 0, 0)',
-                    'rgba(0, 255, 0)',
-                    'rgba(0, 0, 255)',
-                    'rgba(192, 192, 192)',
-                    'rgba(255, 255, 0)',
-                    'rgba(255, 0, 255)'
+                    'rgba(255, 255, 64, 0.2)',
+                    'rgba(255, 0, 250, 0.2)',
+                    'rgba(0, 255, 0, 0.2)',
+                    'rgba(68, 74, 80, 0.2)',
+                    'rgba(192, 192, 192, 0.2)',
+                    'rgba(255, 255, 0, 0.2)',
+                    'rgba(255, 0, 255, 0.2)'
                 ],
                 borderColor: [
                     'rgba(255,99,132,1)',
@@ -101,12 +103,12 @@
                     'rgba(75, 192, 192, 1)',
                     'rgba(153, 102, 255, 1)',
                     'rgba(255, 159, 64, 1)',
-                    'rgba(255, 0, 0)',
-                    'rgba(0, 255, 0)',
-                    'rgba(0, 0, 255)',
-                    'rgba(192, 192, 192)',
-                    'rgba(255, 255, 0)',
-                    'rgba(255, 0, 255)'
+                    'rgba(255, 0, 250, 1)',
+                    'rgba(0, 255, 0, 1)',
+                    'rgba(68, 74, 80, 1)',
+                    'rgba(192, 192, 192, 1)',
+                    'rgba(255, 255, 0, 1)',
+                    'rgba(255, 0, 255, 1)'
                 ],
                 borderWidth: 1,
                 data: @Html.Raw(YValues)

@@ -188,6 +188,19 @@
                     }
                 }
 
+                @*EXECS BY USER*@
+                @if (Model.Type == "cepu")
+                {
+                    foreach (var item in Model.Data)
+                    {
+                        <tr>
+                            <td>@item.userLogin</td>
+                            <td>@item.nombreCompleto</td>
+                            <td>@item.cantidad</td>
+                        </tr>
+                    }
+                }
+
                 @*TASKS BY USER*@
                 @if (Model.Type == "ctpu")
                 {

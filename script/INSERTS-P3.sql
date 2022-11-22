@@ -195,7 +195,8 @@ BEGIN
 		'Ejec ' + CAST(@maxElement AS varchar(3)),
 		(SELECT DATEADD(DAY, ABS(CHECKSUM(NEWID()) % 30)*-1, GETDATE())), -- crea una fecha random
 		(SELECT TOP 1 codigo FROM Proyecto ORDER BY NEWID()),
-		(SELECT TOP 1 codigo FROM Departamento ORDER BY NEWID())
+		(SELECT TOP 1 codigo FROM Departamento ORDER BY NEWID()),
+		(SELECT TOP 1 userLogin FROM Usuario ORDER BY NEWID())
 		)
 
 	END TRY

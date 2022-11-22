@@ -234,7 +234,11 @@ namespace BasesP1.Controllers
                     break;
                 case "vpd":
                     dataModel = reportData.getSellsByDepartment(filters.From, filters.To);
-                    model.YValues = getAllQuantities(dataModel);
+                    model.YValues = getAllQuantitiesPer(dataModel);
+                    break;
+                case "cpt":
+                    dataModel = reportData.getCasesByType(filters.From, filters.To);
+                    model.YValues = getAllQuantitiesPer(dataModel);
                     break;
                 case "cpe":
                     dataModel = reportData.getCasesByState(filters.From, filters.To);
@@ -406,6 +410,10 @@ namespace BasesP1.Controllers
                     break;
                 case "ceccma":
                     tableHeaders.Add("Cantidad de Ejecuciones");
+                case "cepu":
+                    tableHeaders.Add("Login");
+                    tableHeaders.Add("Nombre");
+                    tableHeaders.Add("Ejecuciones");
                     break;
                 case "ctpu":
                     tableHeaders.Add("Login");
@@ -506,6 +514,11 @@ namespace BasesP1.Controllers
                     //Get the data from the query
                     totalExecutions = queryReport.getTotalExecutionsByMonthAndYear(filters.From, filters.To);
                     model.Data = totalExecutions;
+                case "cepu":
+                    //Get the data from the query
+                    user = queryReport.getTExesByUser(filters.From, filters.To, filters.OrderBy);
+                    model.Data = user;
+                    break;
                 case "ctpu":
                     //Get the data from the query
                     tbu = queryReport.getTTasksByUser(filters.From, filters.To, filters.OrderBy);
