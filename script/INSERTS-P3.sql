@@ -194,6 +194,7 @@ BEGIN
 		'CASOCOD' + CAST(@maxElement AS varchar(3)),
 		'Ejec ' + CAST(@maxElement AS varchar(3)),
 		(SELECT DATEADD(DAY, ABS(CHECKSUM(NEWID()) % 30)*-1, GETDATE())), -- crea una fecha random
+		(SELECT DATEADD(DAY, ABS(CHECKSUM(NEWID()) % 30)*-1, GETDATE())), -- crea una fecha random
 		(SELECT TOP 1 codigo FROM Proyecto ORDER BY NEWID()),
 		(SELECT TOP 1 codigo FROM Departamento ORDER BY NEWID()),
 		(SELECT TOP 1 userLogin FROM Usuario ORDER BY NEWID())
@@ -205,8 +206,6 @@ BEGIN
 
 	SET @maxElement = @maxElement + 1;
 END;
-
-UPDATE Ejecucion SET fechaCierre = fecha
 
 -- Compra
 SET @maxElement = 100;
@@ -271,7 +270,7 @@ BEGIN
 		@maxElement,
 		'Oport ' + CAST(@maxElement AS varchar(3)),
 		@fecha1, -- fecha
-		CAST(DATEPART(MONTH, @fecha2) AS varchar(2)) + '-' + CAST(DATEPART(YEAR, @fecha2) AS varchar(4)), -- mes y año de cierre
+		CAST(DATEPART(MONTH, @fecha2) AS varchar(2)) + '-' + CAST(DATEPART(YEAR, @fecha2) AS varchar(4)), -- mes y aï¿½o de cierre
 		@fecha2, -- fecha cierre
 		ROUND(RAND()*100,2), -- probabilidad
 		'Describcion de Cotizacion: ' + CAST(@maxElement AS varchar(3)),

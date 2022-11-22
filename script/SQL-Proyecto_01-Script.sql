@@ -119,21 +119,6 @@ CREATE TABLE Proyecto (
 	codigo varchar(10) NOT NULL PRIMARY KEY
 )
 
-<<<<<<< HEAD
--- Usa Proyecto y Departamento
-CREATE TABLE Ejecucion (
-	codigo varchar(10) NOT NULL PRIMARY KEY,
-	nombre varchar(12) NOT NULL,
-	fecha date,
-	fechaCierre date,
-	codigo_proyecto varchar(10) NOT NULL,
-	codigo_departamento varchar(10) NOT NULL,
-	FOREIGN KEY (codigo_proyecto) REFERENCES Proyecto(codigo),
-	FOREIGN KEY (codigo_departamento) REFERENCES Departamento(codigo)
-)
-
-=======
->>>>>>> 3b9fe7ae55a84bcf88a591ccbe10443322239c0d
 -- Se usa por Cliente, Tarea, Cotizacion y Ejecucion
 -- La encriptacion de la clave se va a manejar en el backend ya que consideramos que es mas 
 -- seguro y sencillo de aplicar y validar a la hora de realizar los logins
@@ -155,6 +140,7 @@ CREATE TABLE Ejecucion (
 	codigo varchar(10) NOT NULL PRIMARY KEY,
 	nombre varchar(12) NOT NULL,
 	fecha date,
+	fechaCierre date,
 	codigo_proyecto varchar(10) NOT NULL,
 	codigo_departamento varchar(10) NOT NULL,
 	userLogin varchar(10) NOT NULL,
@@ -698,6 +684,7 @@ CREATE PROCEDURE insertarEjecucion
 	@EjeCodigo varchar(10),
 	@EjeNombre varchar(12),
 	@EjeFecha date,
+	@EjeFechaCierre date,
 	@EjeCodigoProyecto varchar(10),
 	@EjeCodigoDept varchar(10),
 	@EjeAsesor varchar(10)
@@ -706,7 +693,7 @@ DECLARE @Return int
 BEGIN
 	BEGIN TRY
 		INSERT INTO Ejecucion VALUES 
-		(@EjeCodigo, @EjeNombre, @EjeFecha, @EjeCodigoProyecto, @EjeCodigoDept, @EjeAsesor)
+		(@EjeCodigo, @EjeNombre, @EjeFecha, @EjeFechaCierre, @EjeCodigoProyecto, @EjeCodigoDept, @EjeAsesor)
 		SET @Return = 1
 	END TRY
 
@@ -1927,18 +1914,51 @@ RETURN
 );
 GO
 
-<<<<<<< HEAD
---Funcion para obtener la cantidad de por zona y monto ventas por zona
-CREATE FUNCTION cantidad_clientes_monto_x_zona(@Desde varchar(10), @Hasta varchar(10), @zona varchar(12))
-=======
 -- Funcion para obtener las ejecuciones por usuario DESC
 CREATE FUNCTION ejecPorUsuarioDESC(@Desde varchar(10), @Hasta varchar(10))
->>>>>>> 3b9fe7ae55a84bcf88a591ccbe10443322239c0d
 RETURNS TABLE
 AS
 RETURN
 (
-<<<<<<< HEAD
+	SELECT TOP 1000
+		u.userLogin,
+		u.nombre,
+		u.primerApellido,
+		u.segundoApellido,
+		COUNT(DISTINCT e.codigo) AS ejecuciones
+	FROM Usuario AS u
+	JOIN Ejecucion AS e ON e.userLogin = u.userLogin
+	JOIN ejecucionEnRangoFechas(@Desde, @Hasta) AS eerf ON eerf.codigo = e.codigo
+	GROUP BY u.userLogin, u.nombre, u.primerApellido, u.segundoApellido
+	ORDER BY ejecuciones DESC
+);
+GO
+
+-- Funcion para obtener las ejecuciones por usuario ASC
+CREATE FUNCTION ejecPorUsuarioASC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT TOP 1000
+		u.userLogin,
+		u.nombre,
+		u.primerApellido,
+		u.segundoApellido,
+		COUNT(DISTINCT e.codigo) AS ejecuciones
+	FROM Usuario AS u
+	JOIN Ejecucion AS e ON e.userLogin = u.userLogin
+	JOIN ejecucionEnRangoFechas(@Desde, @Hasta) AS eerf ON eerf.codigo = e.codigo
+	GROUP BY u.userLogin, u.nombre, u.primerApellido, u.segundoApellido
+	ORDER BY ejecuciones ASC
+);
+GO
+
+CREATE FUNCTION cantidad_clientes_monto_x_zona(@Desde varchar(10), @Hasta varchar(10), @zona varchar(12))
+RETURNS TABLE
+AS
+RETURN
+(
 	SELECT  ct.zona AS Zona, COUNT(ct.contacto_clienteCodigo) AS Clientes, (SELECT CAST(SUM(p.precioEstandar) AS INT) FROM Cotizacion c JOIN ProductoXCotizacion pxc ON c.numeroCotizacion = pxc.numero_cotizacion JOIN Producto p ON pxc.codigo_producto = p.codigo WHERE nombre_etapa = 'Facturada' AND c.zona = @zona) AS Monto
 	FROM Cotizacion ct
 	LEFT JOIN Cliente c ON ct.contacto_clienteCodigo = c.codigo
@@ -2030,39 +2050,3 @@ GO
 
 --DROP TABLE #TEMP
 --SELECT * FROM #TEMP
-
-=======
-	SELECT TOP 1000
-		u.userLogin,
-		u.nombre,
-		u.primerApellido,
-		u.segundoApellido,
-		COUNT(DISTINCT e.codigo) AS ejecuciones
-	FROM Usuario AS u
-	JOIN Ejecucion AS e ON e.userLogin = u.userLogin
-	JOIN ejecucionEnRangoFechas(@Desde, @Hasta) AS eerf ON eerf.codigo = e.codigo
-	GROUP BY u.userLogin, u.nombre, u.primerApellido, u.segundoApellido
-	ORDER BY ejecuciones DESC
-);
-GO
-
--- Funcion para obtener las ejecuciones por usuario ASC
-CREATE FUNCTION ejecPorUsuarioASC(@Desde varchar(10), @Hasta varchar(10))
-RETURNS TABLE
-AS
-RETURN
-(
-	SELECT TOP 1000
-		u.userLogin,
-		u.nombre,
-		u.primerApellido,
-		u.segundoApellido,
-		COUNT(DISTINCT e.codigo) AS ejecuciones
-	FROM Usuario AS u
-	JOIN Ejecucion AS e ON e.userLogin = u.userLogin
-	JOIN ejecucionEnRangoFechas(@Desde, @Hasta) AS eerf ON eerf.codigo = e.codigo
-	GROUP BY u.userLogin, u.nombre, u.primerApellido, u.segundoApellido
-	ORDER BY ejecuciones ASC
-);
-GO
->>>>>>> 3b9fe7ae55a84bcf88a591ccbe10443322239c0d

@@ -410,6 +410,7 @@ namespace BasesP1.Controllers
                     break;
                 case "ceccma":
                     tableHeaders.Add("Cantidad de Ejecuciones");
+                    break;
                 case "cepu":
                     tableHeaders.Add("Login");
                     tableHeaders.Add("Nombre");
@@ -514,6 +515,7 @@ namespace BasesP1.Controllers
                     //Get the data from the query
                     totalExecutions = queryReport.getTotalExecutionsByMonthAndYear(filters.From, filters.To);
                     model.Data = totalExecutions;
+                    break;
                 case "cepu":
                     //Get the data from the query
                     user = queryReport.getTExesByUser(filters.From, filters.To, filters.OrderBy);
