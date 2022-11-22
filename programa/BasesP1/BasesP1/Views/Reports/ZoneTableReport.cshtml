@@ -1,0 +1,83 @@
+﻿@*FORM TO SELECT THE TYPE OF REPORT YPU WANT TO VIEW*@
+<form asp-action="ZoneTableReport" asp-controller="Reports" method="post">
+    <div class="mb-3">
+        <label for="contact-client-code" class="form-label">Selecione el reporte a visualizar:</label>
+        <div class="input-group w-50">
+            <select class="form-select auto-wdth" id="ReportType" name="ReportType">
+                <option value="cczmz">Cantidad de clientes por zona y monto de ventas por zona</option>
+            </select>
+            @*<button type="submit" class="btn btn-outline-info" onclick="location.href='@Url.Action("TableReport", "Reports")?ReportType=' + document.getElementById('ReportType').value">Buscar</button>*@
+        </div>
+    </div>
+
+    @*FORM TO SELECT THE DATE RANGE*@
+    <div class="mb-3">
+        <label for="date-filter" class="form-label">Rango de fechas a filtrar:</label>
+        <div class="w-50">
+            <div class="input-group mb-3">
+                <label for="date-filter-from" class="form-label mr-2">Desde:</label>
+                <select class="form-select auto-wdth mr-4" id="From" name="From">
+                    @foreach (var item in Model.Dates)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
+                <label for="date-filter-to" class="form-label mr-2">Hasta:</label>
+                <select class="form-select auto-wdth" id="To" name="To">
+                    @foreach (var item in Model.Dates)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="zone-filter-to" class="form-label mr-2">Zona:</label>
+                <select class="form-select auto-wdth" id="Zones" name="Zones">
+                    @foreach (var item in Model.Zones)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-outline-info">Buscar</button>
+
+</form>
+
+<br />
+
+@*TABLE TO SHOW THE INFORMATION FROM THE SQL TABLE*@
+@if (Model.Data != null)
+{
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    @foreach (var header in Model.Headers)
+                    {
+                        <th>@header</th>
+                    }
+                </tr>
+            </thead>
+
+            <tbody>
+                @*CREATE THE TABLES ROWS AND ASSIGN THEM THE INFORMATION FROM THE DB*@
+
+                @*Clients per zone and amount per zone*@
+                @if (Model.Type == "cczmz")
+                {
+                    foreach (var item in Model.Data)
+                    {
+                        <tr>
+                            <td>@item.Zona</td>
+                            <td>@item.Clientes</td>
+                            <td>@item.Monto</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}

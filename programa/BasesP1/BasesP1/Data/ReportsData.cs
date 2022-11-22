@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
+using System.Security.Policy;
 using Task = BasesP1.Models.Task;
 
 namespace BasesP1.Data
@@ -46,6 +47,39 @@ namespace BasesP1.Data
             }
             return data;
         }
+
+        //Method to get all the zones
+        public List<String> getZones()
+        {
+            //Structure where the data for the report will be save
+            List<String> data = new List<String>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                //Query to be use
+                string sql = $"SELECT * FROM todas_las_zonas()";
+
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+
+                        while (dataReader.Read())
+                        {
+                            data.Add("" + dataReader["nombre"]);
+
+                        }
+
+                    }
+                }
+                connection.Close();
+            }
+            return data;
+        }
+        
 
         //Method to get the data for the family products sales (circular) report
         public List<SimpleReportViewModel> getCFamilySales(string from, string to)
@@ -964,6 +998,96 @@ namespace BasesP1.Data
                 connection.Close();
             }
             return data;
+        }
+
+        public List<ClientsAndSales> getClientsAndSalesPerZone(string? from, string? to, string? zones)
+        {
+
+            List<ClientsAndSales> clientsAndSales = new List<ClientsAndSales>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = $"SELECT * FROM cantidad_clientes_monto_x_zona('{from}', '{to}', '{zones}')";
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    using (SqlDataReader dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            clientsAndSales.Add(new ClientsAndSales
+                            {
+                                Zona = "" + dataReader["Zona"],
+                                Clientes = "" + dataReader["Clientes"],
+                                Monto = int.Parse("" + dataReader["Monto"]),
+                            });
+                        }
+                        dataReader.Close();
+                    }
+                }
+                connection.Close();
+            }
+            return clientsAndSales;
+        }
+
+        public List<ExecutionsWithTasksAndActivities> getTopTenExecutions(string? from, string? to)
+        {
+            List<ExecutionsWithTasksAndActivities> executionsWithTasksAndActivities = new List<ExecutionsWithTasksAndActivities>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = $"SELECT * FROM top_10_cotizaciones_con_tareas_actividades('{from}', '{to}')";
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    using (SqlDataReader dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            executionsWithTasksAndActivities.Add(new ExecutionsWithTasksAndActivities
+                            {
+                                NumeroCotizacion = "" + dataReader["numeroCotizacion"],
+                                Tareas = "" + dataReader["Tareas"],
+                                Actividades = "" + dataReader["Actividades"],
+                                Total = int.Parse("" + dataReader["Total"]),
+                            });
+                        }
+                        dataReader.Close();
+                    }
+                }
+                connection.Close();
+            }
+            return executionsWithTasksAndActivities;
+        }
+
+        internal List<int> getTotalExecutionsByMonthAndYear(string? from, string? to)
+        {
+            List<int> executions = new List<int>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = $"SELECT * FROM cantidad_ejecuciones_mes_anno('{from}', '{to}')";
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    using (SqlDataReader dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            executions.Add(int.Parse("" + dataReader["Ejecuciones"]));
+                        }
+                        dataReader.Close();
+                    }
+                }
+                connection.Close();
+            }
+            return executions;
         }
     }
 }

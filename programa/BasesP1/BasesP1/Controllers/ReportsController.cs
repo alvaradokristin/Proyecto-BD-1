@@ -308,6 +308,21 @@ namespace BasesP1.Controllers
 
             return View("TableReport", model);
         }
+        public IActionResult LoadZoneTableReport()
+        {
+            //Create a model that wll store several models to be use in View
+            dynamic model = new ExpandoObject();
+
+            ReportsData reportData = new ReportsData(this.Configuration);
+            List<String> yearMonth = reportData.getDates();
+            List<String> zones = reportData.getZones();
+
+            model.Data = null;
+            model.Dates = yearMonth;
+            model.Zones = zones;
+
+            return View("ZoneTableReport", model);
+        }
 
         public List<String> getTableHeaders(string ReportType)
         {
@@ -382,6 +397,20 @@ namespace BasesP1.Controllers
                     tableHeaders.Add("Fecha Cierre");
                     tableHeaders.Add("Dias");
                     break;
+                case "cczmz":
+                    tableHeaders.Add("Zona");
+                    tableHeaders.Add("Cantidad de clientes");
+                    tableHeaders.Add("Monto");
+                    break;
+                case "tteat":
+                    tableHeaders.Add("Numero Cotizacion");
+                    tableHeaders.Add("Tareas");
+                    tableHeaders.Add("Actividades");
+                    tableHeaders.Add("Total");
+                    break;
+                case "ceccma":
+                    tableHeaders.Add("Cantidad de Ejecuciones");
+                    break;
                 case "cepu":
                     tableHeaders.Add("Login");
                     tableHeaders.Add("Nombre");
@@ -399,7 +428,7 @@ namespace BasesP1.Controllers
                     // Code for "any-other-than" cases :)
                     break;
             }
-
+            
             return tableHeaders;
         }
 
@@ -417,6 +446,10 @@ namespace BasesP1.Controllers
             List<User> user = new List<User>();
             List<Task> task = new List<Task>();
             List<Quotation> quote = new List<Quotation>();
+            List<ClientsAndSales> clientsAndSales = new List<ClientsAndSales>();
+            List<ExecutionsWithTasksAndActivities> executionsWithTasksAndActivities = new List<ExecutionsWithTasksAndActivities>();
+            List<int> totalExecutions = new List<int>();
+
             List<TasksByUser> tbu = new List<TasksByUser>();
 
             ProductData queryProd = new ProductData(this.Configuration);
@@ -468,6 +501,21 @@ namespace BasesP1.Controllers
                     quote = queryReport.getTQuotesDaysBDates(filters.From, filters.To, filters.OrderBy);
                     model.Data = quote;
                     break;
+                case "cczmz":
+                    //Get the data from the query
+                    clientsAndSales = queryReport.getClientsAndSalesPerZone(filters.From, filters.To, filters.Zones);
+                    model.Data = clientsAndSales;
+                    break;
+                case "tteat":
+                    //Get the data from the query
+                    executionsWithTasksAndActivities = queryReport.getTopTenExecutions(filters.From, filters.To);
+                    model.Data = executionsWithTasksAndActivities;
+                    break;
+                case "ceccma":
+                    //Get the data from the query
+                    totalExecutions = queryReport.getTotalExecutionsByMonthAndYear(filters.From, filters.To);
+                    model.Data = totalExecutions;
+                    break;
                 case "cepu":
                     //Get the data from the query
                     user = queryReport.getTExesByUser(filters.From, filters.To, filters.OrderBy);
@@ -488,5 +536,47 @@ namespace BasesP1.Controllers
 
             return View(model);
         }
+        public IActionResult ZoneTableReport(GraphFilters filters)
+        {
+            //Create a model that wll store several models to be use in View
+            dynamic model = new ExpandoObject();
+
+            //Create an array of the headers that will be used in View table
+            List<String> tableHeaders = new List<String>();
+
+            List<ClientsAndSales> clientsAndSales = new List<ClientsAndSales>();
+
+
+            ProductData queryProd = new ProductData(this.Configuration);
+            ReportsData queryReport = new ReportsData(this.Configuration);
+
+            List<String> yearMonth = queryReport.getDates();
+            List<String> zones = queryReport.getZones();
+
+            // Get the table headers
+            tableHeaders = getTableHeaders(filters.ReportType);
+
+            //Add the data to the general model that cointains dirrefent models inside
+            model.Headers = tableHeaders;
+
+            switch (filters.ReportType)
+            {
+                case "cczmz":
+                    //Get the data from the query
+                    clientsAndSales = queryReport.getClientsAndSalesPerZone(filters.From, filters.To, filters.Zones);
+                    model.Data = clientsAndSales;
+                    break;
+                case null:
+                    // Default
+                    break;
+            }
+
+            model.Dates = yearMonth;
+            model.Type = filters.ReportType;
+            model.Zones = zones;
+
+            return View(model);
+        }
+
     }
 }

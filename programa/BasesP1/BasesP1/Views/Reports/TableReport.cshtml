@@ -13,10 +13,13 @@
                 <option value="tftscma">Top 15 de tareas sin cerrar más antiguas</option>
                 <option value="cepu">Cantidad de ejecuciones por usuario</option>
                 <option value="ctpu">Cantidad de tareas por usuario</option>
+                <option value="tteat">Top 10 de ejecuciones con tareas y actividades</option>
+                <option value="ceccma">Cantidad de ejecuciones con cierre</option>
             </select>
             @*<button type="submit" class="btn btn-outline-info" onclick="location.href='@Url.Action("TableReport", "Reports")?ReportType=' + document.getElementById('ReportType').value">Buscar</button>*@
         </div>
     </div>
+
 
 @*FORM TO SELECT THE DATE RANGE*@
     <div class="mb-3">
@@ -37,7 +40,7 @@
                         <option value="@item">@item</option>
                     }
                 </select>
-            </div>
+            </div>             
             <div class="mb-3">
                 <label for="order-filter" class="form-label mr-2">Ordenar de manera:</label>
                 <select class="form-select auto-wdth" id="OrderBy" name="OrderBy">
@@ -210,6 +213,30 @@
                             <td>@item.EnProgreso</td>
                             <td>@item.Finalizadas</td>
                             <td>@item.Total</td>
+                        </tr>
+                    }
+                }
+                @*TOP 10 EXECUTIONS WITH THE MOST TASKS AND ACTIVITIES*@
+                @if (Model.Type == "tteat")
+                {
+                    foreach (var item in Model.Data)
+                    {
+                        <tr>
+                            <td>@item.NumeroCotizacion</td>
+                            <td>@item.Tareas</td>
+                            <td>@item.Actividades</td>
+                            <td>@item.Total</td>
+                        </tr>
+                    }
+                }
+
+                @*AMOUNT OF EXECUTIONS WITH ACTIVIES AND TASKS*@
+                @if (Model.Type == "ceccma")
+                {
+                    foreach (var item in Model.Data)
+                    {
+                        <tr>
+                            <td>@item</td>
                         </tr>
                     }
                 }
