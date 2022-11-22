@@ -1069,7 +1069,7 @@ BEGIN
 	DECLARE @ret DECIMAL(3,2);
 	SELECT @ret =  EXP(SUM(LOG(porcentaje)))
 	FROM Inflacion
-	WHERE CAST(anno AS INT) BETWEEN CAST(@Desde AS INT) AND DATENAME(YYYY, getdate()) - 1;
+	WHERE CAST(anno AS INT) BETWEEN CAST(@Desde AS INT) AND DATENAME(YYYY, getdate());
 	RETURN @ret
 END;
 GO
@@ -2073,13 +2073,13 @@ RETURN
 	SELECT
 	cam.annoMes,
 	SUM(CASE 
-			WHEN dbo.multiploValorActual(anno_inflacion) IS NULL AND c.nombre_etapa = 'Facturada' THEN cm.monto * 1 
-			WHEN dbo.multiploValorActual(anno_inflacion) IS NOT NULL AND c.nombre_etapa = 'Facturada' THEN cm.monto * dbo.multiploValorActual(anno_inflacion)
+			WHEN c.nombre_etapa = 'Facturada' AND CAST(c.anno_inflacion AS INT) != DATENAME(YYYY, getdate()) THEN cm.monto * dbo.multiploValorActual(anno_inflacion)
+			WHEN c.nombre_etapa = 'Facturada' AND CAST(c.anno_inflacion AS INT) = DATENAME(YYYY, getdate()) THEN cm.monto * 1
 			ELSE 0
 		END) AS ventas,
 	SUM(CASE 
-			WHEN dbo.multiploValorActual(anno_inflacion) IS NULL AND c.nombre_etapa != 'Facturada' THEN cm.monto * 1 
-			WHEN dbo.multiploValorActual(anno_inflacion) IS NOT NULL AND c.nombre_etapa != 'Facturada' THEN cm.monto * dbo.multiploValorActual(anno_inflacion)
+			WHEN c.nombre_etapa != 'Facturada' AND CAST(c.anno_inflacion AS INT) != DATENAME(YYYY, getdate()) THEN cm.monto * dbo.multiploValorActual(anno_inflacion)
+			WHEN c.nombre_etapa != 'Facturada' AND CAST(c.anno_inflacion AS INT) = DATENAME(YYYY, getdate()) THEN cm.monto * 1
 			ELSE 0
 		END) cotizaciones
 	FROM CotAnnoMes AS cam
