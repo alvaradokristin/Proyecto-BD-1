@@ -1031,6 +1031,32 @@ RETURN
 );
 GO
 
+-- Funcion para obtener las tareas en un rango de fechas
+CREATE FUNCTION tareasEnRangoFechas(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT
+		t.codigo
+	FROM Tarea AS t
+	WHERE t.fechaInicio BETWEEN CONVERT(DATETIME, @Desde, 101) AND CONVERT(DATETIME, @Hasta, 101)
+);
+GO
+
+-- Funcion para obtener las ejecuciones en un rango de fechas
+CREATE FUNCTION ejecucionEnRangoFechas(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT DISTINCT
+		e.codigo
+	FROM Ejecucion AS e
+	WHERE e.fecha BETWEEN CONVERT(DATETIME, @Desde, 101) AND CONVERT(DATETIME, @Hasta, 101)
+);
+GO
+
 -- Funcion para seleccionar todos los productos
 CREATE FUNCTION obtenerFamProd()
 RETURNS TABLE
@@ -1458,7 +1484,7 @@ RETURN
 );
 GO
 
--- Funcion para seleccionar los distintos año-mes
+-- Funcion para seleccionar los distintos aï¿½o-mes
 CREATE FUNCTION cotDisMesAnno()
 RETURNS TABLE
 AS
@@ -1479,7 +1505,7 @@ RETURN
 );
 GO
 
--- Funcion para seleccionar cantidad de ventas y cotizaciones por mes por año
+-- Funcion para seleccionar cantidad de ventas y cotizaciones por mes por aï¿½o
 CREATE FUNCTION cotVentasMesAnnoCant(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
@@ -1496,7 +1522,7 @@ RETURN
 );
 GO
 
--- Funcion para seleccionar monto de ventas y cotizaciones por mes por año
+-- Funcion para seleccionar monto de ventas y cotizaciones por mes por aï¿½o
 CREATE FUNCTION cotVentasMesAnnoMonto(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
@@ -1766,7 +1792,7 @@ RETURN
 );
 GO
 
--- Funcion para obtener las 10 cotizaciones con diferencia entre creacion y cierre mas pequeña ASC
+-- Funcion para obtener las 10 cotizaciones con diferencia entre creacion y cierre mas pequeï¿½a ASC
 CREATE FUNCTION cotDifDiasASC(@Desde varchar(10), @Hasta varchar(10))
 RETURNS TABLE
 AS
@@ -1788,6 +1814,99 @@ RETURN
 	JOIN Cliente AS cl ON cl.codigo = c.contacto_clienteCodigo
 	JOIN todasCotEnRangoFechas(@Desde, @Hasta) AS tcerf ON tcerf.numeroCotizacion = c.numeroCotizacion
 	ORDER BY dias ASC
+);
+GO
+
+-- Funcion para obtener las ventas por sector por departamaneto
+CREATE FUNCTION ventasSectorDept(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT 
+		d.nombre,
+		SUM(CASE WHEN c.sector = 'Gobierno' THEN cm.monto ELSE 0 END) AS gobierno,
+		SUM(CASE WHEN c.sector = 'Hoteleria' THEN cm.monto ELSE 0 END) AS hoteleria,
+		SUM(CASE WHEN c.sector = 'Residencial' THEN cm.monto ELSE 0 END) AS residencial,
+		SUM(CASE WHEN c.sector = 'Turismo' THEN cm.monto ELSE 0 END) AS turismo
+	FROM CotMontos AS cm
+	JOIN ventEnRangoFechas(@Desde, @Hasta) AS verf ON verf.numeroCotizacion = cm.numero_cotizacion
+	JOIN Cotizacion AS c ON c.numeroCotizacion = verf.numeroCotizacion
+	JOIN Usuario AS u ON u.userLogin = c.login_usuario
+	JOIN Departamento AS d ON d.codigo = u.codigo_departamento
+	GROUP BY d.nombre
+);
+GO
+
+-- Funcion para obtener las ventas por zona por departamaneto
+CREATE FUNCTION ventasZonaDept(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT 
+		d.nombre,
+		SUM(CASE WHEN c.zona = 'Alajuela' THEN cm.monto ELSE 0 END) AS alajuela,
+		SUM(CASE WHEN c.zona = 'Cartago' THEN cm.monto ELSE 0 END) AS cartago,
+		SUM(CASE WHEN c.zona = 'Guanacaste' THEN cm.monto ELSE 0 END) AS guanacaste,
+		SUM(CASE WHEN c.zona = 'Heredia' THEN cm.monto ELSE 0 END) AS heredia,
+		SUM(CASE WHEN c.zona = 'Limon' THEN cm.monto ELSE 0 END) AS limon,
+		SUM(CASE WHEN c.zona = 'Puntarenas' THEN cm.monto ELSE 0 END) AS puntarenas,
+		SUM(CASE WHEN c.zona = 'San Jose' THEN cm.monto ELSE 0 END) AS sj
+	FROM CotMontos AS cm
+	JOIN ventEnRangoFechas(@Desde, @Hasta) AS verf ON verf.numeroCotizacion = cm.numero_cotizacion
+	JOIN Cotizacion AS c ON c.numeroCotizacion = verf.numeroCotizacion
+	JOIN Usuario AS u ON u.userLogin = c.login_usuario
+	JOIN Departamento AS d ON d.codigo = u.codigo_departamento
+	GROUP BY d.nombre
+);
+GO
+
+-- Funcion para obtener las tareas por usuario DESC
+CREATE FUNCTION tareasPorUsuarioDESC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT TOP 1000
+		u.userLogin,
+		u.nombre,
+		u.primerApellido,
+		u.segundoApellido,
+		--COUNT(DISTINCT t.codigo) AS tareas
+		SUM(CASE WHEN t.nombre_estado = 'Inicio' THEN 1 ELSE 0 END) AS iniciadas,
+		SUM(CASE WHEN t.nombre_estado = 'En Progreso' THEN 1 ELSE 0 END) AS enProgreso,
+		SUM(CASE WHEN t.nombre_estado = 'Finalizado' THEN 1 ELSE 0 END) AS finalizadas,
+		COUNT(t.codigo) AS total
+	FROM Usuario AS u
+	JOIN Tarea AS t ON t.usuario_asignado = u.userLogin
+	JOIN tareasEnRangoFechas(@Desde, @Hasta) AS terf ON terf.codigo = t.codigo
+	GROUP BY u.userLogin, u.nombre, u.primerApellido, u.segundoApellido
+	ORDER BY total DESC
+);
+GO
+
+-- Funcion para obtener las tareas por usuario ASC
+CREATE FUNCTION tareasPorUsuarioASC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT TOP 1000
+		u.userLogin,
+		u.nombre,
+		u.primerApellido,
+		u.segundoApellido,
+		--COUNT(DISTINCT t.codigo) AS tareas
+		SUM(CASE WHEN t.nombre_estado = 'Inicio' THEN 1 ELSE 0 END) AS iniciadas,
+		SUM(CASE WHEN t.nombre_estado = 'En Progreso' THEN 1 ELSE 0 END) AS enProgreso,
+		SUM(CASE WHEN t.nombre_estado = 'Finalizado' THEN 1 ELSE 0 END) AS finalizadas,
+		COUNT(t.codigo) AS total
+	FROM Usuario AS u
+	JOIN Tarea AS t ON t.usuario_asignado = u.userLogin
+	JOIN tareasEnRangoFechas(@Desde, @Hasta) AS terf ON terf.codigo = t.codigo
+	GROUP BY u.userLogin, u.nombre, u.primerApellido, u.segundoApellido
+	ORDER BY total ASC
 );
 GO
 
@@ -1836,7 +1955,7 @@ RETURN
 );
 GO
 
--- Funcion para seleccionar cantidad de ventas y cotizaciones por mes por año
+-- Funcion para seleccionar cantidad de ventas y cotizaciones por mes por aï¿½o
 --ALTER PROCEDURE cotVentasMesAnnoMonto_valorpresente(@Desde varchar(10), @Hasta varchar(10))
 --AS
 --DECLARE @anno VARCHAR(15),
@@ -1888,5 +2007,4 @@ GO
 
 --DROP TABLE #TEMP
 --SELECT * FROM #TEMP
-
 

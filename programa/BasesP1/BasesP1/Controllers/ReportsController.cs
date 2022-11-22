@@ -147,11 +147,16 @@ namespace BasesP1.Controllers
                 case "vcpmavp":
                     // Code specific to PersonalPolicy
                     break;
-                case "vpspd":
-                    // Code specific to PersonalPolicy
-                    break;
                 case "vpzpd":
-                // Code specific to PersonalPolicy
+                    dataModel = reportData.getBSellsByDeptZone(filters.From, filters.To);
+                    model.XLabels = getAllxL(dataModel);
+                    model.YValues = getAllyVDouble(dataModel);
+                    break;
+                case "vpspd":
+                    dataModel = reportData.getBSellsByDeptSector(filters.From, filters.To);
+                    model.XLabels = getAllxL(dataModel);
+                    model.YValues = getAllyVDouble(dataModel);
+                    break;
                 case null:
                     // Code for "any-other-than" cases :)
                     break;
@@ -402,6 +407,14 @@ namespace BasesP1.Controllers
                 case "ceccma":
                     tableHeaders.Add("Cantidad de Ejecuciones");
                     break;
+                case "ctpu":
+                    tableHeaders.Add("Login");
+                    tableHeaders.Add("Nombre");
+                    tableHeaders.Add("Iniciadas");
+                    tableHeaders.Add("En Progreso");
+                    tableHeaders.Add("Finalizadas");
+                    tableHeaders.Add("Total");
+                    break;
                 case null:
                     // Code for "any-other-than" cases :)
                     break;
@@ -428,6 +441,7 @@ namespace BasesP1.Controllers
             List<ExecutionsWithTasksAndActivities> executionsWithTasksAndActivities = new List<ExecutionsWithTasksAndActivities>();
             List<int> totalExecutions = new List<int>();
 
+            List<TasksByUser> tbu = new List<TasksByUser>();
 
             ProductData queryProd = new ProductData(this.Configuration);
             ReportsData queryReport = new ReportsData(this.Configuration);
@@ -478,6 +492,7 @@ namespace BasesP1.Controllers
                     quote = queryReport.getTQuotesDaysBDates(filters.From, filters.To, filters.OrderBy);
                     model.Data = quote;
                     break;
+<<<<<<< HEAD
                 case "cczmz":
                     //Get the data from the query
                     clientsAndSales = queryReport.getClientsAndSalesPerZone(filters.From, filters.To, filters.Zones);
@@ -492,6 +507,12 @@ namespace BasesP1.Controllers
                     //Get the data from the query
                     totalExecutions = queryReport.getTotalExecutionsByMonthAndYear(filters.From, filters.To);
                     model.Data = totalExecutions;
+=======
+                case "ctpu":
+                    //Get the data from the query
+                    tbu = queryReport.getTTasksByUser(filters.From, filters.To, filters.OrderBy);
+                    model.Data = tbu;
+>>>>>>> beee6f1faed03ab9f07a947cceab8bd55bba7b28
                     break;
                 case null:
                     // Default
