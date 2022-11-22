@@ -124,6 +124,7 @@ CREATE TABLE Ejecucion (
 	codigo varchar(10) NOT NULL PRIMARY KEY,
 	nombre varchar(12) NOT NULL,
 	fecha date,
+	fechaCierre date,
 	codigo_proyecto varchar(10) NOT NULL,
 	codigo_departamento varchar(10) NOT NULL,
 	FOREIGN KEY (codigo_proyecto) REFERENCES Proyecto(codigo),
@@ -1805,7 +1806,87 @@ RETURN
 );
 GO
 
+-- Funcion que muestra el top 10 de las cotizaciones con mas tareas y actividades
+CREATE FUNCTION top_10_cotizaciones_con_tareas_actividades(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS 
+RETURN (
+SELECT TOP 10 c.numeroCotizacion, COUNT(ct.codigo_tarea) AS Tareas, COUNT(ca.codigo_actividad) AS Actividades, (COUNT(ct.codigo_tarea) + COUNT(ca.codigo_actividad)) AS Total
+FROM Cotizacion c 
+	LEFT JOIN TareaXCotizacion ct ON ct.numero_cotizacion = c.numeroCotizacion
+			LEFT JOIN ActividadXCotizacion ca ON ct.numero_cotizacion = ca.numero_cotizacion
+WHERE c.fecha BETWEEN CONVERT(DATETIME, @Desde, 101) AND CONVERT(DATETIME, @Hasta, 101)
+GROUP BY c.numeroCotizacion
+ORDER BY Total DESC
+);
+GO
 
+-- Funcion que muestra las ventas y cotizaciones, falta aplicarle lo del valor presente
+	--PENDIENTE
 
-SELECT * FROM cantidad_clientes_monto_x_zona('2017-11-11','2024-11-18','Alajuela')
+--Muestra las ejecuciones por mes anno (debes enviarle como parametro una fecha)
+CREATE FUNCTION cantidad_ejecuciones_mes_anno(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS 
+RETURN
+(
+	SELECT COUNT(codigo) AS Ejecuciones
+	FROM Ejecucion e
+	WHERE e.fechaCierre BETWEEN CONVERT(DATETIME, @Desde, 101) AND CONVERT(DATETIME, @Hasta, 101)
+);
+GO
+
+-- Funcion para seleccionar cantidad de ventas y cotizaciones por mes por año
+--ALTER PROCEDURE cotVentasMesAnnoMonto_valorpresente(@Desde varchar(10), @Hasta varchar(10))
+--AS
+--DECLARE @anno VARCHAR(15),
+--		@inflacion DECIMAL(3,2),
+--		@ventaxinflacion INT,
+--		@cotizacionxinflacion INT,
+--		@counter INT = 1,
+--		@max INT = 0
+--BEGIN
+--	BEGIN TRY
+--		CREATE TABLE #TEMP (
+--			id INT IDENTITY(1,1),
+--			annoMes VARCHAR(15),
+--			ventas DECIMAL(9,2),
+--			cotizaciones DECIMAL(9,2)
+--		);
+--		INSERT INTO #TEMP SELECT * FROM cotVentasMesAnnoMonto(@Desde, @Hasta)
+
+--		WHILE @counter <= @max
+--			BEGIN
+--				SET @anno = (SELECT SUBSTRING(annoMes, 1, 4) FROM #TEMP WHERE id = @counter);
+--				SET @inflacion = (SELECT porcentaje FROM Inflacion WHERE anno = @anno);
+--				SET @ventaxinflacion = (SELECT ventas * @inflacion FROM #TEMP WHERE id = @counter);
+--				SET @cotizacionxinflacion = (SELECT cotizaciones * @inflacion FROM #TEMP WHERE id = @counter);
+--				IF EXISTS (SELECT * FROM #TEMP2)
+--					BEGIN
+--						INSERT INTO #TEMP2 VALUES (@anno, @ventaxinflacion, @cotizacionxinflacion)
+--					END
+--				ELSE
+--					BEGIN
+--						CREATE TABLE #TEMP2 (
+--							anno VARCHAR(15),
+--							ventaxinflacion INT,
+--							cotizacionxinflacion INT
+--						)
+--						INSERT INTO #TEMP2 VALUES (@anno, @ventaxinflacion, @cotizacionxinflacion)
+--					END
+--			SET @counter = @counter + 1
+--			END
+--		DROP TABLE #TEMP
+--		SELECT * FROM #TEMP2
+--	END TRY
+--	BEGIN CATCH
+--		PRINT 'ERROR'
+--	END CATCH
+--END
+
+--EXEC cotVentasMesAnnoMonto_valorpresente @Desde = '2018-11-11', @Hasta = '2022-11-11'
+
+--DROP TABLE #TEMP
+--SELECT * FROM #TEMP
+
 

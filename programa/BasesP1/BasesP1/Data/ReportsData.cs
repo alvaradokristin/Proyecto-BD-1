@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
+using System.Security.Policy;
 using Task = BasesP1.Models.Task;
 
 namespace BasesP1.Data
@@ -809,6 +810,64 @@ namespace BasesP1.Data
                 connection.Close();
             }
             return clientsAndSales;
+        }
+
+        public List<ExecutionsWithTasksAndActivities> getTopTenExecutions(string? from, string? to)
+        {
+            List<ExecutionsWithTasksAndActivities> executionsWithTasksAndActivities = new List<ExecutionsWithTasksAndActivities>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = $"SELECT * FROM top_10_cotizaciones_con_tareas_actividades('{from}', '{to}')";
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    using (SqlDataReader dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            executionsWithTasksAndActivities.Add(new ExecutionsWithTasksAndActivities
+                            {
+                                NumeroCotizacion = "" + dataReader["numeroCotizacion"],
+                                Tareas = "" + dataReader["Tareas"],
+                                Actividades = "" + dataReader["Actividades"],
+                                Total = int.Parse("" + dataReader["Total"]),
+                            });
+                        }
+                        dataReader.Close();
+                    }
+                }
+                connection.Close();
+            }
+            return executionsWithTasksAndActivities;
+        }
+
+        internal List<int> getTotalExecutionsByMonthAndYear(string? from, string? to)
+        {
+            List<int> executions = new List<int>();
+
+            string connectionString = Configuration["ConnectionStrings:RealConnection"];
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = $"SELECT * FROM cantidad_ejecuciones_mes_anno('{from}', '{to}')";
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    using (SqlDataReader dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            executions.Add(int.Parse("" + dataReader["Ejecuciones"]));
+                        }
+                        dataReader.Close();
+                    }
+                }
+                connection.Close();
+            }
+            return executions;
         }
     }
 }

@@ -7,5 +7,6 @@
         public string? To { get; set; }
         public string? OrderBy { get; set; }
         public string? Zones { get; set; }
+        public string? MonthAndYear { get; set; }
     }
 }

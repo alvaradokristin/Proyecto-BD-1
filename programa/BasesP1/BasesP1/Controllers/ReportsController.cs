@@ -393,6 +393,15 @@ namespace BasesP1.Controllers
                     tableHeaders.Add("Cantidad de clientes");
                     tableHeaders.Add("Monto");
                     break;
+                case "tteat":
+                    tableHeaders.Add("Numero Cotizacion");
+                    tableHeaders.Add("Tareas");
+                    tableHeaders.Add("Actividades");
+                    tableHeaders.Add("Total");
+                    break;
+                case "ceccma":
+                    tableHeaders.Add("Cantidad de Ejecuciones");
+                    break;
                 case null:
                     // Code for "any-other-than" cases :)
                     break;
@@ -416,6 +425,8 @@ namespace BasesP1.Controllers
             List<Task> task = new List<Task>();
             List<Quotation> quote = new List<Quotation>();
             List<ClientsAndSales> clientsAndSales = new List<ClientsAndSales>();
+            List<ExecutionsWithTasksAndActivities> executionsWithTasksAndActivities = new List<ExecutionsWithTasksAndActivities>();
+            List<int> totalExecutions = new List<int>();
 
 
             ProductData queryProd = new ProductData(this.Configuration);
@@ -471,6 +482,16 @@ namespace BasesP1.Controllers
                     //Get the data from the query
                     clientsAndSales = queryReport.getClientsAndSalesPerZone(filters.From, filters.To, filters.Zones);
                     model.Data = clientsAndSales;
+                    break;
+                case "tteat":
+                    //Get the data from the query
+                    executionsWithTasksAndActivities = queryReport.getTopTenExecutions(filters.From, filters.To);
+                    model.Data = executionsWithTasksAndActivities;
+                    break;
+                case "ceccma":
+                    //Get the data from the query
+                    totalExecutions = queryReport.getTotalExecutionsByMonthAndYear(filters.From, filters.To);
+                    model.Data = totalExecutions;
                     break;
                 case null:
                     // Default

@@ -205,6 +205,8 @@ BEGIN
 	SET @maxElement = @maxElement + 1;
 END;
 
+SET fechaCierre = fecha
+
 -- Compra
 SET @maxElement = 100;
 WHILE @maxElement < 551
@@ -409,3 +411,4 @@ BEGIN
 
 	SET @maxElement = @maxElement + 1;
 END;
+
