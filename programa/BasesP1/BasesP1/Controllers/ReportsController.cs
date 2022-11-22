@@ -492,7 +492,6 @@ namespace BasesP1.Controllers
                     quote = queryReport.getTQuotesDaysBDates(filters.From, filters.To, filters.OrderBy);
                     model.Data = quote;
                     break;
-<<<<<<< HEAD
                 case "cczmz":
                     //Get the data from the query
                     clientsAndSales = queryReport.getClientsAndSalesPerZone(filters.From, filters.To, filters.Zones);
@@ -507,12 +506,10 @@ namespace BasesP1.Controllers
                     //Get the data from the query
                     totalExecutions = queryReport.getTotalExecutionsByMonthAndYear(filters.From, filters.To);
                     model.Data = totalExecutions;
-=======
                 case "ctpu":
                     //Get the data from the query
                     tbu = queryReport.getTTasksByUser(filters.From, filters.To, filters.OrderBy);
                     model.Data = tbu;
->>>>>>> beee6f1faed03ab9f07a947cceab8bd55bba7b28
                     break;
                 case null:
                     // Default
