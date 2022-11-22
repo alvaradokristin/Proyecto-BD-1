@@ -119,17 +119,6 @@ CREATE TABLE Proyecto (
 	codigo varchar(10) NOT NULL PRIMARY KEY
 )
 
--- Usa Proyecto y Departamento
-CREATE TABLE Ejecucion (
-	codigo varchar(10) NOT NULL PRIMARY KEY,
-	nombre varchar(12) NOT NULL,
-	fecha date,
-	codigo_proyecto varchar(10) NOT NULL,
-	codigo_departamento varchar(10) NOT NULL,
-	FOREIGN KEY (codigo_proyecto) REFERENCES Proyecto(codigo),
-	FOREIGN KEY (codigo_departamento) REFERENCES Departamento(codigo)
-)
-
 -- Se usa por Cliente, Tarea, Cotizacion y Ejecucion
 -- La encriptacion de la clave se va a manejar en el backend ya que consideramos que es mas 
 -- seguro y sencillo de aplicar y validar a la hora de realizar los logins
@@ -144,6 +133,19 @@ CREATE TABLE Usuario (
 	codigo_departamento varchar(10) NOT NULL,
 	FOREIGN KEY (codigo_departamento) REFERENCES Departamento(codigo),
 	FOREIGN KEY (nombre_rol) REFERENCES Rol(nombre)
+)
+
+-- Usa Proyecto y Departamento
+CREATE TABLE Ejecucion (
+	codigo varchar(10) NOT NULL PRIMARY KEY,
+	nombre varchar(12) NOT NULL,
+	fecha date,
+	codigo_proyecto varchar(10) NOT NULL,
+	codigo_departamento varchar(10) NOT NULL,
+	userLogin varchar(10) NOT NULL,
+	FOREIGN KEY (codigo_proyecto) REFERENCES Proyecto(codigo),
+	FOREIGN KEY (codigo_departamento) REFERENCES Departamento(codigo),
+	FOREIGN KEY (userLogin) REFERENCES Usuario(userLogin)
 )
 
 -- Se usa apara el manejo de usuarios
@@ -534,9 +536,9 @@ VALUES	('P001'),
 		('P003'),
 		('P004');
 
-INSERT INTO Ejecucion (codigo, nombre, fecha, codigo_proyecto, codigo_departamento)
-VALUES	('E001', 'Ejecucion1', '2022-10-10', 'P003', 'DP02'),
-		('E002', 'Ejecucion2', '2021-11-11', 'P002', 'DP03');
+INSERT INTO Ejecucion (codigo, nombre, fecha, codigo_proyecto, codigo_departamento, userLogin)
+VALUES	('E001', 'Ejecucion1', '2022-10-10', 'P003', 'DP02', 'amr'),
+		('E002', 'Ejecucion2', '2021-11-11', 'P002', 'DP03', 'jsm');
 
 INSERT INTO Caso (codigo, origen, asunto, direccion, descripcion, categoria_tipo, nombre_tipo, tipo_prioridad, categoria_estado, nombre_estado)
 VALUES	('C001', 'Origen 01', 'asunto1', 'direccion del caso', 'descripcion del caso', 'Caso', 'Tipo 2', 'P3', 'Caso', 'En Progreso'),
@@ -682,13 +684,14 @@ CREATE PROCEDURE insertarEjecucion
 	@EjeNombre varchar(12),
 	@EjeFecha date,
 	@EjeCodigoProyecto varchar(10),
-	@EjeCodigoDept varchar(10)
+	@EjeCodigoDept varchar(10),
+	@EjeAsesor varchar(10)
 AS
 DECLARE @Return int
 BEGIN
 	BEGIN TRY
 		INSERT INTO Ejecucion VALUES 
-		(@EjeCodigo, @EjeNombre, @EjeFecha, @EjeCodigoProyecto, @EjeCodigoDept)
+		(@EjeCodigo, @EjeNombre, @EjeFecha, @EjeCodigoProyecto, @EjeCodigoDept, @EjeAsesor)
 		SET @Return = 1
 	END TRY
 
@@ -1889,5 +1892,45 @@ RETURN
 	JOIN tareasEnRangoFechas(@Desde, @Hasta) AS terf ON terf.codigo = t.codigo
 	GROUP BY u.userLogin, u.nombre, u.primerApellido, u.segundoApellido
 	ORDER BY total ASC
+);
+GO
+
+-- Funcion para obtener las ejecuciones por usuario DESC
+CREATE FUNCTION ejecPorUsuarioDESC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT TOP 1000
+		u.userLogin,
+		u.nombre,
+		u.primerApellido,
+		u.segundoApellido,
+		COUNT(DISTINCT e.codigo) AS ejecuciones
+	FROM Usuario AS u
+	JOIN Ejecucion AS e ON e.userLogin = u.userLogin
+	JOIN ejecucionEnRangoFechas(@Desde, @Hasta) AS eerf ON eerf.codigo = e.codigo
+	GROUP BY u.userLogin, u.nombre, u.primerApellido, u.segundoApellido
+	ORDER BY ejecuciones DESC
+);
+GO
+
+-- Funcion para obtener las ejecuciones por usuario ASC
+CREATE FUNCTION ejecPorUsuarioASC(@Desde varchar(10), @Hasta varchar(10))
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT TOP 1000
+		u.userLogin,
+		u.nombre,
+		u.primerApellido,
+		u.segundoApellido,
+		COUNT(DISTINCT e.codigo) AS ejecuciones
+	FROM Usuario AS u
+	JOIN Ejecucion AS e ON e.userLogin = u.userLogin
+	JOIN ejecucionEnRangoFechas(@Desde, @Hasta) AS eerf ON eerf.codigo = e.codigo
+	GROUP BY u.userLogin, u.nombre, u.primerApellido, u.segundoApellido
+	ORDER BY ejecuciones ASC
 );
 GO
