@@ -234,7 +234,11 @@ namespace BasesP1.Controllers
                     break;
                 case "vpd":
                     dataModel = reportData.getSellsByDepartment(filters.From, filters.To);
-                    model.YValues = getAllQuantities(dataModel);
+                    model.YValues = getAllQuantitiesPer(dataModel);
+                    break;
+                case "cpt":
+                    dataModel = reportData.getCasesByType(filters.From, filters.To);
+                    model.YValues = getAllQuantitiesPer(dataModel);
                     break;
                 case "cpe":
                     dataModel = reportData.getCasesByState(filters.From, filters.To);
@@ -378,6 +382,11 @@ namespace BasesP1.Controllers
                     tableHeaders.Add("Fecha Cierre");
                     tableHeaders.Add("Dias");
                     break;
+                case "cepu":
+                    tableHeaders.Add("Login");
+                    tableHeaders.Add("Nombre");
+                    tableHeaders.Add("Ejecuciones");
+                    break;
                 case "ctpu":
                     tableHeaders.Add("Login");
                     tableHeaders.Add("Nombre");
@@ -458,6 +467,11 @@ namespace BasesP1.Controllers
                     //Get the data from the query
                     quote = queryReport.getTQuotesDaysBDates(filters.From, filters.To, filters.OrderBy);
                     model.Data = quote;
+                    break;
+                case "cepu":
+                    //Get the data from the query
+                    user = queryReport.getTExesByUser(filters.From, filters.To, filters.OrderBy);
+                    model.Data = user;
                     break;
                 case "ctpu":
                     //Get the data from the query
