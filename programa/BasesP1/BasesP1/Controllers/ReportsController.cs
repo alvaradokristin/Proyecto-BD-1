@@ -1,6 +1,9 @@
 ﻿using BasesP1.Data;
 using BasesP1.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Options;
+using Newtonsoft.Json.Linq;
+using System.Drawing;
 using System.Dynamic;
 using Task = BasesP1.Models.Task;
 
@@ -129,11 +132,15 @@ namespace BasesP1.Controllers
             switch (filters.ReportType)
             {
                 case "cvpd":
+                    ViewData["Title"] = "Cotizaciones y Ventas por departamento";
+
                     dataModel = reportData.getBQuotesSellsByDept(filters.From, filters.To);
                     model.XLabels = getAllxL(dataModel);
                     model.YValues = getAllyV(dataModel);
                     break;
                 case "vcpma":
+                    ViewData["Title"] = "Ventas y cotizaciones por mes, por año";
+
                     //How many sells/quotes
                     //dataModel = reportData.getBQuotesSellsByMonthYearQuantity(filters.From, filters.To);
                     //model.XLabels = getAllxL(dataModel);
@@ -145,14 +152,20 @@ namespace BasesP1.Controllers
                     model.YValues = getAllyVDouble(dataModel);
                     break;
                 case "vcpmavp":
+                    ViewData["Title"] = "Ventas y cotizaciones por mes, por año, en valor presente";
+
                     // Code specific to PersonalPolicy
                     break;
                 case "vpzpd":
+                    ViewData["Title"] = "Ventas por zona por departamento";
+
                     dataModel = reportData.getBSellsByDeptZone(filters.From, filters.To);
                     model.XLabels = getAllxL(dataModel);
                     model.YValues = getAllyVDouble(dataModel);
                     break;
                 case "vpspd":
+                    ViewData["Title"] = "Ventas por sector por departamento";
+
                     dataModel = reportData.getBSellsByDeptSector(filters.From, filters.To);
                     model.XLabels = getAllxL(dataModel);
                     model.YValues = getAllyVDouble(dataModel);
@@ -221,30 +234,44 @@ namespace BasesP1.Controllers
             switch (filters.ReportType)
             {
                 case "fpv":
+                    ViewData["Title"] = "Familias de productos vendidos";
+
                     dataModel = reportData.getCFamilySales(filters.From, filters.To);
                     model.YValues = getAllQuantitiesPer(dataModel);
                     break;
                 case "vps":
+                    ViewData["Title"] = "Ventas por sector";
+
                     dataModel = reportData.getSellsBySector(filters.From, filters.To);
                     model.YValues = getAllQuantities(dataModel);
                     break;
                 case "vpz":
+                    ViewData["Title"] = "Ventas por zona";
+
                     dataModel = reportData.getSellsByZone(filters.From, filters.To);
                     model.YValues = getAllQuantities(dataModel);
                     break;
                 case "vpd":
+                    ViewData["Title"] = "Ventas por departamento";
+
                     dataModel = reportData.getSellsByDepartment(filters.From, filters.To);
                     model.YValues = getAllQuantitiesPer(dataModel);
                     break;
                 case "cpt":
+                    ViewData["Title"] = "Casos por tipo";
+
                     dataModel = reportData.getCasesByType(filters.From, filters.To);
                     model.YValues = getAllQuantitiesPer(dataModel);
                     break;
                 case "cpe":
+                    ViewData["Title"] = "Casos por estado";
+
                     dataModel = reportData.getCasesByState(filters.From, filters.To);
                     model.YValues = getAllQuantities(dataModel);
                     break;
                 case "ccpt":
+                    ViewData["Title"] = "Cantidad de cotizaciones por tipo";
+
                     dataModel = reportData.getQuotationByType(filters.From, filters.To);
                     model.YValues = getAllQuantities(dataModel);
                     break;
@@ -381,7 +408,7 @@ namespace BasesP1.Controllers
                     tableHeaders.Add("Descripcion");
                     tableHeaders.Add("Estado");
                     tableHeaders.Add("Asesor");
-                    tableHeaders.Add("FechaInicio");
+                    tableHeaders.Add("Fecha Inicio");
                     tableHeaders.Add("Dias");
                     break;
                 case "ttcdccma":
@@ -399,7 +426,7 @@ namespace BasesP1.Controllers
                     break;
                 case "cczmz":
                     tableHeaders.Add("Zona");
-                    tableHeaders.Add("Cantidad de clientes");
+                    tableHeaders.Add("Cantidad de Clientes");
                     tableHeaders.Add("Monto");
                     break;
                 case "tteat":
@@ -466,62 +493,86 @@ namespace BasesP1.Controllers
             switch (filters.ReportType)
             {
                 case "ttpmv":
+                    ViewData["Title"] = "Top 10 de productos más vendidos";
+
                     //Get the data from the query
                     product = queryReport.getTTopSellerProd(filters.From, filters.To, filters.OrderBy);
                     model.Data = product;
 
                     break;
                 case "ttpmc":
+                    ViewData["Title"] = "Top 10 de productos más cotizados";
+
                     //Get the data from the query
                     product = queryReport.getTTopQuoterProd(filters.From, filters.To, filters.OrderBy);
                     model.Data = product;
                     break;
                 case "ttccmv":
+                    ViewData["Title"] = "Top 10 de clientes con mayores ventas";
+
                     //Get the data from the query
                     client = queryReport.getTClientMostSells(filters.From, filters.To, filters.OrderBy);
                     model.Data = client;
                     break;
                 case "ttvcmv":
+                    ViewData["Title"] = "Top 10 de vendedores con mayores ventas";
+
                     //Get the data from the query
                     user = queryReport.getTSellersMostSells(filters.From, filters.To, filters.OrderBy);
                     model.Data = user;
                     break;
                 case "cccu":
+                    ViewData["Title"] = "Cantidad de contactos de cliente por usuario";
+
                     //Get the data from the query
                     user = queryReport.getTContactsByUsers(filters.From, filters.To, filters.OrderBy);
                     model.Data = user;
                     break;
                 case "tftscma":
+                    ViewData["Title"] = "Top 15 de tareas sin cerrar más antiguas";
+
                     //Get the data from the query
                     task = queryReport.getTOldestsOpenTasks(filters.From, filters.To, filters.OrderBy);
                     model.Data = task;
                     break;
                 case "ttcdccma":
+                    ViewData["Title"] = "Top 10 de cotizaciones con diferencia entre creación y cierre más altos";
+
                     //Get the data from the query
                     quote = queryReport.getTQuotesDaysBDates(filters.From, filters.To, filters.OrderBy);
                     model.Data = quote;
                     break;
                 case "cczmz":
+                    ViewData["Title"] = "Cantidad de clientes por zona y monto de ventas por zona";
+
                     //Get the data from the query
                     clientsAndSales = queryReport.getClientsAndSalesPerZone(filters.From, filters.To, filters.Zones);
                     model.Data = clientsAndSales;
                     break;
                 case "tteat":
+                    ViewData["Title"] = "Top 10 de ejecuciones con tareas y actividades";
+
                     //Get the data from the query
                     executionsWithTasksAndActivities = queryReport.getTopTenExecutions(filters.From, filters.To);
                     model.Data = executionsWithTasksAndActivities;
                     break;
                 case "ceccma":
+                    ViewData["Title"] = "Cantidad de ejecuciones con cierre";
+
                     //Get the data from the query
                     totalExecutions = queryReport.getTotalExecutionsByMonthAndYear(filters.From, filters.To);
                     model.Data = totalExecutions;
                     break;
                 case "cepu":
+                    ViewData["Title"] = "Cantidad de ejecuciones por usuario";
+
                     //Get the data from the query
                     user = queryReport.getTExesByUser(filters.From, filters.To, filters.OrderBy);
                     model.Data = user;
                     break;
                 case "ctpu":
+                    ViewData["Title"] = "Cantidad de tareas por usuario";
+
                     //Get the data from the query
                     tbu = queryReport.getTTasksByUser(filters.From, filters.To, filters.OrderBy);
                     model.Data = tbu;

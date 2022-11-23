@@ -551,7 +551,7 @@ namespace BasesP1.Data
                                 Descripcion = "" + dataReader["descripcion"],
                                 Estado = "" + dataReader["nombre_estado"],
                                 Asesor = "" + dataReader["usuario_asignado"],
-                                FechaInicio = "" + dataReader["fechaInicio"],
+                                FechaInicio = DateTime.Parse("" + dataReader["fechaInicio"]).ToShortDateString(), // Convert DateTime to String with format SmallDate
                                 Cantidad = int.Parse("" + dataReader["dias"])
                             });
                         }

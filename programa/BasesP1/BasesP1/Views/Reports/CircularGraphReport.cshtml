@@ -2,8 +2,6 @@
 @{
     var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.XLabels);
     var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.YValues);
-
-    ViewData["Title"] = "Pie Chart";
 }
 
 <!DOCTYPE html>
@@ -58,6 +56,10 @@
         <button type="submit" class="btn btn-outline-info">Buscar</button>
 
     </form>
+
+    <br />
+
+    <h1>@ViewData["Title"]</h1>
 
     <br />
 
